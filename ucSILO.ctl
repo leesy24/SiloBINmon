@@ -2093,6 +2093,7 @@ Dim tBuf As Variant
                 '' or, the distance value is 2147483647 (0x7FFFFFFF) in case that the echo signal was noisy.
                 If (Scan2590Dist(i) > 2147483646) Then ''2147483647 - 1
                     Scan2590Dist(i) = 0
+                End If
             Next i
             
         End If
