@@ -1976,6 +1976,11 @@ Dim tBuf As Variant
                 ''angleN = angleN + 4
                 ''Scan2590Pulse(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 ''
+                '' Check the distance value is -2147483648 (0x80000000) in case that the echo signal was too low.
+                '' or, the distance value is 2147483647 (0x7FFFFFFF) in case that the echo signal was noisy.
+                If (Scan2590Dist(i) > 2147483646) Then ''2147483647 - 1
+                    Scan2590Dist(i) = 0
+                End If
             Next i
             
             
@@ -2084,6 +2089,10 @@ Dim tBuf As Variant
                 angleN = angleN + 4
                 Scan2590Pulse(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 ''
+                '' Check the distance value is -2147483648 (0x80000000) in case that the echo signal was too low.
+                '' or, the distance value is 2147483647 (0x7FFFFFFF) in case that the echo signal was noisy.
+                If (Scan2590Dist(i) > 2147483646) Then ''2147483647 - 1
+                    Scan2590Dist(i) = 0
             Next i
             
         End If
@@ -2168,6 +2177,14 @@ Dim tBuf As Variant
                 tSum = 0
                 tCntH = 0
                 tSumH = 0
+                
+                If (Scan2590Direc(i) < tAng + 0.5) Then
+                    tSum = tSum + Scan2590Dist(i)
+                    tCnt = tCnt + 1
+                ElseIf (Scan2590Direc(i) < tAng + 1#) Then
+                    tSumH = tSumH + Scan2590Dist(i)
+                    tCntH = tCntH + 1
+                End If
             End If
 
         End If
