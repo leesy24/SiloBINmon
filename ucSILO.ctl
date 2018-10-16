@@ -2193,6 +2193,40 @@ Dim tBuf As Variant
     Next i
 
 
+    If tCnt > 0 Then
+        tSum = (tSum / tCnt) / 10   ''* 1000  '';;;[cm]distance
+        '''
+        If tSum > 80000 Then
+            tSum = 0
+        End If
+        '''
+        
+        ''rxWORD((tAng) * 2 - 30) = CLng(tSum)
+        
+        ''rxWORD((tAng) * 2 - 45 - 15) = CLng(tSum)
+        
+        ''[90::{45.0~135.0}]==>[120::{0~120}]==>[240::{0~238}]
+        rxWORD((tAng - 45) * 2 + 30) = CLng(tSum)
+        
+        ''[90::{45.0~135.0}]=(-45):{0~90)==[x2]=>0~180==[+30]==>{~(30~210)~} // [120::{0~120}]==>[240::{0~238}]
+        
+    End If
+    
+    If tCntH > 0 Then
+        tSumH = (tSumH / tCntH) / 10 ''* 1000  '';;;[cm]distance
+        '''
+        If tSumH > 80000 Then
+            tSumH = 0
+        End If
+        '''
+        ''rxWORD((tAng) * 2 - 30 + 1) = CLng(tSumH)
+        ''rxWORD((tAng) * 2 - 45 - 15 + 1) = CLng(tSumH)
+        
+        ''[90::{45.0~135.0}]==>[120::{0~120}]==>[240::{0~238}]
+        rxWORD((tAng - 45) * 2 + 30 + 1) = CLng(tSumH)
+    
+    End If
+
 
     xcMax = 238
     ''''''''''''''''''''''''''''
