@@ -1566,7 +1566,7 @@ Dim strA As String
 ''                strA = "SetAngle[" & strA & "]"
                 ''
                 
-                strA = "SetAngle[-5]"
+                strA = "SetAngle[-1]"
 
                 Dim bb() As Byte
                 bb = StrConv(strA, vbFromUnicode)
