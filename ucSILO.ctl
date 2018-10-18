@@ -1899,6 +1899,7 @@ Dim tBuf As Variant
                 Exit Do
         End If
     Loop  ''''''''''''''''''''''''''''''[RX--sleep]
+    tmrTRX.Enabled = False
 
 
 ''    For i = 0 To 1000  '''1 To 239
@@ -1927,7 +1928,7 @@ Dim tBuf As Variant
             lbRxHead.BackColor = &HFFC0C0
             
         ElseIf (inBUF(0) = LD_sBUF(47)(0)) And (inBUF(1) = LD_sBUF(47)(1)) And (inBUF(2) = LD_sBUF(47)(2)) Then
-        ''''SCAN---;;
+        ''''GSCN---;;
             lbRxHead.Caption = "GSCN"
             lbRxHead.BackColor = &HFFC0C0
             
@@ -1953,7 +1954,7 @@ Dim tBuf As Variant
             Exit Function  ''===>
     End If
 
-
+    
     If (inCNT = 4056) Or (inCNT = 4086) Then   ''''''<=="GSCN"  ''(201809~DPSex::++30)
         ''rxSTOP = 1          ''''''=======>
         
@@ -2168,7 +2169,7 @@ Dim tBuf As Variant
                     ''[90::{45.0~135.0}]==>[120::{0~120}]==>[240::{0~238}]
                     rxWORD((tAng - 45) * 2 + 30 + 1) = CLng(tSumH)
                     
-                    Debug.Print tSum, tSumH
+                    'Debug.Print tSum, tSumH
                     
                 End If
             
@@ -2301,7 +2302,8 @@ Dim tBuf As Variant
                 Exit Do
         End If
     Loop  ''''''''''''''''''''''''''''''[sleep]
-    
+    tmrTRX.Enabled = False
+
     
 ''______________________________________________________________________________
 ''  Point ;    Echo ;   Direction ;    Distance ; Pulse width ;
@@ -2449,7 +2451,7 @@ Dim tBuf As Variant
                     '''
                     rxWORD((tAng) * 2 - 30 + 1) = CLng(tSumH)
                     
-                    Debug.Print tSum, tSumH
+                    'Debug.Print tSum, tSumH
                     
                 End If
             
@@ -2926,7 +2928,7 @@ Dim Dcnt As Long  ''A91
 
         Dsum = 0
         Dcnt = 0
-        
+    
         If rxWORD(i) < 5000 Then  ''2001
 
             For j = 1 To 5  ''3ea
