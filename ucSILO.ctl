@@ -583,11 +583,11 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-
 Public Event Resize()
 
 Public Event upDXY()
 
+Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 ''''''''''''''''''''''''''''''''[ DPS2590-EX :: Tilt-Motion ] 201809~DPSex
 ''    int    AutoTiltON = 0;
@@ -1898,6 +1898,7 @@ Dim tBuf As Variant
         If rxSTOP > 0 Then
                 Exit Do
         End If
+        Sleep 1
     Loop  ''''''''''''''''''''''''''''''[RX--sleep]
     tmrTRX.Enabled = False
 
@@ -2301,6 +2302,7 @@ Dim tBuf As Variant
         If rxSTOP > 0 Then
                 Exit Do
         End If
+        Sleep 1
     Loop  ''''''''''''''''''''''''''''''[sleep]
     tmrTRX.Enabled = False
 
@@ -2554,6 +2556,7 @@ Dim ONEcnt As Integer
     tmrTRX.Enabled = True
     Do While tmrTRX.Enabled = True
         DoEvents
+        Sleep 1
     Loop  ''''''''''''''''''''''''''''''[sleep]
     
 
@@ -2687,6 +2690,9 @@ ONEmore:
 
         DoEvents
         ''''''''
+    
+        Sleep 1
+
     Loop
 
 
