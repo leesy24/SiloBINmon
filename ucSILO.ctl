@@ -2105,7 +2105,7 @@ Dim tBuf As Variant
 
 
 
-    For i = 1 To 239
+    For i = 0 To 239
         rxWORD(i) = 0
     Next i
     
@@ -2810,33 +2810,33 @@ Dim j As Integer
                     End If
                 Next j
                 '''''''''''''''''''''''''''''''''
-                If c > 0 Then
+                If c >= 3 Then
                     rxWORD(i) = s / c
-                Else
-                    c = 0
-                    s = 0
-                    '''''''''''''''''''''''''''''''''''(Side-Filt)!
-                    For j = i - 5 To i + 5
-                        If rxWdeep(cnWring, j) > 0 Then
-                            s = s + rxWdeep(cnWring, j)
-                            c = c + 1
-                        End If
-                    Next j
-                    '''''''''''''''''''''''''''''''''''
-                    If c > 0 Then
-                        rxWORD(i) = s / c
-                    End If
+'''                Else
+'''                    c = 0
+'''                    s = 0
+'''                    '''''''''''''''''''''''''''''''''''(Side-Filt)!
+'''                    For j = i - 5 To i + 5
+'''                        If rxWdeep(cnWring, j) > 0 Then
+'''                            s = s + rxWdeep(cnWring, j)
+'''                            c = c + 1
+'''                        End If
+'''                    Next j
+'''                    '''''''''''''''''''''''''''''''''''
+'''                    If c > 0 Then
+'''                        rxWORD(i) = s / c
+'''                    End If
                 End If
             End If
-            
-            
-            If rxWORD(i) = 0 Then
-                ''''None---Filted??
-                j = 0
-                Debug.Print "None-Filt...?"
-            End If
-            
-            
+
+
+'''            If rxWORD(i) = 0 Then
+'''                ''''None---Filted??
+'''                j = 0
+'''                'Debug.Print "None-Filt...?"
+'''            End If
+
+
             ''DoEvents
             
         Next i
@@ -2922,35 +2922,71 @@ Dim Dcnt As Long  ''A91
 ''
 ''    Next i
 
+Dim Drl As Variant
+Dim Dlr As Variant
+ReDim Drl(xcMax) As Long
+ReDim Dlr(xcMax) As Long
 
-
-    For i = 32 To 120 Step 1     '''(mid--to--Right)''   '';<--[238]word
+    For i = 30 To (xcMax - 30) Step 1     '''(Right--to--Left)''   '';<--[238]word
 
         Dsum = 0
         Dcnt = 0
-    
-        If rxWORD(i) < 5000 Then  ''2001
+
+        Drl(i) = rxWORD(i)
+        If Drl(i) < 5000 Then  ''2001
 
             For j = 1 To 5  ''3ea
-                If rxWORD(i - j) > 0 Then
-                    Dsum = Dsum + rxWORD(i - j)
+                If Drl(i - j) >= 5000 Then
+                    Dsum = Dsum + Drl(i - j)
                     Dcnt = Dcnt + 1
                 End If
             Next j
     
             If Dcnt > 0 Then
-                Dsum = Dsum / Dcnt   '''3
-                rxWORD(i) = Dsum
-                
-''                If Abs((Dsum - rxWORD(i))) > (rxWORD(i) * 0.5) Then
-''                    rxWORD(i) = Dsum '''* 0.955  '''<==20180105
-''                End If
+                Drl(i) = Dsum / Dcnt   '''3
             End If
         End If
         
     Next i
 
-    For i = (xcMax - 30) To 121 Step -1   '''(mid--to--Right)''   '';<--[238]word
+    For i = (xcMax - 30) To 30 Step -1   '''(Left--to--Right)''   '';<--[238]word
+
+        Dsum = 0
+        Dcnt = 0
+
+        Dlr(i) = rxWORD(i)
+        If Dlr(i) < 5000 Then  ''2001
+
+            For j = 1 To 5  ''3ea
+                If Dlr(i + j) >= 5000 Then
+                    Dsum = Dsum + Dlr(i + j)
+                    Dcnt = Dcnt + 1
+                End If
+            Next j
+    
+            If Dcnt > 0 Then
+                Dlr(i) = Dsum / Dcnt   '''3
+            End If
+        End If
+        
+    Next i
+
+    For i = 30 To (xcMax - 30) Step 1
+
+        If Drl(i) >= 5000 And Dlr(i) >= 5000 Then
+            rxWORD(i) = (Drl(i) + Dlr(i)) / 2
+        ElseIf Drl(i) >= 5000 Then
+            rxWORD(i) = Drl(i)
+        ElseIf Dlr(i) >= 5000 Then
+            rxWORD(i) = Dlr(i)
+        End If
+        
+    Next i
+
+
+
+
+    For i = 29 To 0 Step -1     '''(Right--to--End)''   '';<--[238]word
 
         Dsum = 0
         Dcnt = 0
@@ -2958,28 +2994,20 @@ Dim Dcnt As Long  ''A91
         If rxWORD(i) < 5000 Then  ''2001
 
             For j = 1 To 5  ''3ea
-                If rxWORD(i + j) > 0 Then
+                If rxWORD(i + j) >= 5000 Then
                     Dsum = Dsum + rxWORD(i + j)
                     Dcnt = Dcnt + 1
                 End If
             Next j
     
             If Dcnt > 0 Then
-                Dsum = Dsum / Dcnt   '''3
-                rxWORD(i) = Dsum
-                
-''                If Abs((Dsum - rxWORD(i))) > (rxWORD(i) * 0.5) Then
-''                    rxWORD(i) = Dsum '''* 0.955  '''<==20180105
-''                End If
+                rxWORD(i) = Dsum / Dcnt * 0.955   '''3
             End If
         End If
         
     Next i
 
-
-
-
-    For i = 32 To 0 Step -1     '''(mid--to--Right)''   '';<--[238]word
+    For i = (xcMax - 29) To xcMax Step 1     '''(Left--to--End)''   '';<--[238]word
 
         Dsum = 0
         Dcnt = 0
@@ -2987,37 +3015,14 @@ Dim Dcnt As Long  ''A91
         If rxWORD(i) < 5000 Then  ''2001
 
             For j = 1 To 5  ''3ea
-                If rxWORD(i + j) > 0 Then
-                    Dsum = Dsum + rxWORD(i + j)
-                    Dcnt = Dcnt + 1
-                End If
-            Next j
-    
-            If Dcnt > 0 Then
-                Dsum = Dsum / Dcnt   '''3
-                rxWORD(i) = Dsum * 0.955
-            End If
-        End If
-        
-    Next i
-
-    For i = (xcMax - 29) To xcMax Step 1     '''(mid--to--Right)''   '';<--[238]word
-
-        Dsum = 0
-        Dcnt = 0
-        
-        If rxWORD(i) < 5000 Then  ''2001
-
-            For j = 1 To 5  ''3ea
-                If rxWORD(i - j) > 0 Then
+                If rxWORD(i - j) >= 5000 Then
                     Dsum = Dsum + rxWORD(i - j)
                     Dcnt = Dcnt + 1
                 End If
             Next j
     
             If Dcnt > 0 Then
-                Dsum = Dsum / Dcnt   '''3
-                rxWORD(i) = Dsum * 0.955
+                rxWORD(i) = Dsum / Dcnt * 0.955   '''3
             End If
         End If
         
