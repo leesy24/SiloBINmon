@@ -1889,18 +1889,18 @@ Dim tBuf As Variant
     SEND_wsickLD tBuf
     '''''''''''''''''
     DoEvents
-    
-    
+
+
     tmrTRX.Interval = 2500  ''2500   '''7000  ''20
     tmrTRX.Enabled = True
     Do While tmrTRX.Enabled = True
         DoEvents
         If rxSTOP > 0 Then
-                Exit Do
+            tmrTRX.Enabled = False
+            Exit Do
         End If
         Sleep 1
     Loop  ''''''''''''''''''''''''''''''[RX--sleep]
-    tmrTRX.Enabled = False
 
 
 ''    For i = 0 To 1000  '''1 To 239
@@ -2293,20 +2293,20 @@ Dim tBuf As Variant
     SEND_wsickLD tBuf
     
     DoEvents
-    
-    
+
+
     tmrTRX.Interval = 7000  ''20
     tmrTRX.Enabled = True
     Do While tmrTRX.Enabled = True
         DoEvents
         If rxSTOP > 0 Then
-                Exit Do
+            tmrTRX.Enabled = False
+            Exit Do
         End If
         Sleep 1
     Loop  ''''''''''''''''''''''''''''''[sleep]
-    tmrTRX.Enabled = False
 
-    
+
 ''______________________________________________________________________________
 ''  Point ;    Echo ;   Direction ;    Distance ; Pulse width ;
 ''        ;         ;       [deg] ;         [m] ;        [ps] ;
