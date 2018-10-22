@@ -1598,7 +1598,7 @@ Dim strA As String
             tmrSrun.Enabled = True
 
         Case Check2Device
-            rxWaitTime = rxWaitTime + 100
+            rxWaitTime = rxWaitTime + tmrSrun.Interval
             If ScanTYPE = 22590 Then
                 ret = LDrx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
                 
