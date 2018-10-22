@@ -689,6 +689,19 @@ Private baseHH As Long
 ''
 Private scaleHH As Long
 
+Private Enum eSrunMode
+    InitConn = 0
+    CheckConn
+    Init1Device
+    Check1Device
+    Init2Device
+    Check2Device
+    SendCmd
+    ReceiveData
+End Enum
+
+Private rxWaitTime As Integer
+
 
 
 ''Private Declare Function Polygon Lib "gdi32" (ByVal hdc As Long, lpPoint As POINTAPI, ByVal nCount As Long) As Long
@@ -803,6 +816,10 @@ Private Sub cmdCONN_Click()
 ''    inCNT = 0
 ''
 ''    LDtxDATA 39
+''    Sleep (10)
+''    rxWaitTime = 10
+''    LDrxDATA 39
+''
     
 End Sub
 
@@ -839,7 +856,7 @@ Private Sub UserControl_Initialize()
 
     '''ScanTYPE = 3100  '''LD-LRS-3100,, DPS-2590
 
-    tSrunMode = 0
+    tSrunMode = eSrunMode.InitConn
     
     DRAWmode = 0
     
@@ -858,7 +875,7 @@ Private Sub UserControl_Initialize()
     LDinitVAR
     '''''''''
     
-    lbMode = 0
+    lbMode = tSrunMode
     lbRXcnt = 0
     lbRXerr = 0
 
@@ -1346,8 +1363,8 @@ End Function
 
 Public Function ret_Act() As Integer
     
-    ''If (wsACT = True) And (tSrunMode >= 7) Then
-    If (tSrunMode >= 7) Then
+    ''If (wsACT = True) And (tSrunMode >= eSrunMode.SendCmd) Then
+    If (tSrunMode >= eSrunMode.SendCmd) Then
         ret_Act = 1
     Else
         ret_Act = 0
@@ -1428,7 +1445,7 @@ End Sub
 
 Public Sub initStart()
 
-    tSrunMode = 0
+    tSrunMode = eSrunMode.InitConn
     
     tmrSrun.Interval = 1000
     tmrSrun.Enabled = True
@@ -1439,6 +1456,10 @@ End Sub
 Private Sub tmrSrun_Timer()
 Dim ret As Integer
 Dim strA As String
+'Dim t As Long
+    
+    't = GetTickCount
+    'DGPSLog "tmrSrun_Timer(" & UCindex & ") START " & tSrunMode & "", "SILO"
 
     tmrSrun.Enabled = False
     '''''''''''''''''''''''
@@ -1446,8 +1467,7 @@ Dim strA As String
     lbMode = tSrunMode
 
     Select Case tSrunMode
-    
-    Case 0
+        Case InitConn
             lbRXerr = 0
             lbRXcnt = 0
         
@@ -1455,149 +1475,193 @@ Dim strA As String
             
             CONN_wsockLD
             
-            tSrunMode = tSrunMode + 1
+            tSrunMode = eSrunMode.CheckConn
             
             tmrSrun.Interval = 2000
             tmrSrun.Enabled = True
             
             picSilo_Click  ''Blank
             
-    Case 1
+        Case CheckConn
             tmrSrun.Interval = 2000
             
             If wsockLD.State <> sckConnected Then
-                tSrunMode = 0  ''tSrunMode - 1
+                tSrunMode = eSrunMode.InitConn
             Else
                 cmdCONN.BackColor = &HFF80FF   ''<гне╘  ''vbBlue
-                tSrunMode = tSrunMode + 1
+                tSrunMode = Init1Device
             End If
 
             tmrSrun.Enabled = True
             
-    Case 2
-
-            tmrSrun.Interval = 2000
-            ''tmrSrun.Enabled = True
-
+        Case Init1Device
             If ScanTYPE = 22590 Then
-            
                 ret = LDtx12590(51)   '''DPS_SPRM_SCD4 SCD(Scan Data Content) to 4(=distances olny)
             
-                lbTiltV.Caption = "0"
-                SEND_wsickLD "AutoTiltON"  '''[[ "AutoTiltON"=="TorqueMax(200)"&"SetAngle[0]" ]]
-                ''
-''                DoEvents
-''                Sleep 50
-            
-                tSrunMode = 5  '''==>
-                tmrSrun.Interval = 2000
+                tSrunMode = eSrunMode.Check1Device  '''==>
+                rxWaitTime = 0
+
+                tmrSrun.Interval = 100
 
             ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
-            
                 ret = LDtx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
             
-                tSrunMode = 7
-                tmrSrun.Interval = 2000
-            ElseIf ScanTYPE = 2590 Then  '''DPS-2590
+                tSrunMode = eSrunMode.Check1Device
+                rxWaitTime = 0
             
+                tmrSrun.Interval = 100
+
+            ElseIf ScanTYPE = 2590 Then  '''DPS-2590
                 ret = LDtx2590(41)   '''DPS-2590:Terminal-Mode!!
             
-                tSrunMode = 7
-                tmrSrun.Interval = 2000
+                tSrunMode = eSrunMode.Check1Device
+                rxWaitTime = 0
                 
+                tmrSrun.Interval = 100
+
             Else
                 If LDinitTXs <> 0 Then  '''LD-LRS-3100
                 ''''''''''''''''''''''
-                    tSrunMode = 0
+                    tSrunMode = eSrunMode.InitConn
+                    
+                    tmrSrun.Interval = 2000
+
                 Else
-                    tSrunMode = 7
+                    tSrunMode = eSrunMode.Check1Device
+                    rxWaitTime = 0
+                    
+                    tmrSrun.Interval = 2000
+
                 End If
-                tmrSrun.Interval = 2000
+            
             End If
                         
-            '''tmrSrun.Interval = 2000
             tmrSrun.Enabled = True
-   
-       ''Case 3
-    
-    Case 5
-    
+
+        Case Check1Device
+            rxWaitTime = rxWaitTime + tmrSrun.Interval
             If ScanTYPE = 22590 Then
+                ret = LDrx12590(51)   '''DPS_SPRM_SCD4 SCD(Scan Data Content) to 4(=distances olny)
+                
+                If ret = 0 Or ret < 0 Then
+                    lbTiltV.Caption = "0"
+                    SEND_wsickLD "AutoTiltON"  '''[[ "AutoTiltON"=="TorqueMax(200)"&"SetAngle[0]" ]]
+                
+                    tSrunMode = eSrunMode.Init2Device  '''==>
+                    
+                    tmrSrun.Interval = 1000
+                End If
+
+            ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
+                ret = LDrx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
             
-                AutoTiltON = 1  '''''0
-                AutoTiltStep = 1#   ''1.555
-                AutoTiltNow = 0#
-                AutoTiltMax = 5#
-                AutoTiltMin = -5#
+                If ret = 0 Or ret < 0 Then
+                    tSrunMode = eSrunMode.SendCmd
+                
+                    tmrSrun.Interval = 1000
+                End If
             
+            ElseIf ScanTYPE = 2590 Then  '''DPS-2590
+                ret = LDrx2590(41)   '''DPS-2590:Terminal-Mode!!
+            
+                If ret = 0 Or ret < 0 Then
+                    tSrunMode = eSrunMode.SendCmd
+                    
+                    tmrSrun.Interval = 2000
+                End If
+
+            Else
+                tSrunMode = eSrunMode.SendCmd
+                tmrSrun.Interval = 2000
+                
+            End If
+                        
+            tmrSrun.Enabled = True
+
+        Case Init2Device
+            If ScanTYPE = 22590 Then
                 ret = LDtx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
-                tSrunMode = 7
+                
+                tSrunMode = eSrunMode.Check2Device
+                rxWaitTime = 0
+                
+                tmrSrun.Interval = 100
+            
+            Else
+                tSrunMode = eSrunMode.InitConn
+                
+                tmrSrun.Interval = 2000
+            
             End If
     
             ''''
-            tmrSrun.Interval = 1000 '''500
             tmrSrun.Enabled = True
 
-            
-    Case 7
-            lbCnt = "TX"
-            
-            ''picSilo_Click
-            
-            txtRx1 = ""
+        Case Check2Device
+            rxWaitTime = rxWaitTime + 100
+            If ScanTYPE = 22590 Then
+                ret = LDrx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
                 
+                If ret = 0 Or ret < 0 Then
+                    tSrunMode = eSrunMode.SendCmd
+                    tmrSrun.Interval = 1000 '''500
+    
+                    AutoTiltON = 1  '''''0
+                    AutoTiltStep = 1#   ''1.555
+                    AutoTiltNow = 0#
+                    AutoTiltMax = 5#
+                    AutoTiltMin = -5#
+    
+                    tSrunMode = eSrunMode.SendCmd
+                    
+                    tmrSrun.Interval = 1000 '''500
+                End If
+            
+            Else
+                tSrunMode = eSrunMode.InitConn
+                
+                tmrSrun.Interval = 2000
+            
+            End If
+    
+            ''''
+            tmrSrun.Enabled = True
+
+        Case SendCmd
+            lbCnt = "TX"
+
+            ''picSilo_Click
+
+            txtRx1 = ""
+
             If ScanTYPE = 22590 Then
 
                 '''''''''
                 ret = LDtx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
-            
 
-''                AutoTiltNow = AutoTiltNow + AutoTiltStep
-''                ''''''''''''''''''''''''''''''''''''''''
-''                If AutoTiltNow > AutoTiltMax Then
-''                    AutoTiltNow = AutoTiltMax:      AutoTiltStep = AutoTiltStep * (-1#)
-''                End If
-''                If AutoTiltNow < AutoTiltMin Then
-''                    AutoTiltNow = AutoTiltMin:      AutoTiltStep = AutoTiltStep * (-1#)
-''                End If
-''
-''                strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
-''                lbTiltV.Caption = Str(strA)
-''                strA = "SetAngle[" & strA & "]"
-                ''
-                
-                strA = "SetAngle[-1]"
+                tSrunMode = eSrunMode.ReceiveData
+                rxWaitTime = 0
 
-                Dim bb() As Byte
-                bb = StrConv(strA, vbFromUnicode)
-                ''
-                SEND_wsickLD bb
-                '''''''''''''''
-'''                ''DoEvents
-'''                tmrTRX.Interval = 100  '''100  ''
-'''                tmrTRX.Enabled = True
-'''                Do While tmrTRX.Enabled = True
-'''                    DoEvents
-'''                Loop  '''''''''[RX--sleep]
-            
-                tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
-            
+                tmrSrun.Interval = 100
+
             ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
-            
                 ret = LDtx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
-            
-                tmrSrun.Interval = 2000  ''1000 ''after-Done!! ''2000  ''<===!
-                
-                
+
+                tSrunMode = eSrunMode.ReceiveData
+                rxWaitTime = 0
+
+                tmrSrun.Interval = 100
+
             ElseIf ScanTYPE = 2590 Then   '''''''''''''''''''' DPS-2590
-            
                 ret = LDtx2590(43)  '''43<--49 for DPS2590--12590
                                     '''Console: "s\r\n"  : Array(Asc("s"), &HD, &HA)
-            
-                tmrSrun.Interval = 2000  ''8000  ''9000
-                
+
+                tSrunMode = eSrunMode.ReceiveData
+                rxWaitTime = 0
+
+                tmrSrun.Interval = 100
+
             Else  ''''''''''''''''''''LD-LRS-3100
-            
                 ret = LDtxDATA(39)
                 ''''''''''''''''''
                     '            If ret < 0 Then
@@ -1605,19 +1669,112 @@ Dim strA As String
                     '            End If
 
                 If ret < 0 Then
-                    tmrSrun.Interval = 1000  ''200
+                    tmrSrun.Interval = 1000
+
+                    tSrunMode = eSrunMode.InitConn
+
                 Else
-                    tmrSrun.Interval = 1000  ''400
+                    tmrSrun.Interval = 10
+
+                    tSrunMode = eSrunMode.ReceiveData
+                    rxWaitTime = 0
+
                 End If
             
             End If
                             
             tmrSrun.Enabled = True
+        
+        Case ReceiveData
+            rxWaitTime = rxWaitTime + tmrSrun.Interval
             
-    Case Else
+            If ScanTYPE = 22590 Then
+
+                '''''''''
+                ret = LDrx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
+            
+                If ret = 0 Or ret < 0 Then
+''                    AutoTiltNow = AutoTiltNow + AutoTiltStep
+''                    ''''''''''''''''''''''''''''''''''''''''
+''                    If AutoTiltNow > AutoTiltMax Then
+''                        AutoTiltNow = AutoTiltMax:      AutoTiltStep = AutoTiltStep * (-1#)
+''                    End If
+''                    If AutoTiltNow < AutoTiltMin Then
+''                        AutoTiltNow = AutoTiltMin:      AutoTiltStep = AutoTiltStep * (-1#)
+''                    End If
+''
+''                    strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
+''                    lbTiltV.Caption = Str(strA)
+''                    strA = "SetAngle[" & strA & "]"
+                      ''
+                
+                    'strA = "SetAngle[0]"
+                    'strA = "SetAngle[-1]"
+                    'strA = "SetAngle[-5]"
+                    strA = "SetAngle[-70]"
+    
+                    Dim bb() As Byte
+                    bb = StrConv(strA, vbFromUnicode)
+                    ''
+                    SEND_wsickLD bb
+                    '''''''''''''''
+                
+                    tSrunMode = eSrunMode.SendCmd
+                    
+                    tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
+                End If
+            
+            ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
+                ret = LDrx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
+                
+                If ret = 0 Or ret < 0 Then
+                    tSrunMode = eSrunMode.SendCmd
+                    
+                    tmrSrun.Interval = 2000  ''1000 ''after-Done!! ''2000  ''<===!
+                End If
+                
+            ElseIf ScanTYPE = 2590 Then   '''''''''''''''''''' DPS-2590
+                ret = LDrx2590(43)  '''43<--49 for DPS2590--12590
+                                    '''Console: "s\r\n"  : Array(Asc("s"), &HD, &HA)
+            
+                If ret = 0 Or ret < 0 Then
+                    tSrunMode = eSrunMode.SendCmd
+                    
+                    tmrSrun.Interval = 2000  ''8000  ''9000
+                End If
+
+            Else  ''''''''''''''''''''LD-LRS-3100
+                ret = LDrxDATA(39)
+                ''''''''''''''''''
+                    '            If ret < 0 Then
+                    '                ret = LDrxDATA(39)
+                    '            End If
+
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
+                
+                    tmrSrun.Interval = 1000
+                
+                Else
+                    tSrunMode = eSrunMode.SendCmd
+                
+                    tmrSrun.Interval = 1000  ''400
+                
+                End If
+            
+            End If
+                            
+            tmrSrun.Enabled = True
+        
+        Case Else
+            tSrunMode = eSrunMode.InitConn
+            tmrSrun.Interval = 2000
+            tmrSrun.Enabled = True
     
     End Select
     
+    't = GetTickCount - t
+    'DGPSLog "tmrSrun_Timer(" & UCindex & ") END " & tSrunMode & ", " & t & "", "SILO"
 
 End Sub
 
@@ -1817,7 +1974,7 @@ End Sub
 
 Private Sub wsockLD_Error(ByVal Number As Integer, Description As String, ByVal Scode As Long, ByVal Source As String, ByVal HelpFile As String, ByVal HelpContext As Long, CancelDisplay As Boolean)
     cmdCONN.BackColor = vbRed
-    tSrunMode = 0
+    tSrunMode = eSrunMode.InitConn
 End Sub
 
 
@@ -1826,7 +1983,7 @@ Private Sub SEND_wsickLD(SD As Variant)
         wsockLD.SendData SD
     Else
         cmdCONN.BackColor = vbRed
-        tSrunMode = 0
+        tSrunMode = eSrunMode.InitConn
     End If
 End Sub
 
@@ -1841,7 +1998,10 @@ Dim i As Integer
     txtRx1 = ""
     
     For i = 0 To 3
-        If LDtxDATA(0) = 0 Then Exit For
+        LDtxDATA (0)
+        Sleep (10)
+        rxWaitTime = 10
+        If LDrxDATA(0) = 0 Then Exit For
         ''''''''''''''''''''''''''''''''
     Next i
     
@@ -1853,10 +2013,16 @@ Dim i As Integer
     
     For i = 0 To 29  ''DWONLOAD-ALL!!
         LDtxDATA i
+        Sleep (10)
+        rxWaitTime = 10
+        LDrxDATA i
     Next i
     
     
     ''LDtxDATA 29
+    ''Sleep (10)
+    ''rxWaitTime = 10
+    ''LDrxDATA 29
 
     LDinitTXs = 0
     
@@ -1888,21 +2054,22 @@ Dim tBuf As Variant
     
     SEND_wsickLD tBuf
     '''''''''''''''''
-    DoEvents
+
+    LDtx12590 = 0
+
+End Function
 
 
-    tmrTRX.Interval = 2500  ''2500   '''7000  ''20
-    tmrTRX.Enabled = True
-    Do While tmrTRX.Enabled = True
-        DoEvents
-        If rxSTOP > 0 Then
-            tmrTRX.Enabled = False
-            Exit Do
-        End If
-        Sleep 1
-    Loop  ''''''''''''''''''''''''''''''[RX--sleep]
+Private Function LDrx12590(ix As Integer) As Integer
 
+Dim i As Integer
+'Dim t As Long
 
+    If rxWaitTime < 2500 And rxSTOP = 0 Then
+        LDrx12590 = 1
+        Exit Function  ''===>
+    End If
+    
 ''    For i = 0 To 1000  '''1 To 239
 ''        rxWORD(i) = 0
 ''    Next i
@@ -1913,6 +2080,9 @@ Dim tBuf As Variant
 '''
 '''    '''''''''''''ERR???? ; LD_sBUF(49) = Array(&H45, &H52, &H52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
+    'DGPSLog "LDrx12590(" & UCindex & ") rxWaitTime=" & rxWaitTime & ", rxSTOP=" & rxSTOP & "", "SILO"
+    'DGPSLog "LDrx12590(" & UCindex & ") inCNT=" & inCNT & "", "SILO"
+
     If inCNT < 22 Then   ''''''<=="ERR///SCAN"---"GSCN"
     
         If (inBUF(0) = LD_sBUF(49)(0)) And (inBUF(1) = LD_sBUF(49)(1)) And (inBUF(2) = LD_sBUF(49)(2)) Then
@@ -1920,7 +2090,7 @@ Dim tBuf As Variant
             lbRxHead.Caption = "ERR"
             lbRxHead.BackColor = vbRed
             
-            LDtx12590 = -1
+            LDrx12590 = -1
             Exit Function  ''===>
         
         ElseIf (inBUF(0) = LD_sBUF(45)(0)) And (inBUF(1) = LD_sBUF(45)(1)) And (inBUF(2) = LD_sBUF(45)(2)) Then
@@ -1947,14 +2117,16 @@ Dim tBuf As Variant
 
     If (inCNT < 30) Then
         lbCnt.BackColor = vbYellow  ''&HC0C0C0
-            LDtx12590 = -1
+            LDrx12590 = -1
             Exit Function  ''===>
     ElseIf (inCNT < 4056) Or ((inCNT > 4086) And (inCNT < 8056)) Then
         lbCnt.BackColor = vbRed  ''&HC0C0C0
-            LDtx12590 = -1
+            LDrx12590 = -1
             Exit Function  ''===>
     End If
 
+    't = GetTickCount
+    'DGPSLog "LDrx12590(" & UCindex & ") START " & inCNT & "", "SILO"
     
     If (inCNT = 4056) Or (inCNT = 4086) Then   ''''''<=="GSCN"  ''(201809~DPSex::++30)
         ''rxSTOP = 1          ''''''=======>
@@ -1983,6 +2155,7 @@ Dim tBuf As Variant
                 If (Scan2590Dist(i) > 2147483646) Then ''2147483647 - 1
                     Scan2590Dist(i) = 0
                 End If
+                'Scan2590Dist(i) = Scan2590Dist(i) * 10
             Next i
             
             
@@ -2255,9 +2428,10 @@ Dim tBuf As Variant
             cmdCONN.BackColor = vbGreen
     ''''''''
 
-    LDtx12590 = 0
+    LDrx12590 = 0
 
-
+    't = GetTickCount - t
+    'DGPSLog "LDrx12590(" & UCindex & ") END " & t & "", "SILO"
 
 End Function
 
@@ -2291,21 +2465,21 @@ Dim tBuf As Variant
     
     
     SEND_wsickLD tBuf
+
+    LDtx2590 = 0
     
-    DoEvents
+End Function
 
 
-    tmrTRX.Interval = 7000  ''20
-    tmrTRX.Enabled = True
-    Do While tmrTRX.Enabled = True
-        DoEvents
-        If rxSTOP > 0 Then
-            tmrTRX.Enabled = False
-            Exit Do
-        End If
-        Sleep 1
-    Loop  ''''''''''''''''''''''''''''''[sleep]
+Private Function LDrx2590(ix As Integer) As Integer
 
+Dim i As Integer
+
+    If rxWaitTime < 7000 And rxSTOP = 0 Then
+        LDrx2590 = 1
+        Exit Function  ''===>
+    End If
+    
 
 ''______________________________________________________________________________
 ''  Point ;    Echo ;   Direction ;    Distance ; Pulse width ;
@@ -2494,7 +2668,7 @@ Dim tBuf As Variant
             cmdCONN.BackColor = vbGreen
     ''''''''
 
-    LDtx2590 = 0
+    LDrx2590 = 0
     
 End Function
 
@@ -2502,23 +2676,7 @@ End Function
 Private Function LDtxDATA(ix As Integer) As Integer    ''(sBUF())
 
 Dim i As Integer
-Dim c As Integer
-Dim z As Integer
-
-Dim strHD(8) As Integer
-
 Dim tBuf As Variant
-
-Dim ONEcnt As Integer
-
-    ONEcnt = 0
-
-    strHD(0) = 2
-    strHD(1) = 2
-    strHD(2) = 2
-    strHD(3) = 0
-    strHD(4) = 0
-
 
     ReDim tBuf(UBound(LD_sBUF(ix))) As Byte
     ''
@@ -2548,19 +2706,37 @@ Dim ONEcnt As Integer
     SEND_wsickLD tBuf
     '''''''''''''''''
 
-    DoEvents
-    ''Sleep 100
-    
+    LDtxDATA = 0
 
-    tmrTRX.Interval = 10  ''20
-    tmrTRX.Enabled = True
-    Do While tmrTRX.Enabled = True
-        DoEvents
-        Sleep 1
-    Loop  ''''''''''''''''''''''''''''''[sleep]
-    
+End Function
 
-    If tSrunMode >= 7 Then
+
+Private Function LDrxDATA(ix As Integer) As Integer    ''(sBUF())
+
+Dim i As Integer
+Dim c As Integer
+Dim z As Integer
+
+Dim strHD(8) As Integer
+
+Dim tBuf As Variant
+
+Dim ONEcnt As Integer
+
+    If rxWaitTime < 10 Then
+        LDrxDATA = 1
+        Exit Function  ''===>
+    End If
+    
+    ONEcnt = 0
+
+    strHD(0) = 2
+    strHD(1) = 2
+    strHD(2) = 2
+    strHD(3) = 0
+    strHD(4) = 0
+
+    If tSrunMode >= eSrunMode.SendCmd Then
         tmrTRX.Interval = 200  ''300
     Else
         tmrTRX.Interval = 300
@@ -2575,7 +2751,7 @@ ONEmore:
     Do While tmrTRX.Enabled = True
     
     
-        If (tSrunMode < 7) And (inCNT > 10) Then   ''Command-RX
+        If (tSrunMode < eSrunMode.SendCmd) And (inCNT > 10) Then   ''Command-RX
 
             i = 1
 
@@ -2598,7 +2774,7 @@ ONEmore:
                 
             End If
             
-        ElseIf (tSrunMode >= 7) And (inCNT >= 516) Then  ''DATA-RX
+        ElseIf (tSrunMode >= eSrunMode.SendCmd) And (inCNT >= 516) Then  ''DATA-RX
     
             i = 1
 
@@ -2731,7 +2907,7 @@ ONEmore:
 
     If lbRXerr > 9 Then
     
-        tSrunMode = 0  ''<<RESTART>>''
+        tSrunMode = eSrunMode.InitConn  ''<<RESTART>>''
         '''''''''''''
         
         tmrTRX.Enabled = False
@@ -2744,14 +2920,14 @@ ONEmore:
 
     inCNT = 0 ''Time-OUT??
 
-    LDtxDATA = -1
+    LDrxDATA = -1
     
     Exit Function  ''-------->
     
 RxOK:
     tmrTRX.Enabled = False
     
-    LDtxDATA = 0
+    LDrxDATA = 0
 
 End Function
 
