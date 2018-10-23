@@ -636,6 +636,9 @@ Private xcMax As Integer
 Private rxBcnt As Integer
 Private rxBYTE(2000) As Byte        ''(120~240)=>121*0.5degree: 121*2*2==484==242word
 Private rxWORD(1001) As Long  '''1000
+Private rxWORDrl(1001) As Long
+Private rxWORDlr(1001) As Long
+
 
 Private rxSTOP As Integer
 
@@ -3104,50 +3107,55 @@ Dim Dcnt As Long  ''A91
 ''
 ''    Next i
 
-Dim Drl As Variant
-Dim Dlr As Variant
-ReDim Drl(xcMax) As Long
-ReDim Dlr(xcMax) As Long
-
+    For i = 0 To (30 - 1) Step 1
+        rxWORDrl(i) = rxWORD(i)
+    
+    Next i
+    
     For i = 30 To (xcMax - 30) Step 1     '''(Right--to--Left)''   '';<--[238]word
 
         Dsum = 0
         Dcnt = 0
 
-        Drl(i) = rxWORD(i)
-        If Drl(i) < 5000 Then  ''2001
+        rxWORDrl(i) = rxWORD(i)
+        If rxWORDrl(i) < 5000 Then  ''2001
 
             For j = 1 To 5  ''3ea
-                If Drl(i - j) >= 5000 Then
-                    Dsum = Dsum + Drl(i - j)
+                If rxWORDrl(i - j) >= 5000 Then
+                    Dsum = Dsum + rxWORDrl(i - j)
                     Dcnt = Dcnt + 1
                 End If
             Next j
     
             If Dcnt > 0 Then
-                Drl(i) = Dsum / Dcnt   '''3
+                rxWORDrl(i) = Dsum / Dcnt   '''3
             End If
         End If
         
     Next i
 
+    For i = xcMax To (xcMax - 30 + 1) Step -1   '''(Left--to--Right)''   '';<--[238]word
+        rxWORDlr(i) = rxWORD(i)
+    
+    Next i
+    
     For i = (xcMax - 30) To 30 Step -1   '''(Left--to--Right)''   '';<--[238]word
 
         Dsum = 0
         Dcnt = 0
 
-        Dlr(i) = rxWORD(i)
-        If Dlr(i) < 5000 Then  ''2001
+        rxWORDlr(i) = rxWORD(i)
+        If rxWORDlr(i) < 5000 Then  ''2001
 
             For j = 1 To 5  ''3ea
-                If Dlr(i + j) >= 5000 Then
-                    Dsum = Dsum + Dlr(i + j)
+                If rxWORDlr(i + j) >= 5000 Then
+                    Dsum = Dsum + rxWORDlr(i + j)
                     Dcnt = Dcnt + 1
                 End If
             Next j
     
             If Dcnt > 0 Then
-                Dlr(i) = Dsum / Dcnt   '''3
+                rxWORDlr(i) = Dsum / Dcnt   '''3
             End If
         End If
         
@@ -3155,12 +3163,12 @@ ReDim Dlr(xcMax) As Long
 
     For i = 30 To (xcMax - 30) Step 1
 
-        If Drl(i) >= 5000 And Dlr(i) >= 5000 Then
-            rxWORD(i) = (Drl(i) + Dlr(i)) / 2
-        ElseIf Drl(i) >= 5000 Then
-            rxWORD(i) = Drl(i)
-        ElseIf Dlr(i) >= 5000 Then
-            rxWORD(i) = Dlr(i)
+        If rxWORDrl(i) >= 5000 And rxWORDlr(i) >= 5000 Then
+            rxWORD(i) = (rxWORDrl(i) + rxWORDlr(i)) / 2
+        ElseIf rxWORDrl(i) >= 5000 Then
+            rxWORD(i) = rxWORDrl(i)
+        ElseIf rxWORDlr(i) >= 5000 Then
+            rxWORD(i) = rxWORDlr(i)
         End If
         
     Next i
