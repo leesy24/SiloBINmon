@@ -3055,7 +3055,6 @@ Dim s As Integer
                 If s = 0 Then
                     s = 1
                     x1 = i
-                    xstart = i
                 ElseIf s = 1 Then
                     x1 = i
                 ElseIf s = 2 Then
