@@ -1459,6 +1459,7 @@ End Sub
 Private Sub tmrSrun_Timer()
 Dim ret As Integer
 Dim strA As String
+Dim bb() As Byte
 'Dim t As Long
     
     't = GetTickCount
@@ -1606,6 +1607,13 @@ Dim strA As String
                 ret = LDrx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
                 
                 If ret = 0 Or ret < 0 Then
+                    strA = "SetAngle[-1]"
+    
+                    bb = StrConv(strA, vbFromUnicode)
+                    ''
+                    SEND_wsickLD bb
+                    '''''''''''''''
+                    
                     tSrunMode = eSrunMode.SendCmd
                     tmrSrun.Interval = 1000 '''500
     
@@ -1711,12 +1719,8 @@ Dim strA As String
 ''                    strA = "SetAngle[" & strA & "]"
                       ''
                 
-                    'strA = "SetAngle[0]"
-                    'strA = "SetAngle[-1]"
-                    'strA = "SetAngle[-5]"
-                    strA = "SetAngle[-70]"
+                    strA = "SetAngle[-1]"
     
-                    Dim bb() As Byte
                     bb = StrConv(strA, vbFromUnicode)
                     ''
                     SEND_wsickLD bb
