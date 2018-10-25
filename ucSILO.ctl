@@ -2158,7 +2158,11 @@ Dim i As Integer
                 If (Scan2590Dist(i) > 2147483646) Then ''2147483647 - 1
                     Scan2590Dist(i) = 0
                 End If
-                'Scan2590Dist(i) = Scan2590Dist(i) * 10
+                'If (UCindex = 0) Then
+                '    Scan2590Dist(i) = Scan2590Dist(i) * 10
+                'ElseIf (UCindex >= 4) Then
+                '    Scan2590Dist(i) = Scan2590Dist(i) * 4
+                'End If
             Next i
             
             
@@ -3034,223 +3038,121 @@ End Sub
 Private Sub RX_filt()
 
 Dim i, j As Integer
-
-
 Dim Dsum As Long
-Dim Dcnt As Long  ''A91
+Dim Dcnt As Integer
+Dim x1 As Integer
+Dim y1 As Long
+Dim s As Integer
 
+    If cmdFilt.BackColor = vbGreen Then
+        'Filter by equation of a line from 2 points.
+        x1 = 0
+        y1 = 0
+        s = 0
 
-'    ''''''''''''''''''''''''''''''''''''''''''''''Reverse !!??!!
-'    If (UCindex >= 5) And (UCindex <= 6) Then
-'        For i = 0 To 100
-'            scanDfilt(i) = scanD(100 - i)
-'        Next i
-'        For i = 0 To 100
-'            scanD(i) = scanDfilt(i)
-'        Next i
-'    End If
-'    ''''''''''''''''''''''''''''''''''''''''''''''
-
-''    If (UCindex = 2) Then
-''        For i = 0 To 239
-''            rxWORD(i) = rxWORD(i) * 10
-''        Next i
-''    End If
-
-
-
-
-  If cmdFilt.BackColor = vbGreen Then
-
-''    For i = 120 To 0 Step -1    '''(mid--to--Right)''   '';<--[238]word
-''
-''        Dsum = 0
-''        Dcnt = 0
-''
-''        For j = 2 To 4  ''3ea
-''            If rxWORD(i + j) > 0 Then
-''                Dsum = Dsum + rxWORD(i + j)
-''                Dcnt = Dcnt + 1
-''            End If
-''        Next j
-''
-''        If Dcnt > 0 Then
-''            Dsum = Dsum / Dcnt   '''3
-''
-''            If Abs((Dsum - rxWORD(i))) > (rxWORD(i) * 0.5) Then
-''                rxWORD(i) = Dsum '''* 0.955  '''<==20180105
-''            End If
-''        End If
-''
-''    Next i
-''
-''    For i = 121 To xcMax Step 1    '''(mid--to--Left)''  '';<--[238]word
-''
-''        Dsum = 0
-''        Dcnt = 0
-''
-''        For j = 2 To 4  ''3ea
-''            If rxWORD(i - j) > 0 Then
-''                Dsum = Dsum + rxWORD(i - j)
-''                Dcnt = Dcnt + 1
-''            End If
-''        Next j
-''
-''        If Dcnt > 0 Then
-''            Dsum = Dsum / Dcnt   '''3
-''
-''            If Abs((Dsum - rxWORD(i))) > (rxWORD(i) * 0.5) Then
-''                rxWORD(i) = Dsum '''* 0.955  '''<==20180105
-''
-''            End If
-''        End If
-''
-''    Next i
-
-    For i = 0 To (30 - 1) Step 1
-        rxWORDrl(i) = rxWORD(i)
-    
-    Next i
-    
-    For i = 30 To (xcMax - 30) Step 1     '''(Right--to--Left)''   '';<--[238]word
-
-        Dsum = 0
-        Dcnt = 0
-
-        rxWORDrl(i) = rxWORD(i)
-        If rxWORDrl(i) < 5000 Then  ''2001
-
-            For j = 1 To 5  ''3ea
-                If rxWORDrl(i - j) >= 5000 Then
-                    Dsum = Dsum + rxWORDrl(i - j)
-                    Dcnt = Dcnt + 1
+        For i = 30 To (xcMax - 30) Step 1
+            If rxWORD(i) >= 5000 Then '' 5meter
+                If s = 0 Then
+                    s = 1
+                    x1 = i
+                    xstart = i
+                ElseIf s = 1 Then
+                    x1 = i
+                ElseIf s = 2 Then
+                    Dsum = 0
+                    Dcnt = 0
+                    For j = x1 To x1 - 5 Step -1
+                        If rxWORD(j) >= 5000 Then
+                            Dsum = Dsum + rxWORD(j)
+                            Dcnt = Dcnt + 1
+                        End If
+                        y1 = Dsum / Dcnt
+                    Next j
+                    For j = x1 + 1 To i - 1 Step 1
+                        rxWORD(j) = (rxWORD(i) - y1) * (j - x1) / (i - x1) + y1
+                    Next j
+                    s = 1
+                    x1 = i
                 End If
-            Next j
-    
-            If Dcnt > 0 Then
-                rxWORDrl(i) = Dsum / Dcnt   '''3
-            End If
-        End If
-        
-    Next i
-
-    For i = xcMax To (xcMax - 30 + 1) Step -1   '''(Left--to--Right)''   '';<--[238]word
-        rxWORDlr(i) = rxWORD(i)
-    
-    Next i
-    
-    For i = (xcMax - 30) To 30 Step -1   '''(Left--to--Right)''   '';<--[238]word
-
-        Dsum = 0
-        Dcnt = 0
-
-        rxWORDlr(i) = rxWORD(i)
-        If rxWORDlr(i) < 5000 Then  ''2001
-
-            For j = 1 To 5  ''3ea
-                If rxWORDlr(i + j) >= 5000 Then
-                    Dsum = Dsum + rxWORDlr(i + j)
-                    Dcnt = Dcnt + 1
+            Else '' under 5meter
+                If s = 1 Then
+                    s = 2
                 End If
-            Next j
-    
-            If Dcnt > 0 Then
-                rxWORDlr(i) = Dsum / Dcnt   '''3
             End If
-        End If
+        Next i
         
-    Next i
-
-    For i = 30 To (xcMax - 30) Step 1
-
-        If rxWORDrl(i) >= 5000 And rxWORDlr(i) >= 5000 Then
-            rxWORD(i) = (rxWORDrl(i) + rxWORDlr(i)) / 2
-        ElseIf rxWORDrl(i) >= 5000 Then
-            rxWORD(i) = rxWORDrl(i)
-        ElseIf rxWORDlr(i) >= 5000 Then
-            rxWORD(i) = rxWORDlr(i)
-        End If
+        For i = 30 To (xcMax - 30) Step 1     '''(Right--to--Left)''   '';<--[238]word
+            Dsum = 0
+            Dcnt = 0
         
-    Next i
-
-
-
-
-    For i = 29 To 0 Step -1     '''(Right--to--End)''   '';<--[238]word
-
-        Dsum = 0
-        Dcnt = 0
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i - j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i - j)
+                        Dcnt = Dcnt + 1
+                    End If
+                Next j
         
-        If rxWORD(i) < 5000 Then  ''2001
-
-            For j = 1 To 5  ''3ea
-                If rxWORD(i + j) >= 5000 Then
-                    Dsum = Dsum + rxWORD(i + j)
-                    Dcnt = Dcnt + 1
+                If Dcnt > 0 Then
+                    rxWORD(i) = Dsum / Dcnt   '''3
                 End If
-            Next j
-    
-            If Dcnt > 0 Then
-                rxWORD(i) = Dsum / Dcnt * 0.955   '''3
             End If
-        End If
+        Next i
+
+        For i = (xcMax - 30) To 30 Step -1   '''(Left--to--Right)''   '';<--[238]word
+            Dsum = 0
+            Dcnt = 0
         
-    Next i
-
-    For i = (xcMax - 29) To xcMax Step 1     '''(Left--to--End)''   '';<--[238]word
-
-        Dsum = 0
-        Dcnt = 0
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i + j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i + j)
+                        Dcnt = Dcnt + 1
+                    End If
+                Next j
         
-        If rxWORD(i) < 5000 Then  ''2001
-
-            For j = 1 To 5  ''3ea
-                If rxWORD(i - j) >= 5000 Then
-                    Dsum = Dsum + rxWORD(i - j)
-                    Dcnt = Dcnt + 1
+                If Dcnt > 0 Then
+                    rxWORD(i) = Dsum / Dcnt   '''3
                 End If
-            Next j
-    
-            If Dcnt > 0 Then
-                rxWORD(i) = Dsum / Dcnt * 0.955   '''3
             End If
-        End If
+        Next i
+
+        For i = 29 To 0 Step -1     '''(Right--to--End)''   '';<--[238]word
+            Dsum = 0
+            Dcnt = 0
+            
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i + j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i + j)
+                        Dcnt = Dcnt + 1
+                    End If
+                Next j
         
-    Next i
-
-
-
-
-  End If
-  
-
-''    For i = 0 To 237
-''        rxWORD(i) = rxWORD(i) * 0.97
-''        '''''''''''''''''''''''''''';;H<---(50M+@)
-''    Next i
-
-
-''    For i = 0 To 100
-''
-''        ''scanDfilt(i) = scanD(i) ''''(Law-Data!!)
-''
-''
-''        ''        Y(k) = (rxWORD(k) / 10) * Sin(((s) + 30 + lbAngle) * (PI / 180))  '';;HHHHHHH<---(50M+@):SILO
-''        ''        Y(k) = maxyrange - 500 - Y(k)
-''        ''''''''''''''''''''''''''''''''''''''''
-''        '';; 238 => 0~237 => [20~220]/2 ::SILO!!
-''        ''''''''''''''''''''''''''''''''''''''''
-''        ''  Y(k) = (rxWORD(k) / 10) * Sin(((s) + 30 + lbAngle) * (PI / 180))
-''        ''
-''
-''        If DRAWmode = 0 Then
-''            scanDfilt(i) = (rxWORD(i * 2 + 20) / 10) * Sin(((i) + 30 + lbAngle) * (PI / 180))  ''SILO <-~LMS-211
-''        Else
-''            scanDfilt(i) = 0
-''        End If
-''
-''    Next i
+                If Dcnt > 0 Then
+                    rxWORD(i) = Dsum / Dcnt * 0.955   '''3
+                End If
+            End If
+        Next i
     
+        For i = (xcMax - 29) To xcMax Step 1     '''(Left--to--End)''   '';<--[238]word
+            Dsum = 0
+            Dcnt = 0
+            
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i - j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i - j)
+                        Dcnt = Dcnt + 1
+                    End If
+                Next j
+        
+                If Dcnt > 0 Then
+                    rxWORD(i) = Dsum / Dcnt * 0.955   '''3
+                End If
+            End If
+        Next i
+    End If
 End Sub
 
 
