@@ -636,8 +636,6 @@ Private xcMax As Integer
 Private rxBcnt As Integer
 Private rxBYTE(2000) As Byte        ''(120~240)=>121*0.5degree: 121*2*2==484==242word
 Private rxWORD(1001) As Long  '''1000
-Private rxWORDrl(1001) As Long
-Private rxWORDlr(1001) As Long
 
 
 Private rxSTOP As Integer
