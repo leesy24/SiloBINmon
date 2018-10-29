@@ -63,6 +63,42 @@ errFile1:
     
 End Sub
 
+Public Sub SaveBuffer2File(index As Integer, buffer() As Byte, size As Integer)
+    Dim dirName         As String
+    Dim fileName        As String
+    Dim fileNumber
+    Dim i As Integer
+    
+    dirName = "C:\BIN_LOG\"
+    fileName = dirName & index & "_" & Format(Now, "YYYYMMDDhhmmss") & ".dat"
+
+On Error GoTo errFile1
+
+    If Dir(dirName, vbDirectory) = "" Then
+        MkDir dirName
+    End If
+    
+    If FileExists(fileName) Then
+        Exit Sub
+    End If
+    
+    fileNumber = FreeFile
+    Open fileName For Binary Access Write As #fileNumber
+       
+    For i = 0 To size - 1
+        Put #fileNumber, , buffer(i)
+    Next i
+    
+    Close #fileNumber
+    
+    DoEvents
+
+errFile1:
+    dirName = ""
+    ''''''''''''(just-cancle~)
+    
+End Sub
+
 
 
 

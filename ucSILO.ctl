@@ -2145,6 +2145,10 @@ Dim i As Integer
             
             ''''cmdCONN.BackColor = vbGreen
             
+            If cmdFilt.BackColor <> vbGreen Then
+                SaveBuffer2File UCindex, inBUF, 4056
+            End If
+            
             Dim angleN As Integer
             '''
             For i = 0 To 999  '''1000
