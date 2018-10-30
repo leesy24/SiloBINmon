@@ -3548,6 +3548,10 @@ LD_sBUF(39) = Array(2, 2, 2, 2, 0, 0, 0, 5, Asc("s"), Asc("R"), Asc("I"), 0, Asc
     
     LD_sBUF(51) = Array(&H53, &H50, &H52, &H4D, &H0, &H0, &H0, &H8, &H0, &H0, &H0, &H1F, &H0, &H0, &H0, &H4, &HE1, &H72, &H4B, &H46)
 
+''    // Set Parameter Red Laser Marker at startup to 1(=off)
+''    // 53 50 52 4d 00 00 00 08 00 00 00 07 00 00 00 01 c1 88 63 8a;; SPRM............A.c.
+''    // Set Parameter Red Laser Marker at startup to 0(=off)
+''    // 53 50 52 4d 00 00 00 08 00 00 00 07 00 00 00 00 b6 8f 53 1c;; SPRM............¶.S.
 ''    // Set Parameter Temp: Red Laser Marker status to 1(=on)
 ''    // 53 50 52 4d 00 00 00 08 00 00 00 08 00 00 00 01 43 d8 f4 5b;; SPRM............C¨ªo[
 ''    // Set Parameter Temp: Red Laser Marker status to 0(=off)
