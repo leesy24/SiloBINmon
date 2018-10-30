@@ -1498,7 +1498,7 @@ Dim bb() As Byte
             
         Case Init1Device
             If ScanTYPE = 22590 Then
-                ret = LDtx12590(51)   '''DPS_SPRM_SCD4 SCD(Scan Data Content) to 4(=distances olny)
+                ret = LDtx12590(51)   '''DPS_SPRM_SDC4 SDC(Scan Data Content) to 4(=distances olny)
             
                 tSrunMode = eSrunMode.Check1Device  '''==>
                 rxWaitTime = 0
@@ -1543,7 +1543,7 @@ Dim bb() As Byte
         Case Check1Device
             rxWaitTime = rxWaitTime + tmrSrun.Interval
             If ScanTYPE = 22590 Then
-                ret = LDrx12590(51)   '''DPS_SPRM_SCD4 SCD(Scan Data Content) to 4(=distances olny)
+                ret = LDrx12590(51)   '''DPS_SPRM_SDC4 SDC(Scan Data Content) to 4(=distances olny)
                 
                 If ret = 0 Or ret < 0 Then
                     lbTiltV.Caption = "0"
@@ -3538,15 +3538,20 @@ LD_sBUF(39) = Array(2, 2, 2, 2, 0, 0, 0, 5, Asc("s"), Asc("R"), Asc("I"), 0, Asc
     LD_sBUF(49) = Array(&H45, &H52, &H52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 
-''    // Set Parameter SCD(Scan Data Content) to 8(=distances+PW)
+''    // Set Parameter SDC(Scan Data Content) to 8(=distances+PW)
 ''    // 53 50 52 4d 00 00 00 08 00 00 00 1f 00 00 00 08 e8 c4 07 6d;; SPRM............eA.m
-''    char DPS_SPRM_SCD8[20] = { 0x53, 0x50, 0x52, 0x4d, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x1f, 0x00, 0x00, 0x00, 0x08, 0xe8, 0xc4, 0x07, 0x6d };
+''    char DPS_SPRM_SDC8[20] = { 0x53, 0x50, 0x52, 0x4d, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x1f, 0x00, 0x00, 0x00, 0x08, 0xe8, 0xc4, 0x07, 0x6d };
 ''
-''    // Set Parameter SCD(Scan Data Content) to 4(=distances olny)
+''    // Set Parameter SDC(Scan Data Content) to 4(=distances olny)
 ''    // 53 50 52 4d 00 00 00 08 00 00 00 1f 00 00 00 04 e1 72 4b 46;; SPRM............arKF   --5350524d000000080000001f00000004e1724b46--
-''    char DPS_SPRM_SCD4[20] = { 0x53, 0x50, 0x52, 0x4d, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x1f, 0x00, 0x00, 0x00, 0x04, 0xe1, 0x72, 0x4b, 0x46 };
+''    char DPS_SPRM_SDC4[20] = { 0x53, 0x50, 0x52, 0x4d, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x1f, 0x00, 0x00, 0x00, 0x04, 0xe1, 0x72, 0x4b, 0x46 };
     
     LD_sBUF(51) = Array(&H53, &H50, &H52, &H4D, &H0, &H0, &H0, &H8, &H0, &H0, &H0, &H1F, &H0, &H0, &H0, &H4, &HE1, &H72, &H4B, &H46)
+
+''    // Set Parameter Temp: Red Laser Marker status to 1(=on)
+''    // 53 50 52 4d 00 00 00 08 00 00 00 08 00 00 00 01 43 d8 f4 5b;; SPRM............C¨ªo[
+''    // Set Parameter Temp: Red Laser Marker status to 0(=off)
+''    // 53 50 52 4d 00 00 00 08 00 00 00 08 00 00 00 00 34 df c4 cd;; SPRM............4©¬AI
 
 End Sub
 
