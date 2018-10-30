@@ -1498,6 +1498,8 @@ Dim bb() As Byte
             
         Case Init1Device
             If ScanTYPE = 22590 Then
+                ''ret = LDtx12590(53) ''' Red laser marker status temporary on
+                ''ret = LDtx12590(55) ''' Red laser marker status temporary off
                 ret = LDtx12590(51)   '''DPS_SPRM_SDC4 SDC(Scan Data Content) to 4(=distances olny)
             
                 tSrunMode = eSrunMode.Check1Device  '''==>
@@ -1817,7 +1819,7 @@ Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
     
         wsockLD.GetData buffData  ''';BIN-Mode!
         '''''''''''''''''''''''''
-        DoEvents
+        ''DoEvents   ''' Comment out to avoid out of stack space error. 
         
         If rxSTOP > 0 Then
             Exit Sub  ''''===============>>
@@ -3551,11 +3553,16 @@ LD_sBUF(39) = Array(2, 2, 2, 2, 0, 0, 0, 5, Asc("s"), Asc("R"), Asc("I"), 0, Asc
 ''    // Set Parameter Red Laser Marker at startup to 1(=off)
 ''    // 53 50 52 4d 00 00 00 08 00 00 00 07 00 00 00 01 c1 88 63 8a;; SPRM............A.c.
 ''    // Set Parameter Red Laser Marker at startup to 0(=off)
-''    // 53 50 52 4d 00 00 00 08 00 00 00 07 00 00 00 00 b6 8f 53 1c;; SPRM............¶.S.
-''    // Set Parameter Temp: Red Laser Marker status to 1(=on)
+''    // 53 50 52 4d 00 00 00 08 00 00 00 07 00 00 00 00 b6 8f 53 1c;; SPRM............?S.
+''    // Set Parameter Red Laser Marker status temporary to 1(=on)
 ''    // 53 50 52 4d 00 00 00 08 00 00 00 08 00 00 00 01 43 d8 f4 5b;; SPRM............C¨ªo[
-''    // Set Parameter Temp: Red Laser Marker status to 0(=off)
+
+    LD_sBUF(53) = Array(&H53, &H50, &H52, &H4D, &H0, &H0, &H0, &H8, &H0, &H0, &H0, &H8, &H0, &H0, &H0, &H1, &H43, &HD8, &HF4, &H5B)
+
+''    // Set Parameter Red Laser Marker status temporary to 0(=off)
 ''    // 53 50 52 4d 00 00 00 08 00 00 00 08 00 00 00 00 34 df c4 cd;; SPRM............4©¬AI
+
+    LD_sBUF(55) = Array(&H53, &H50, &H52, &H4D, &H0, &H0, &H0, &H8, &H0, &H0, &H0, &H8, &H0, &H0, &H0, &H0, &H34, &HDF, &HC4, &HCD)
 
 End Sub
 
