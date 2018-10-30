@@ -835,9 +835,15 @@ Private Sub cmdFilt_Click()
     Else
             ''cmdFilt.BackColor = vbGreen
         If tmrReStart.Enabled = True Then
-            tmrReStart.Enabled = False
-            tmrReStart.Interval = 10000
-            tmrReStart.Enabled = True
+            If (tmrReStart.Interval <> 30000) Then
+                tmrReStart.Enabled = False
+                If (tmrReStart.Interval = 5000) Then
+                    tmrReStart.Interval = 10000
+                Else
+                    tmrReStart.Interval = 30000
+                End If
+                tmrReStart.Enabled = True
+            End If
         End If
     End If
 
@@ -1819,7 +1825,7 @@ Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
     
         wsockLD.GetData buffData  ''';BIN-Mode!
         '''''''''''''''''''''''''
-        ''DoEvents   ''' Comment out to avoid out of stack space error. 
+        ''DoEvents   ''' Comment out to avoid out of stack space error.
         
         If rxSTOP > 0 Then
             Exit Sub  ''''===============>>
