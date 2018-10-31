@@ -1853,7 +1853,7 @@ Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
             
         End If
     
-        DoEvents
+        ''DoEvents   ''' Comment out to avoid out of stack space error.
         
         Exit Sub  ''''===============>>
 
@@ -1964,7 +1964,7 @@ Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
         '''''''''''''''''===>
     End If
 
-    DoEvents
+    ''DoEvents   ''' Comment out to avoid out of stack space error.
     
     
 '            c = bytesTotal  ''UBound(buffData)
@@ -2169,7 +2169,11 @@ Dim i As Integer
                 ''
                 '' Check the distance value is -2147483648 (0x80000000) in case that the echo signal was too low.
                 '' or, the distance value is 2147483647 (0x7FFFFFFF) in case that the echo signal was noisy.
-                If (Scan2590Dist(i) > 2147483646) Then ''2147483647 - 1
+                '' And Check the distance is near to 5meters.
+                '' 2147483646 <= 2147483647 - 1
+                If (Scan2590Dist(i) > 2147483646) _
+                    Or (Scan2590Dist(i) < 50000) _
+                        Then
                     Scan2590Dist(i) = 0
                 End If
                 'If (UCindex = 0) Then
@@ -2287,7 +2291,11 @@ Dim i As Integer
                 ''
                 '' Check the distance value is -2147483648 (0x80000000) in case that the echo signal was too low.
                 '' or, the distance value is 2147483647 (0x7FFFFFFF) in case that the echo signal was noisy.
-                If (Scan2590Dist(i) > 2147483646) Then ''2147483647 - 1
+                '' And Check the distance is near to 5meters.
+                '' 2147483646 <= 2147483647 - 1
+                If (Scan2590Dist(i) > 2147483646) _
+                    Or (Scan2590Dist(i) < 50000) _
+                        Then
                     Scan2590Dist(i) = 0
                 End If
             Next i
@@ -2318,7 +2326,7 @@ Dim i As Integer
     tCntH = 0
     tSumH = 0
     ''
-    For i = 2 To 999  ''(1~1000)
+    For i = 0 To 999  ''(1~1000)
 
         If (Scan2590Dist(i) > 0) Then
         
@@ -2369,11 +2377,13 @@ Dim i As Integer
                 End If
             
             
-                tAng = tAng + 1#
                 tCnt = 0
                 tSum = 0
                 tCntH = 0
                 tSumH = 0
+                
+AngleUp:
+                tAng = tAng + 1#
                 
                 If (Scan2590Direc(i) < tAng + 0.5) Then
                     tSum = tSum + Scan2590Dist(i)
@@ -2381,6 +2391,8 @@ Dim i As Integer
                 ElseIf (Scan2590Direc(i) < tAng + 1#) Then
                     tSumH = tSumH + Scan2590Dist(i)
                     tCntH = tCntH + 1
+                Else
+                    GoTo AngleUp
                 End If
             End If
 
@@ -3054,38 +3066,38 @@ Private Sub RX_filt()
 Dim i, j As Integer
 Dim Dsum As Long
 Dim Dcnt As Integer
-Dim x1 As Integer
-Dim y1 As Long
+Dim X1 As Integer
+Dim Y1 As Long
 Dim s As Integer
 
     If cmdFilt.BackColor = vbGreen Then
         'Filter by equation of a line from 2 points.
-        x1 = 0
-        y1 = 0
+        X1 = 0
+        Y1 = 0
         s = 0
 
         For i = 30 To (xcMax - 30) Step 1
             If rxWORD(i) >= 5000 Then '' 5meter
                 If s = 0 Then
                     s = 1
-                    x1 = i
+                    X1 = i
                 ElseIf s = 1 Then
-                    x1 = i
+                    X1 = i
                 ElseIf s = 2 Then
                     Dsum = 0
                     Dcnt = 0
-                    For j = x1 To x1 - 5 Step -1
+                    For j = X1 To X1 - 5 Step -1
                         If rxWORD(j) >= 5000 Then
                             Dsum = Dsum + rxWORD(j)
                             Dcnt = Dcnt + 1
                         End If
-                        y1 = Dsum / Dcnt
+                        Y1 = Dsum / Dcnt
                     Next j
-                    For j = x1 + 1 To i - 1 Step 1
-                        rxWORD(j) = (rxWORD(i) - y1) * (j - x1) / (i - x1) + y1
+                    For j = X1 + 1 To i - 1 Step 1
+                        rxWORD(j) = (rxWORD(i) - Y1) * (j - X1) / (i - X1) + Y1
                     Next j
                     s = 1
-                    x1 = i
+                    X1 = i
                 End If
             Else '' under 5meter
                 If s = 1 Then

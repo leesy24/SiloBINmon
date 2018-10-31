@@ -17,19 +17,6 @@ Begin VB.Form frmMain
    ScaleHeight     =   8040
    ScaleWidth      =   16230
    ShowInTaskbar   =   0   'False
-   Begin ADSOCXLib.AdsOcx AdsOcx2 
-      Left            =   1860
-      Top             =   1380
-      _Version        =   131074
-      _ExtentX        =   900
-      _ExtentY        =   953
-      _StockProps     =   0
-      AdsAmsServerNetId=   ""
-      AdsAmsClientPort=   32879
-      AdsClientType   =   ""
-      AdsClientAdsState=   ""
-      AdsClientAdsControl=   ""
-   End
    Begin ADSOCXLib.AdsOcx AdsOcx1 
       Left            =   960
       Top             =   1320
@@ -38,7 +25,20 @@ Begin VB.Form frmMain
       _ExtentY        =   953
       _StockProps     =   0
       AdsAmsServerNetId=   ""
-      AdsAmsClientPort=   32877
+      AdsAmsClientPort=   33147
+      AdsClientType   =   ""
+      AdsClientAdsState=   ""
+      AdsClientAdsControl=   ""
+   End
+   Begin ADSOCXLib.AdsOcx AdsOcx2 
+      Left            =   1860
+      Top             =   1380
+      _Version        =   131074
+      _ExtentX        =   900
+      _ExtentY        =   953
+      _StockProps     =   0
+      AdsAmsServerNetId=   ""
+      AdsAmsClientPort=   33145
       AdsClientType   =   ""
       AdsClientAdsState=   ""
       AdsClientAdsControl=   ""
@@ -550,6 +550,16 @@ Public AOdeepCNT2 As Integer  ''''''''''''''''''''''New-CTS-Silo(15+4)!!
 Dim AOdeepFull2 As Boolean
 
 
+Private Declare Function GetModuleFileNameW Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpFilename As Long, ByVal nSize As Long) As Long
+
+Private Function GetEXEName() As String
+    Const MAX_PATH = 260&
+    
+    GetEXEName = Space$(MAX_PATH - 1&)
+    GetEXEName = Left$(GetEXEName, GetModuleFileNameW(0&, StrPtr(GetEXEName), MAX_PATH))
+    GetEXEName = Right$(GetEXEName, Len(GetEXEName) - InStrRev(GetEXEName, "\"))
+End Function
+
 Private Sub cmdADS1_Click()
 
 Dim ioD(33) As Integer
@@ -821,9 +831,8 @@ Dim j As Integer
     
     Debug.Print Screen.Width, Screen.Height
 
-
-    DGPSLog vbCrLf & vbCrLf & Format(Now, "YYYYMMDD-hh:mm:ss") & " ====[SILO BIN-LEVEL START]===" & vbCrLf, "SILO"
-
+    DGPSLog vbCrLf, "SILO"
+    DGPSLog " ====[SILO BIN-LEVEL START]=== " & GetEXEName() & vbCrLf, "SILO"
 
     AOdeepMAX = GetSetting(App.Title, "Settings", "DeepMax", 60)
     If AOdeepMAX < 10 Then AOdeepMAX = 10
