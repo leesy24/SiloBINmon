@@ -395,6 +395,44 @@ Begin VB.Form frmMain
          _ExtentY        =   741
          _Version        =   393216
       End
+      Begin VB.Label lbRelVersion 
+         BackStyle       =   0  '투명
+         Caption         =   "Release version"
+         BeginProperty Font 
+            Name            =   "굴림체"
+            Size            =   9
+            Charset         =   129
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00E0E0E0&
+         Height          =   195
+         Left            =   1440
+         TabIndex        =   33
+         Top             =   0
+         Width           =   3015
+      End
+      Begin VB.Label lbRelDate 
+         BackStyle       =   0  '투명
+         Caption         =   "Release date"
+         BeginProperty Font 
+            Name            =   "굴림체"
+            Size            =   9
+            Charset         =   129
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00E0E0E0&
+         Height          =   195
+         Left            =   0
+         TabIndex        =   32
+         Top             =   0
+         Width           =   3015
+      End
       Begin VB.Label lbUpTime 
          BackStyle       =   0  '투명
          Caption         =   "UpTime"
@@ -531,6 +569,8 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+Private Const relVersion = "v2.00.00"
+Private Const relDate = "2018-11-05"
 
 Dim d1 As Single
 
@@ -879,6 +919,13 @@ Dim j As Integer
         
         cmdCFG.Top = 200
         cmdCFG.Left = picTop.Width - 5000
+        
+        lbRelVersion.Top = 200
+        lbRelVersion.Left = picTop.Width - 6050
+        lbRelVersion = relVersion
+        lbRelDate.Top = 400
+        lbRelDate.Left = picTop.Width - 6050
+        lbRelDate = relDate
         
     For i = 0 To 32
         AOdata(i) = 0
