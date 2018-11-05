@@ -7,6 +7,7 @@ Module=modLog; modLog.bas
 UserControl=ucSILO.ctl
 Object={40DD8EA0-284B-11D0-A7B0-0020AFF929F4}#2.3#0; AdsOcx.ocx
 Form=frmCFG.frm
+Module=modCRC32; modCRC32.bas
 IconForm="frmMain"
 Startup="frmMain"
 HelpFile=""

@@ -531,10 +531,10 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   1200
+      Left            =   1560
       TabIndex        =   4
       Top             =   4140
-      Width           =   495
+      Width           =   375
    End
    Begin VB.Label lbAngle 
       Alignment       =   2  '가운데 맞춤
@@ -550,10 +550,29 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   1800
+      Left            =   2040
       TabIndex        =   3
       Top             =   4140
-      Width           =   495
+      Width           =   375
+   End
+   Begin VB.Label lbPointErrCnt 
+      Alignment       =   2  '가운데 맞춤
+      BackColor       =   &H00C0C0C0&
+      Caption         =   "0"
+      BeginProperty Font 
+         Name            =   "굴림체"
+         Size            =   8.25
+         Charset         =   129
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   135
+      Left            =   1080
+      TabIndex        =   35
+      Top             =   4140
+      Width           =   375
    End
    Begin VB.Label lbCnt 
       Alignment       =   2  '가운데 맞춤
@@ -569,7 +588,7 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   600
+      Left            =   480
       TabIndex        =   2
       Top             =   4140
       Width           =   495
@@ -887,6 +906,7 @@ Private Sub UserControl_Initialize()
     lbRXerr = 0
 
     lbCnt.Top = UserControl.Height - 950  ''650
+    lbPointErrCnt.Top = Height - 950  ''650
     lbXC.Top = Height - 950  ''650
     lbAngle.Top = Height - 950  ''650
     
@@ -2076,6 +2096,7 @@ End Function
 Private Function LDrx12590(ix As Integer) As Integer
 
 Dim i As Integer
+Dim pointErr As Integer
 'Dim t As Long
 
     If rxWaitTime < 2500 And rxSTOP = 0 Then
@@ -2142,6 +2163,20 @@ Dim i As Integer
     'DGPSLog "LDrx12590(" & UCindex & ") START " & inCNT & "", "SILO"
     
     If (inCNT = 4056) Or (inCNT = 4086) Then   ''''''<=="GSCN"  ''(201809~DPSex::++30)
+        Dim dataCRC32 As Long
+        Dim calcCRC32 As Long
+        
+        dataCRC32 = GetLong4Bytes(inBUF, 4056 - 4)
+        calcCRC32 = GetCrc32(inBUF, 0, 4056 - 4)
+
+        If (calcCRC32 <> dataCRC32) Then
+            lbRxHead.Caption = "ECRC"
+            lbRxHead.BackColor = vbRed
+            lbRXerr = lbRXerr + 1
+            LDrx12590 = -1
+            Exit Function  ''===>
+        End If
+        
         ''rxSTOP = 1          ''''''=======>
         
         lbCnt.BackColor = &HC0C0C0
@@ -2159,6 +2194,8 @@ Dim i As Integer
             
             Dim angleN As Integer
             '''
+            pointErr = 0
+            
             For i = 0 To 999  '''1000
                 Scan2590Direc(i) = 45# + (i * 0.09)
                 ''
@@ -2175,6 +2212,7 @@ Dim i As Integer
                     Or (Scan2590Dist(i) < 50000) _
                         Then
                     Scan2590Dist(i) = 0
+                    pointErr = pointErr + 1
                 End If
                 'If (UCindex = 0) Then
                 '    Scan2590Dist(i) = Scan2590Dist(i) * 10
@@ -2183,6 +2221,7 @@ Dim i As Integer
                 'End If
             Next i
             
+            lbPointErrCnt = pointErr
             
             ''                주소    크기    명칭                의미                    접근    기본값
             ''                --------------------------------------------------------------
@@ -2297,6 +2336,7 @@ Dim i As Integer
                     Or (Scan2590Dist(i) < 50000) _
                         Then
                     Scan2590Dist(i) = 0
+                    pointErr = pointErr + 1
                 End If
             Next i
             
@@ -2442,7 +2482,7 @@ AngleUp:
     lbXC = xcMax
 
     ''''''''
-            lbRXerr = 0
+            ''lbRXerr = 0
             lbRXcnt = lbRXcnt + 1
             If lbRXcnt > 99999 Then lbRXcnt = 9999
 
