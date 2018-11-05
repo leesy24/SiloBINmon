@@ -661,6 +661,8 @@ Private rxSTOP As Integer
 
 ''-------------------------------------
 Private rxWdeep(5, 300) As Long
+Private rxWdeepSum(300) As Long
+Private rxWdeepCnt(300) As Integer
 Private cnWdeep As Integer
 Private cnWring As Integer
 ''-------------------------------------
@@ -3016,16 +3018,29 @@ Private Sub RX_filt_DEEP()
 
 Dim i As Integer
 Dim j As Integer
-
-
-
     
     For i = 0 To xcMax - 1  ''Just~238
     
         If (rxWORD(i) < 2000) Or (rxWORD(i) > 80000) Then
             rxWORD(i) = 0 ''''''''''''''''''''''''''''''''''Miss-Value!
         End If
-        
+        If cnWdeep >= 4 Then
+            If cnWring = 0 Then
+                If rxWdeep(4, i) <> 0 Then
+                    rxWdeepSum(i) = rxWdeepSum(i) - rxWdeep(4, i)
+                    rxWdeepCnt(i) = rxWdeepCnt(i) - 1
+                End If
+            Else
+                If rxWdeep(cnWring - 1, i) <> 0 Then
+                    rxWdeepSum(i) = rxWdeepSum(i) - rxWdeep(cnWring - 1, i)
+                    rxWdeepCnt(i) = rxWdeepCnt(i) - 1
+                End If
+            End If
+        End If
+        If rxWORD(i) <> 0 Then
+            rxWdeepSum(i) = rxWdeepSum(i) + rxWORD(i)
+            rxWdeepCnt(i) = rxWdeepCnt(i) + 1
+        End If
         rxWdeep(cnWring, i) = rxWORD(i)
     
     Next i
@@ -3049,53 +3064,85 @@ Dim j As Integer
     ''(Miss Proce)''
     Dim c As Integer
     Dim s As Long
+    Dim minVal As Long
+    Dim maxVal As Long
   
-    If cnWdeep > 4 Then
+    If cnWdeep >= 3 Then
     
         For i = 10 To xcMax - 11
     
             If rxWORD(i) = 0 Then
+                '''''''''''''''''''''''''''''''''(Time-Filt)!
+                s = rxWdeepSum(i - 1) + rxWdeepSum(i) + rxWdeepSum(i + 1)
+                c = rxWdeepCnt(i - 1) + rxWdeepCnt(i) + rxWdeepCnt(i + 1)
+                '''''''''''''''''''''''''''''''''
+                ''If UCindex = 9 And c > 0 Then
+                ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & "", "SILO"
+                ''End If
+                If c >= 5 Then
+                    rxWORD(i) = s / c
+                    ''If UCindex = 5 Then
+                    ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
+                    ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":zero" & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
+                    ''End If
+                End If
+            Else
                 c = 0
                 s = 0
+                maxVal = &H80000000 ' min of Long
+                minVal = &H7FFFFFFF ' max of Long
                 '''''''''''''''''''''''''''''''''(Time-Filt)!
                 For j = 0 To 4
                     If rxWdeep(j, i) > 0 Then
+                        If rxWdeep(j, i) > maxVal Then
+                            maxVal = rxWdeep(j, i)
+                        End If
+                        If rxWdeep(j, i) < minVal Then
+                            minVal = rxWdeep(j, i)
+                        End If
                         s = s + rxWdeep(j, i)
                         c = c + 1
                     End If
                 Next j
+                s = s + rxWdeepSum(i - 1) + rxWdeepSum(i + 1)
+                c = c + rxWdeepCnt(i - 1) + rxWdeepCnt(i + 1)
+                ''If UCindex = 9 And c > 0 Then
+                ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
+                ''End If
                 '''''''''''''''''''''''''''''''''
-                If c >= 3 Then
-                    rxWORD(i) = s / c
-'''                Else
-'''                    c = 0
-'''                    s = 0
-'''                    '''''''''''''''''''''''''''''''''''(Side-Filt)!
-'''                    For j = i - 5 To i + 5
-'''                        If rxWdeep(cnWring, j) > 0 Then
-'''                            s = s + rxWdeep(cnWring, j)
-'''                            c = c + 1
-'''                        End If
-'''                    Next j
-'''                    '''''''''''''''''''''''''''''''''''
-'''                    If c > 0 Then
-'''                        rxWORD(i) = s / c
-'''                    End If
+                If c >= 7 Then
+                    '' Check max & min value over 5meters with average
+                    If (maxVal > s / c + 5000) And (minVal < s / c - 5000) Then
+                        rxWORD(i) = (s - maxVal - minVal) / (c - 2)
+                        ''If UCindex = 5 Then
+                        ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
+                        ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":max." & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
+                        ''End If
+                    '' Check max value over 5meters with average
+                    ElseIf maxVal > s / c + 5000 Then
+                        rxWORD(i) = (s - maxVal) / (c - 1)
+                        ''If UCindex = 5 Then
+                        ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
+                        ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":max." & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
+                        ''End If
+                    '' Check min value over 5meters with average
+                    ElseIf minVal < s / c - 5000 Then
+                        rxWORD(i) = (s - minVal) / (c - 1)
+                        ''If UCindex = 5 Then
+                        ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
+                        ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":min." & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
+                        ''End If
+                    End If
                 End If
             End If
-
-
-'''            If rxWORD(i) = 0 Then
-'''                ''''None---Filted??
-'''                j = 0
-'''                'Debug.Print "None-Filt...?"
-'''            End If
-
-
-            ''DoEvents
-            
         Next i
     
+        ''If UCindex = 9 Then
+        ''    For i = 10 To xcMax - 11
+        ''        DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
+        ''    Next i
+        ''End If
+
     End If
 
 End Sub
