@@ -493,7 +493,7 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   3120
+      Left            =   3180
       TabIndex        =   6
       Top             =   4140
       Width           =   495
@@ -512,7 +512,7 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   2520
+      Left            =   2580
       TabIndex        =   5
       Top             =   4140
       Width           =   495
