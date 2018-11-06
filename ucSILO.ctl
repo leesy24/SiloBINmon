@@ -1474,6 +1474,16 @@ End Sub
 
 Public Sub initStart()
 
+    Dim i As Integer
+    
+    For i = 0 To 300 - 1
+        rxWdeepSum(i) = 0
+        rxWdeepCnt(i) = 0
+    Next i
+
+    cnWdeep = 0
+    cnWring = 0
+
     tSrunMode = eSrunMode.InitConn
     
     tmrSrun.Interval = 1000
@@ -3024,17 +3034,10 @@ Dim j As Integer
         If (rxWORD(i) < 2000) Or (rxWORD(i) > 80000) Then
             rxWORD(i) = 0 ''''''''''''''''''''''''''''''''''Miss-Value!
         End If
-        If cnWdeep >= 4 Then
-            If cnWring = 0 Then
-                If rxWdeep(4, i) <> 0 Then
-                    rxWdeepSum(i) = rxWdeepSum(i) - rxWdeep(4, i)
-                    rxWdeepCnt(i) = rxWdeepCnt(i) - 1
-                End If
-            Else
-                If rxWdeep(cnWring - 1, i) <> 0 Then
-                    rxWdeepSum(i) = rxWdeepSum(i) - rxWdeep(cnWring - 1, i)
-                    rxWdeepCnt(i) = rxWdeepCnt(i) - 1
-                End If
+        If cnWdeep > 4 Then
+            If rxWdeep(cnWring, i) <> 0 Then
+                rxWdeepSum(i) = rxWdeepSum(i) - rxWdeep(cnWring, i)
+                rxWdeepCnt(i) = rxWdeepCnt(i) - 1
             End If
         End If
         If rxWORD(i) <> 0 Then
