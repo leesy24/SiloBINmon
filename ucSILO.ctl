@@ -161,6 +161,24 @@ Begin VB.UserControl ucSilo
       TabIndex        =   0
       Top             =   60
       Width           =   3555
+      Begin VB.Label lbTiltTX 
+         Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
+         BackColor       =   &H00C0C0C0&
+         BeginProperty Font 
+            Name            =   "±¼¸²Ã¼"
+            Size            =   8.25
+            Charset         =   129
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   135
+         Left            =   840
+         TabIndex        =   36
+         Top             =   3240
+         Width           =   855
+      End
       Begin VB.Label lbTiltV 
          Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
          BackColor       =   &H00C0C0C0&
@@ -192,10 +210,10 @@ Begin VB.UserControl ucSilo
             Strikethrough   =   0   'False
          EndProperty
          Height          =   135
-         Left            =   720
+         Left            =   1800
          TabIndex        =   33
          Top             =   3240
-         Width           =   1935
+         Width           =   855
       End
       Begin VB.Label lbRxHead 
          Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
@@ -482,7 +500,7 @@ Begin VB.UserControl ucSilo
    Begin VB.Label lbRXerr 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
       BackColor       =   &H00C0C0C0&
-      Caption         =   "00000"
+      Caption         =   "000000000"
       BeginProperty Font 
          Name            =   "±¼¸²Ã¼"
          Size            =   8.25
@@ -501,7 +519,7 @@ Begin VB.UserControl ucSilo
    Begin VB.Label lbRXcnt 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
       BackColor       =   &H00C0C0C0&
-      Caption         =   "00000"
+      Caption         =   "000000000"
       BeginProperty Font 
          Name            =   "±¼¸²Ã¼"
          Size            =   8.25
@@ -746,19 +764,23 @@ Public Sub setScanTYPE(iScan As Integer)  '''LD-LRS-3100,, DPS-2590
     If ScanTYPE = 22590 Then
             lbTiltV.Visible = True
             lbTiltRX.Visible = True
+            lbTiltTX.Visible = True
             lbRxHead.Visible = True
             UserControl.BackColor = &HFF8080     '''&HFFC0C0
     ElseIf ScanTYPE = 12590 Then
             lbRxHead.Visible = True
             lbTiltV.Visible = False
             lbTiltRX.Visible = False
+            lbTiltTX.Visible = False
             UserControl.BackColor = &HFF8080     '''&HFFC0C0
     Else
             lbRxHead.Visible = False
             lbTiltV.Visible = False
             lbTiltRX.Visible = False
+            lbTiltTX.Visible = False
     End If
     
+    lbTiltTX.BackColor = &HFF8080
     lbTiltRX.BackColor = &HFF8080
     lbTiltV.BackColor = &HFF8080
     
@@ -2109,6 +2131,7 @@ Private Function LDrx12590(ix As Integer) As Integer
 
 Dim i As Integer
 Dim pointErr As Integer
+Dim rxAngleOK As Boolean
 'Dim t As Long
 
     If rxWaitTime < 2500 And rxSTOP = 0 Then
@@ -2270,19 +2293,20 @@ Dim pointErr As Integer
                 ''
                 ''Do:Max~??
                 
-                rxAngle = ((CDbl(inBUF(4056 + 12)) * 256) + inBUF(4056 + 11)) / 11.3777778
+                rxAngle = ((CDbl(inBUF(4056 + 12)) * 256) + (CDbl(inBUF(4056 + 11)))) / 11.3777778
                 rxAngle = rxAngle - 180
-                If (rxAngle > (-50)) And (rxAngle < (50)) Then
-                    lbTiltRX.Caption = Trim(Str(CLng(rxAngle * 100) / 100))
-                End If
+                ''If (rxAngle > (-50)) And (rxAngle < (50)) Then
+                    ''lbTiltTX.Caption = Trim(Str(CLng(rxAngle * 100) / 100))
+                    lbTiltTX = CLng(rxAngle * 100) / 100
+                ''End If
                 ''
-                lbTiltRX.Caption = lbTiltRX.Caption & " : "
-                ''
-                rxAngle = (((CDbl(inBUF(4056 + 18)) * 256) + (CDbl(inBUF(4056 + 17))))) / 11.3777778
+                rxAngle = ((CDbl(inBUF(4056 + 18)) * 256) + (CDbl(inBUF(4056 + 17)))) / 11.3777778
                 rxAngle = rxAngle - 180
-                If (rxAngle > (-50)) And (rxAngle < (50)) Then
-                    lbTiltRX.Caption = lbTiltRX.Caption & Trim(Str(CLng(rxAngle * 100) / 100))
-                End If
+                ''If (rxAngle > (-50)) And (rxAngle < (50)) Then
+                    ''lbTiltRX.Caption = Trim(Str(CLng(rxAngle * 100) / 100))
+                    lbTiltRX = CLng(rxAngle * 100) / 100
+                ''End If
+                rxAngleOK = True
             ''
             End If
             
@@ -2496,7 +2520,10 @@ AngleUp:
     ''''''''
             ''lbRXerr = 0
             lbRXcnt = lbRXcnt + 1
-            If lbRXcnt > 99999 Then lbRXcnt = 9999
+            If lbRXcnt > 999999999 Then
+                lbRXcnt = lbRXcnt / 10
+                lbRXerr = lbRXerr / 10
+            End If
 
             If cmdFilt.BackColor = vbGreen Then
                 RX_filt_DEEP
@@ -2736,7 +2763,10 @@ Dim i As Integer
     ''''''''
             lbRXerr = 0
             lbRXcnt = lbRXcnt + 1
-            If lbRXcnt > 99999 Then lbRXcnt = 9999
+            If lbRXcnt > 999999999 Then
+                lbRXcnt = lbRXcnt / 10
+                lbRXerr = lbRXerr / 10
+            End If
             
             If cmdFilt.BackColor = vbGreen Then
                 RX_filt_DEEP
@@ -2915,7 +2945,10 @@ ONEmore:
                                 
                                 lbRXerr = 0
                                 lbRXcnt = lbRXcnt + 1
-                                If lbRXcnt > 99999 Then lbRXcnt = 9999
+                                If lbRXcnt > 999999999 Then
+                                    lbRXcnt = lbRXcnt / 10
+                                    lbRXerr = lbRXerr / 10
+                                End If
                                 
                                 If cmdFilt.BackColor = vbGreen Then
                                     RX_filt_DEEP
