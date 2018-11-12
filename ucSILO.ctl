@@ -477,7 +477,7 @@ Begin VB.UserControl ucSilo
       Left            =   120
       TabIndex        =   7
       Top             =   4140
-      Width           =   255
+      Width           =   135
    End
    Begin VB.Label lbRXerr 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
@@ -493,10 +493,10 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   3180
+      Left            =   2820
       TabIndex        =   6
       Top             =   4140
-      Width           =   495
+      Width           =   855
    End
    Begin VB.Label lbRXcnt 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
@@ -512,10 +512,10 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   2580
+      Left            =   1920
       TabIndex        =   5
       Top             =   4140
-      Width           =   495
+      Width           =   855
    End
    Begin VB.Label lbXC 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
@@ -531,10 +531,10 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   1560
+      Left            =   1200
       TabIndex        =   4
       Top             =   4140
-      Width           =   375
+      Width           =   282
    End
    Begin VB.Label lbAngle 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
@@ -550,10 +550,10 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   2040
+      Left            =   1560
       TabIndex        =   3
       Top             =   4140
-      Width           =   375
+      Width           =   255
    End
    Begin VB.Label lbPointErrCnt 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
@@ -569,10 +569,10 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   1080
+      Left            =   840
       TabIndex        =   35
       Top             =   4140
-      Width           =   375
+      Width           =   282
    End
    Begin VB.Label lbCnt 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
@@ -588,10 +588,10 @@ Begin VB.UserControl ucSilo
          Strikethrough   =   0   'False
       EndProperty
       Height          =   135
-      Left            =   480
+      Left            =   360
       TabIndex        =   2
       Top             =   4140
-      Width           =   495
+      Width           =   375
    End
 End
 Attribute VB_Name = "ucSilo"
