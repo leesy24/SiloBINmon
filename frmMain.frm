@@ -569,8 +569,8 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private Const relVersion = "v2.00.01"
-Private Const relDate = "2018-11-06"
+Private Const relVersion = "v2.00.02-b"
+Private Const relDate = "2018-11-13"
 
 Dim d1 As Single
 
