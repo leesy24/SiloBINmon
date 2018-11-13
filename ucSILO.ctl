@@ -632,7 +632,10 @@ Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 ''    double AutoTiltNow = 0;
 ''    double AutoTiltMax = 5.0;   //// Abs(angle) ~ {-5~+5}==10.0!
 
-Private AutoTiltON As Integer
+Private AutoTiltON As Boolean
+Private AutoTiltStarted As Boolean
+Private AutoTiltOffDelayCnt As Integer
+Private AutoTiltErrorCnt As Integer
 Private AutoTiltStep As Double
 Private AutoTiltNow As Double
 Private AutoTiltMax As Double
@@ -950,13 +953,28 @@ End Sub
 
 
 Private Sub picSilo_Click()
+    If ScanTYPE = 22590 Then
+        If AutoTiltStarted = False Then
+            AutoTiltON = True
+            AutoTiltOffDelayCnt = 0
+            AutoTiltErrorCnt = 0
+            AutoTiltStep = -2#
+            AutoTiltNow = 40#
+            AutoTiltMax = 40#
+            AutoTiltMin = -40#
+        Else
+            AutoTiltStarted = False
+            AutoTiltOffDelayCnt = 6
+            lbTiltTX.BackColor = &HC000&
+            lbTiltRX.BackColor = &HC000&
+            lbTiltV.BackColor = &HC000&
+        End If
+    End If
+End Sub
+
+
+Private Sub picSiloDrawInit()
 Dim i As Integer
-
-
-''    Dim maxyrange As Double                     'Sets max y range of Scan
-''    Dim minyrange As Double                     'Sets min y range of Scan
-''    Dim maxxrange As Double                     'sets max x range of scan
-''    Dim minxrange As Double                     'sets min x range of scan
     
     minxrange = 0
     maxxrange = 6000  ''20000
@@ -965,9 +983,7 @@ Dim i As Integer
 
     picSilo.Scale (minxrange, maxyrange)-(maxxrange, minyrange)
 
-
     picSilo.Cls
-
 
     picSilo.ForeColor = vbCyan
     picSilo.FillStyle = vbFSSolid
@@ -981,8 +997,6 @@ Dim i As Integer
 
     picSilo.Line (500, 500)-(500, 5500)
     picSilo.Line (5500, 500)-(5500, 5500)
-
-
 
     '''''''''''''''''''''''''''''''''''''''''''''''''(¿ø±âµÕ)''
     If (lbHH.Caption <> "") And (DRAWmode = 0) Then
@@ -1006,43 +1020,6 @@ Dim i As Integer
         DoEvents
       End If
     End If
-
-
-''    picSilo.ForeColor = vbWhite  ''vbBlack
-''    picSilo.Line (2500, 500)-(3500, 500)  ''picSilo.Line (500, 500)-(5500, 500)
-''    picSilo.Line (500, 5500)-(5500, 5500)
-''
-''    picSilo.Line (3000, 500)-(3000, 5500)
-''
-''
-''    picSilo.ForeColor = vbWhite  ''vbBlack
-''    picSilo.Line (2000, 500)-(4000, 500)
-''    For i = 1 To 4
-''        picSilo.Line (2800, 500 + (1000 * i))-(3100, 500 + (1000 * i))
-''
-''        'Labeling the yaxis
-''        picSilo.CurrentX = 3120
-''        picSilo.CurrentY = 500 + (1000 * i) + 100
-''        picSilo.Print Trim(i * 10) & "M"
-''    Next i
-''
-''    For i = 1 To 9
-''        picSilo.Line (2900, 500 + (500 * i))-(3100, 500 + (500 * i))
-''    Next i
-''
-''
-''    picSilo.ForeColor = vbYellow  ''vbWhite  ''vbBlack  ''vbRed
-''    picSilo.Line (1000, 500 + maxHH)-(2200, 500 + maxHH)
-''    picSilo.Line (3800, 500 + maxHH)-(5000, 500 + maxHH)
-''    picSilo.Line (1000, 500 + baseHH)-(2200, 500 + baseHH)
-''    picSilo.Line (3800, 500 + baseHH)-(5000, 500 + baseHH)
-''
-''
-''    '';; {100~4500} => {0~4400}
-''    scaleHH = CLng(maxHH - baseHH)    ''''NotUse-Yet~
-''    If scaleHH < 0 Then scaleHH = 0
-
-    
 End Sub
 
 
@@ -1079,7 +1056,7 @@ Dim SideD As Integer  '';20160617~
         cut = 30 '''60
     End If
     
-    For k = cut To n - cut   '''{0 to n}'''
+    For k = cut To n - cut + 2   '''{0 to n}'''
 
             s = k / 2#
 
@@ -1146,7 +1123,7 @@ cancleDRAW:
     picSilo.Line (minXL, 5500)-(minXR, 5500)
 
 
-    If lbRXcnt > 2 Then
+    If (lbRXcnt > 2) And (AutoTiltON = False) Then
     
         Dim YY(300) As Long
         Dim CC As Long
@@ -1165,7 +1142,7 @@ cancleDRAW:
         SS = 0
         CC = 0
         
-        For i = cut To n - cut   '''{0 to n}'''
+        For i = cut To n - cut + 2   '''{0 to n}'''
     
             If (minXR - minXL) < 3000 Then   ''''';20160617~  3000<--3300
 
@@ -1542,7 +1519,7 @@ Dim bb() As Byte
             tmrSrun.Interval = 2000
             tmrSrun.Enabled = True
             
-            picSilo_Click  ''Blank
+            picSiloDrawInit  ''Blank
             
         Case CheckConn
             tmrSrun.Interval = 2000
@@ -1608,7 +1585,7 @@ Dim bb() As Byte
                 ret = LDrx12590(51)   '''DPS_SPRM_SDC4 SDC(Scan Data Content) to 4(=distances olny)
                 
                 If ret = 0 Or ret < 0 Then
-                    lbTiltV.Caption = "0"
+                    lbTiltV = "0"
                     SEND_wsickLD "AutoTiltON"  '''[[ "AutoTiltON"=="TorqueMax(200)"&"SetAngle[0]" ]]
                 
                     tSrunMode = eSrunMode.Init2Device  '''==>
@@ -1667,6 +1644,7 @@ Dim bb() As Byte
                 ret = LDrx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
                 
                 If ret = 0 Or ret < 0 Then
+                    lbTiltV = "-1"
                     strA = "SetAngle[-1]"
     
                     bb = StrConv(strA, vbFromUnicode)
@@ -1675,17 +1653,8 @@ Dim bb() As Byte
                     '''''''''''''''
                     
                     tSrunMode = eSrunMode.SendCmd
-                    tmrSrun.Interval = 1000 '''500
-    
-                    AutoTiltON = 1  '''''0
-                    AutoTiltStep = 1#   ''1.555
-                    AutoTiltNow = 0#
-                    AutoTiltMax = 5#
-                    AutoTiltMin = -5#
-    
-                    tSrunMode = eSrunMode.SendCmd
                     
-                    tmrSrun.Interval = 1000 '''500
+                    tmrSrun.Interval = 2000 '''500
                 End If
             
             Else
@@ -1701,7 +1670,7 @@ Dim bb() As Byte
         Case SendCmd
             lbCnt = "TX"
 
-            ''picSilo_Click
+            ''picSiloDrawInit
 
             txtRx1 = ""
 
@@ -1764,22 +1733,58 @@ Dim bb() As Byte
                 '''''''''
                 ret = LDrx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
             
-                If ret = 0 Or ret < 0 Then
-''                    AutoTiltNow = AutoTiltNow + AutoTiltStep
-''                    ''''''''''''''''''''''''''''''''''''''''
-''                    If AutoTiltNow > AutoTiltMax Then
-''                        AutoTiltNow = AutoTiltMax:      AutoTiltStep = AutoTiltStep * (-1#)
-''                    End If
-''                    If AutoTiltNow < AutoTiltMin Then
-''                        AutoTiltNow = AutoTiltMin:      AutoTiltStep = AutoTiltStep * (-1#)
-''                    End If
-''
-''                    strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
-''                    lbTiltV.Caption = Str(strA)
-''                    strA = "SetAngle[" & strA & "]"
-                      ''
-                
-                    strA = "SetAngle[-1]"
+                If ret = 0 Then
+                    If AutoTiltON = True Then
+                        If AutoTiltOffDelayCnt <> 0 Then
+                            AutoTiltOffDelayCnt = AutoTiltOffDelayCnt - 1
+                            If AutoTiltOffDelayCnt = 0 Then
+                                AutoTiltON = False
+                                lbTiltTX.BackColor = &HFF8080
+                                lbTiltRX.BackColor = &HFF8080
+                                lbTiltV.BackColor = &HFF8080
+                            End If
+                            
+                            lbTiltV = "-1"
+                            strA = "SetAngle[-1]"
+                            tmrSrun.Interval = 1000
+                        ElseIf AutoTiltStarted = False Then
+                            AutoTiltStarted = True
+                            lbTiltTX.BackColor = &HFF00&
+                            lbTiltRX.BackColor = &HFF00&
+                            lbTiltV.BackColor = &HFF00&
+                            
+                            strA = Trim(str(CInt(AutoTiltNow * 100) / 100))
+                            lbTiltV.Caption = strA
+                            strA = "SetAngle[" & strA & "]"
+                            ''
+                            tmrSrun.Interval = 2000
+                        Else
+                            AutoTiltErrorCnt = 0
+                            AutoTiltNow = AutoTiltNow + AutoTiltStep
+                            ''''''''''''''''''''''''''''''''''''''''
+                            If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
+                                AutoTiltStarted = False
+                                AutoTiltOffDelayCnt = 6
+                                lbTiltTX.BackColor = &HC000&
+                                lbTiltRX.BackColor = &HC000&
+                                lbTiltV.BackColor = &HC000&
+                                
+                                lbTiltV = "-1"
+                                strA = "SetAngle[-1]"
+                                tmrSrun.Interval = 1000
+                            Else
+                                strA = Trim(str(CInt(AutoTiltNow * 100) / 100))
+                                lbTiltV = strA
+                                strA = "SetAngle[" & strA & "]"
+                                ''
+                                tmrSrun.Interval = 1000
+                            End If
+                        End If
+                    Else
+                        lbTiltV = "-1"
+                        strA = "SetAngle[-1]"
+                        tmrSrun.Interval = 2000
+                    End If
     
                     bb = StrConv(strA, vbFromUnicode)
                     ''
@@ -1788,7 +1793,41 @@ Dim bb() As Byte
                 
                     tSrunMode = eSrunMode.SendCmd
                     
-                    tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
+                    'tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
+                ElseIf ret < 0 Then
+                    If AutoTiltStarted = True Then
+                        AutoTiltErrorCnt = AutoTiltErrorCnt + 1
+                        If AutoTiltErrorCnt > 5 Then
+                            AutoTiltStarted = False
+                            AutoTiltOffDelayCnt = 1
+                            lbTiltTX.BackColor = &HC000&
+                            lbTiltRX.BackColor = &HC000&
+                            lbTiltV.BackColor = &HC000&
+                            
+                            lbTiltV = "-1"
+                            strA = "SetAngle[-1]"
+                            tmrSrun.Interval = 1000
+                        Else
+                            strA = Trim(str(CInt(AutoTiltNow * 100) / 100))
+                            lbTiltV.Caption = strA
+                            strA = "SetAngle[" & strA & "]"
+                            ''
+                        End If
+                        tmrSrun.Interval = 1000
+                    Else
+                        lbTiltV = "-1"
+                        strA = "SetAngle[-1]"
+                        tmrSrun.Interval = 2000
+                    End If
+    
+                    bb = StrConv(strA, vbFromUnicode)
+                    ''
+                    SEND_wsickLD bb
+                    '''''''''''''''
+                
+                    tSrunMode = eSrunMode.SendCmd
+                    
+                    'tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
                 End If
             
             ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
@@ -2186,11 +2225,11 @@ Dim rxAngleOK As Boolean
 
     If (inCNT < 30) Then
         lbCnt.BackColor = vbYellow  ''&HC0C0C0
-            LDrx12590 = -1
+            LDrx12590 = -2
             Exit Function  ''===>
     ElseIf (inCNT < 4056) Or ((inCNT > 4086) And (inCNT < 8056)) Then
         lbCnt.BackColor = vbRed  ''&HC0C0C0
-            LDrx12590 = -1
+            LDrx12590 = -3
             Exit Function  ''===>
     End If
 
@@ -2208,7 +2247,7 @@ Dim rxAngleOK As Boolean
             lbRxHead.Caption = "ECRC"
             lbRxHead.BackColor = vbRed
             lbRXerr = lbRXerr + 1
-            LDrx12590 = -1
+            LDrx12590 = -4
             Exit Function  ''===>
         End If
         
@@ -2236,6 +2275,7 @@ Dim rxAngleOK As Boolean
                 ''
                 angleN = (i * 4) + 52  '''<==(i * 8)
                 Scan2590Dist(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
+                'Scan2590Dist(i) = Scan2590Dist(i) * 10
                 ''angleN = angleN + 4
                 ''Scan2590Pulse(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 ''
@@ -2392,30 +2432,20 @@ Dim rxAngleOK As Boolean
     Dim tAng As Double
     Dim tCnt As Integer
     Dim tSum As Double
-    Dim tCntH As Integer
-    Dim tSumH As Double
     ''''''''''''''''''''''''''''
     
     tAng = 45#  ''angle
     tCnt = 0
     tSum = 0
-    tCntH = 0
-    tSumH = 0
     ''
     For i = 0 To 999  ''(1~1000)
 
         If (Scan2590Dist(i) > 0) Then
         
-            If (Scan2590Direc(i) < tAng + 0.5) Then
+            If (Scan2590Direc(i) < tAng + 0.25) Then
                 tSum = tSum + Scan2590Dist(i)
                 tCnt = tCnt + 1
-            ElseIf (Scan2590Direc(i) < tAng + 1#) Then
-                tSumH = tSumH + Scan2590Dist(i)
-                tCntH = tCntH + 1
             Else
-            
-''                    rxWORD(xc) = CLng(inBUF(X)) * 1000 + (CLng(inBUF(X + 1)) * 1000 / 256)
-''                    ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
                 If tCnt > 0 Then
                     tSum = (tSum / tCnt) / 10   ''* 1000  '';;;[cm]distance
                     '''
@@ -2424,49 +2454,21 @@ Dim rxAngleOK As Boolean
                     End If
                     '''
                     
-                    ''rxWORD((tAng) * 2 - 30) = CLng(tSum)
-                    
-                    ''rxWORD((tAng) * 2 - 45 - 15) = CLng(tSum)
-                    
-                    ''[90::{45.0~135.0}]==>[120::{0~120}]==>[240::{0~238}]
-                    rxWORD((tAng - 45) * 2 + 30) = CLng(tSum)
+                    rxWORD((tAng - 45#) * 2 + 30) = CLng(tSum)
                     
                     ''[90::{45.0~135.0}]=(-45):{0~90)==[x2]=>0~180==[+30]==>{~(30~210)~} // [120::{0~120}]==>[240::{0~238}]
                     
                 End If
                 
-                If tCntH > 0 Then
-                    tSumH = (tSumH / tCntH) / 10 ''* 1000  '';;;[cm]distance
-                    '''
-                    If tSumH > 80000 Then
-                        tSumH = 0
-                    End If
-                    '''
-                    ''rxWORD((tAng) * 2 - 30 + 1) = CLng(tSumH)
-                    ''rxWORD((tAng) * 2 - 45 - 15 + 1) = CLng(tSumH)
-                    
-                    ''[90::{45.0~135.0}]==>[120::{0~120}]==>[240::{0~238}]
-                    rxWORD((tAng - 45) * 2 + 30 + 1) = CLng(tSumH)
-                    
-                    'Debug.Print tSum, tSumH
-                    
-                End If
-            
-            
                 tCnt = 0
                 tSum = 0
-                tCntH = 0
-                tSumH = 0
                 
 AngleUp:
-                tAng = tAng + 1#
+                tAng = tAng + 0.5
                 
-                If (Scan2590Direc(i) < tAng + 0.5) Then
+                If (Scan2590Direc(i) < tAng + 0.25) Then
                     tSum = tSum + Scan2590Dist(i)
                     tCnt = tCnt + 1
-                ElseIf (Scan2590Direc(i) < tAng + 1#) Then
-                    tSumH = tSumH + Scan2590Dist(i)
-                    tCntH = tCntH + 1
                 Else
                     GoTo AngleUp
                 End If
@@ -2484,34 +2486,12 @@ AngleUp:
             tSum = 0
         End If
         '''
-        
-        ''rxWORD((tAng) * 2 - 30) = CLng(tSum)
-        
-        ''rxWORD((tAng) * 2 - 45 - 15) = CLng(tSum)
-        
-        ''[90::{45.0~135.0}]==>[120::{0~120}]==>[240::{0~238}]
-        rxWORD((tAng - 45) * 2 + 30) = CLng(tSum)
+        rxWORD((tAng - 45#) * 2 + 30) = CLng(tSum)
         
         ''[90::{45.0~135.0}]=(-45):{0~90)==[x2]=>0~180==[+30]==>{~(30~210)~} // [120::{0~120}]==>[240::{0~238}]
         
     End If
     
-    If tCntH > 0 Then
-        tSumH = (tSumH / tCntH) / 10 ''* 1000  '';;;[cm]distance
-        '''
-        If tSumH > 80000 Then
-            tSumH = 0
-        End If
-        '''
-        ''rxWORD((tAng) * 2 - 30 + 1) = CLng(tSumH)
-        ''rxWORD((tAng) * 2 - 45 - 15 + 1) = CLng(tSumH)
-        
-        ''[90::{45.0~135.0}]==>[120::{0~120}]==>[240::{0~238}]
-        rxWORD((tAng - 45) * 2 + 30 + 1) = CLng(tSumH)
-    
-    End If
-
-
     xcMax = 238
     ''''''''''''''''''''''''''''
     ''xcMax = xcMax + 1
@@ -2533,12 +2513,127 @@ AngleUp:
             RX_filt
             '''''''
 
-            picSilo_Click
+            picSiloDrawInit
 
             picSiloDRAW
 
             cmdCONN.BackColor = vbGreen
     ''''''''
+
+    If (ScanTYPE = 22590) And (AutoTiltStarted = True) And (rxAngleOK = False) Then
+        LDrx12590 = -5
+        Exit Function  ''===>
+    End If
+    
+    If (AutoTiltStarted = True) And (rxAngleOK = True) Then
+        ''If (lbTiltRX < AutoTiltNow - 1) Or (lbTiltRX > AutoTiltNow + 1) Then
+        ''    LDrx12590 = -6
+        ''    Exit Function  ''===>
+        ''End If
+        
+        Dim X As Double
+        Dim Y As Double
+        Dim z As Double
+        Dim r As Double
+        
+        i = 30
+        r = (rxWORD(i) + rxWORD(i + 1) + rxWORD(i + 1) / 2#) / 2.5
+        X = r _
+            * Cos(((i / 2) + 30) * (PI / 180)) _
+            / 1000#
+        Y = r _
+            * Sin(((i / 2) + 30) * (PI / 180)) _
+            * Sin(lbTiltRX * (PI / 180)) _
+            / 1000#
+        z = 50# _
+            - (r _
+            * Sin(((i / 2) + 30) * (PI / 180)) _
+            * Cos(lbTiltRX * (PI / 180)) _
+            / 1000#)
+        'DGPSLog vbTab & lbTiltRX & vbTab & (i / 2) + 30 _
+        '    & vbTab & r
+        'DGPSLog vbTab & AutoTiltNow _
+        '    & vbTab & lbTiltRX _
+        '
+        'DGPSLog vbTab & i _
+        '
+        'DGPSLog vbTab & lbTiltRX _
+        '
+        Tilt3Dlog UCindex, _
+            "" & _
+            AutoTiltNow _
+            & vbTab & lbTiltRX _
+            & vbTab & (i / 2) + 30 _
+            & vbTab & vbTab & X _
+            & " " & vbTab & Y _
+            & " " & vbTab & z
+        For i = 34 To xcMax - 30 - 2 Step 4
+            r = (rxWORD(i - 2) / 2# _
+                + rxWORD(i - 1) + rxWORD(i) + rxWORD(i + 1) _
+                + rxWORD(i + 2) / 2#) _
+                / 4#
+            X = r _
+                * Cos(((i / 2) + 30) * (PI / 180)) _
+                / 1000#
+            Y = r _
+                * Sin(((i / 2) + 30) * (PI / 180)) _
+                * Sin(lbTiltRX * (PI / 180)) _
+                / 1000#
+            z = 50# _
+                - (r _
+                * Sin(((i / 2) + 30) * (PI / 180)) _
+                * Cos(lbTiltRX * (PI / 180)) _
+                / 1000#)
+            'DGPSLog vbTab & lbTiltRX & vbTab & (i / 2) + 30 _
+            '    & vbTab & r
+            'DGPSLog vbTab & AutoTiltNow _
+            '    & vbTab & lbTiltRX _
+            '
+            'DGPSLog vbTab & i _
+            '
+            'DGPSLog vbTab & lbTiltRX _
+            '
+            Tilt3Dlog UCindex, _
+                "" & _
+                AutoTiltNow _
+                & vbTab & lbTiltRX _
+                & vbTab & (i / 2) + 30 _
+                & vbTab & vbTab & X _
+                & " " & vbTab & Y _
+                & " " & vbTab & z
+        Next i
+        'i = xcMax - 30 - 2
+        r = (rxWORD(i - 2) / 2# + rxWORD(i - 1) + rxWORD(i)) / 2.5
+        X = r _
+            * Cos(((i / 2) + 30) * (PI / 180)) _
+            / 1000#
+        Y = r _
+            * Sin(((i / 2) + 30) * (PI / 180)) _
+            * Sin(lbTiltRX * (PI / 180)) _
+            / 1000#
+        z = 50# _
+            - (r _
+            * Sin(((i / 2) + 30) * (PI / 180)) _
+            * Cos(lbTiltRX * (PI / 180)) _
+            / 1000#)
+        'DGPSLog vbTab & lbTiltRX & vbTab & (i / 2) + 30 _
+        '    & vbTab & r
+        'DGPSLog vbTab & AutoTiltNow _
+        '    & vbTab & lbTiltRX _
+        '
+        'DGPSLog vbTab & i _
+        '
+        'DGPSLog vbTab & lbTiltRX _
+        '
+        Tilt3Dlog UCindex, _
+            "" & _
+            AutoTiltNow _
+            & vbTab & lbTiltRX _
+            & vbTab & (i / 2) + 30 _
+            & vbTab & vbTab & X _
+            & " " & vbTab & Y _
+            & " " & vbTab & z
+    End If
 
     LDrx12590 = 0
 
@@ -2776,7 +2871,7 @@ Dim i As Integer
             RX_filt
             '''''''
             
-            picSilo_Click
+            picSiloDrawInit
             
             picSiloDRAW
             
@@ -2958,7 +3053,7 @@ ONEmore:
                                 RX_filt
                                 '''''''
                                 
-                                picSilo_Click
+                                picSiloDrawInit
                                 
                                 picSiloDRAW
                                 

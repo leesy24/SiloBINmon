@@ -99,6 +99,43 @@ errFile1:
     
 End Sub
 
+Public Sub Tilt3Dlog(index As Integer, str As String)
+    Dim dirName         As String
+    Dim fileName        As String
+    Dim fileNumber
+    Dim i As Integer
+    
+    dirName = "C:\BIN_LOG\"
+    fileName = dirName & "3D_" & index & "_" & Format(Now, "YYYYMMDD") & ".dat"
+
+On Error GoTo errFile1
+
+    If Dir(dirName, vbDirectory) = "" Then
+        MkDir dirName
+    End If
+    
+    If Not FileExists(fileName) Then
+        fileNumber = FreeFile
+        Open fileName For Binary Access Write As #fileNumber
+            Put #fileNumber, , str & vbCrLf
+        Close #fileNumber
+        DoEvents
+    Else
+    
+        fileNumber = FreeFile
+        Open fileName For Binary Access Write As #fileNumber
+            Seek #fileNumber, LOF(fileNumber) + 1
+            Put #fileNumber, , str & vbCrLf
+        Close #fileNumber
+        DoEvents
+    End If
+    
+errFile1:
+    dirName = ""
+    ''''''''''''(just-cancle~)
+    
+End Sub
+
 
 
 
