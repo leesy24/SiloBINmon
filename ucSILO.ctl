@@ -1542,22 +1542,16 @@ End Sub
 
 
 Public Sub initStart()
-
+'
     Dim i As Integer
-    
-    For i = 0 To 300 - 1
-        rxWdeepSum(i) = 0
-        rxWdeepCnt(i) = 0
-    Next i
-
-    cnWdeep = 0
-    cnWring = 0
-
+'
+    RX_filt_Init
+'
     tSrunMode = eSrunMode.InitConn
-    
+'
     tmrSrun.Interval = 1000
     tmrSrun.Enabled = True
-
+'
 End Sub
 
 
@@ -1818,6 +1812,11 @@ Dim bb() As Byte
                             strA = "SetAngle[-1]"
                             tmrSrun.Interval = 1000
                         ElseIf AutoTiltStarted = False Then
+                            RX_filt_Init
+                            Tilt3Dlog cmdCONN.Caption, _
+                                " " & lbCenterX _
+                                & " " & lbCenterY _
+                                & " " & lbRadius
                             AutoTiltStarted = True
                             lbTiltTX.BackColor = &HFF00&
                             lbTiltRX.BackColor = &HFF00&
@@ -2596,10 +2595,10 @@ AngleUp:
     End If
     
     If (AutoTiltStarted = True) And (rxAngleOK = True) Then
-        ''If (lbTiltRX < AutoTiltNow - 1) Or (lbTiltRX > AutoTiltNow + 1) Then
-        ''    LDrx12590 = -6
-        ''    Exit Function  ''===>
-        ''End If
+        If (Abs(lbTiltRX - AutoTiltNow) > 1) Then
+            LDrx12590 = -6
+            Exit Function  ''===>
+        End If
         
         Dim X As Double
         Dim Y As Double
@@ -2629,10 +2628,8 @@ AngleUp:
         '
         'DGPSLog vbTab & lbTiltRX _
         '
-        Tilt3Dlog UCindex, _
-            "" & _
-            AutoTiltNow _
-            & vbTab & lbTiltRX _
+        Tilt3Dlog cmdCONN.Caption, _
+            " " & lbTiltRX _
             & vbTab & (i / 2) + 30 _
             & vbTab & vbTab & X _
             & " " & vbTab & Y _
@@ -2663,10 +2660,8 @@ AngleUp:
             '
             'DGPSLog vbTab & lbTiltRX _
             '
-            Tilt3Dlog UCindex, _
-                "" & _
-                AutoTiltNow _
-                & vbTab & lbTiltRX _
+            Tilt3Dlog cmdCONN.Caption, _
+                " " & lbTiltRX _
                 & vbTab & (i / 2) + 30 _
                 & vbTab & vbTab & X _
                 & " " & vbTab & Y _
@@ -2695,10 +2690,8 @@ AngleUp:
         '
         'DGPSLog vbTab & lbTiltRX _
         '
-        Tilt3Dlog UCindex, _
-            "" & _
-            AutoTiltNow _
-            & vbTab & lbTiltRX _
+        Tilt3Dlog cmdCONN.Caption, _
+            " " & lbTiltRX _
             & vbTab & (i / 2) + 30 _
             & vbTab & vbTab & X _
             & " " & vbTab & Y _
@@ -3214,7 +3207,19 @@ RxOK:
 
 End Function
 
-
+Private Sub RX_filt_Init()
+'
+    Dim i%
+'
+    For i = 0 To 300 - 1
+        rxWdeepSum(i) = 0
+        rxWdeepCnt(i) = 0
+    Next i
+'
+    cnWdeep = 0
+    cnWring = 0
+'
+End Sub
 
 Private Sub RX_filt_DEEP()
 
