@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
-Object = "{40DD8EA0-284B-11D0-A7B0-0020AFF929F4}#2.3#0"; "AdsOcx.ocx"
+Object = "{40DD8EA0-284B-11D0-A7B0-0020AFF929F4}#2.3#0"; "Adsocx.ocx"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    BackColor       =   &H00404000&
@@ -17,19 +17,6 @@ Begin VB.Form frmMain
    ScaleHeight     =   8040
    ScaleWidth      =   16230
    ShowInTaskbar   =   0   'False
-   Begin ADSOCXLib.AdsOcx AdsOcx1 
-      Left            =   960
-      Top             =   1320
-      _Version        =   131074
-      _ExtentX        =   900
-      _ExtentY        =   953
-      _StockProps     =   0
-      AdsAmsServerNetId=   ""
-      AdsAmsClientPort=   33147
-      AdsClientType   =   ""
-      AdsClientAdsState=   ""
-      AdsClientAdsControl=   ""
-   End
    Begin ADSOCXLib.AdsOcx AdsOcx2 
       Left            =   1860
       Top             =   1380
@@ -38,7 +25,20 @@ Begin VB.Form frmMain
       _ExtentY        =   953
       _StockProps     =   0
       AdsAmsServerNetId=   ""
-      AdsAmsClientPort=   33145
+      AdsAmsClientPort=   33019
+      AdsClientType   =   ""
+      AdsClientAdsState=   ""
+      AdsClientAdsControl=   ""
+   End
+   Begin ADSOCXLib.AdsOcx AdsOcx1 
+      Left            =   960
+      Top             =   1320
+      _Version        =   131074
+      _ExtentX        =   900
+      _ExtentY        =   953
+      _StockProps     =   0
+      AdsAmsServerNetId=   ""
+      AdsAmsClientPort=   33017
       AdsClientType   =   ""
       AdsClientAdsState=   ""
       AdsClientAdsControl=   ""
@@ -499,7 +499,7 @@ Begin VB.Form frmMain
             Name            =   "Arial Black"
             Size            =   21.75
             Charset         =   0
-            Weight          =   700
+            Weight          =   900
             Underline       =   0   'False
             Italic          =   0   'False
             Strikethrough   =   0   'False
@@ -589,8 +589,7 @@ Dim AOdeepFull As Boolean
 Public AOdeepCNT2 As Integer  ''''''''''''''''''''''New-CTS-Silo(15+4)!!
 Dim AOdeepFull2 As Boolean
 
-
-Private Declare Function GetModuleFileNameW Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpFilename As Long, ByVal nSize As Long) As Long
+Private Declare Function GetModuleFileNameW Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpFileName As Long, ByVal nSize As Long) As Long
 
 Private Function GetEXEName() As String
     Const MAX_PATH = 260&
@@ -687,7 +686,11 @@ Private Sub cmdCFG_Click()
     frmCFG.txtMaxHH = frmMain.txtMaxHH
     frmCFG.txtBaseHH = frmMain.txtBaseHH
 
-    frmCFG.Visible = True
+    If frmCFG.Visible = True Then
+        frmCFG.Show
+    Else
+        frmCFG.Visible = True
+    End If
     
 ''    frmCFG.tmrCFG.Interval = 5000
 ''    frmCFG.tmrCFG.Enabled = True
@@ -966,12 +969,42 @@ Dim j As Integer
     ipAddr(14) = "192.168.0.72": ipPort(14) = "7007"
     
     Dim typeTmp As Integer
+    Dim centerXTmp$, centerYTmp$, radiusTmp$
     
     For i = 0 To 14
         ucSilo1(i).setIDX i, ipAddr(i), ipPort(i)
         ''
-        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 3100)))
+        typeTmp = Trim(str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 3100)))
         ucSilo1(i).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
+        centerXTmp = _
+            GetSetting(App.Title, "Settings", "SILOcenterX_" & Format(i + 1, "00"), "Fail")
+        centerYTmp = _
+            GetSetting(App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00"), "Fail")
+        radiusTmp = _
+            GetSetting(App.Title, "Settings", "SILOradius_" & Format(i + 1, "00"), "Fail")
+        If IsNumeric(centerXTmp) = False _
+            Or Abs(CSng(Val(centerXTmp))) > 25! _
+            Then
+            centerXTmp = "0.0"
+            SaveSetting App.Title, "Settings", "SILOcenterX_" & Format(i + 1, "00"), _
+                centerXTmp
+        End If
+        If IsNumeric(centerYTmp) = False _
+            Or Abs(CSng(Val(centerYTmp))) > 25! _
+            Then
+            centerYTmp = "0.0"
+            SaveSetting App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00"), _
+                centerYTmp
+        End If
+        If IsNumeric(radiusTmp) = False _
+            Or CSng(Val(radiusTmp)) < 1! _
+            Or CSng(Val(radiusTmp)) > 25! _
+            Then
+            radiusTmp = "19.0"
+            SaveSetting App.Title, "Settings", "SILOradius_" & Format(i + 1, "00"), _
+                radiusTmp
+        End If
+        ucSilo1(i).setBinSettings CSng(centerXTmp), CSng(centerYTmp), CSng(radiusTmp)
     Next i
 
 ''    ucSilo1(2).setScanTYPE 2590  '''''LD-LRS-3100,, DPS-2590 ==> CONSOLE-Mode!
@@ -983,7 +1016,7 @@ Dim j As Integer
 
 
     Dim TiltStr1 As String
-    TiltStr1 = Trim(Str(GetSetting(App.Title, "Settings", "TiltStrBase", "-1")))
+    TiltStr1 = Trim(str(GetSetting(App.Title, "Settings", "TiltStrBase", "-1")))
         
 
 
@@ -1014,7 +1047,7 @@ Dim j As Integer
         ''
         ''ucSilo1(i).setScanTYPE 12590  '''LD-LRS-3100,, DPS-2590  ==> UDP-Mode!(Rx_8056bytes)
         ''
-        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 12590)))
+        typeTmp = Trim(str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 12590)))
         ucSilo1(i).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
         
     Next i
@@ -1036,15 +1069,15 @@ Dim j As Integer
 '    cboIDX.Refresh
 
 
-    txtPcsPort.Text = Trim(Str(GetSetting(App.Title, "Settings", "PcsPORT", "8005")))
+    txtPcsPort.Text = Trim(str(GetSetting(App.Title, "Settings", "PcsPORT", "8005")))
     ''txtPcsIP.Text = Trim(Str(GetSetting(App.Title, "Settings", "PcsIP", "172.24.55.27")))
     txtPcsIP.Text = "172.24.55.27"  ''"127.0.0.1"  '''"172.24.55.27"
     
-    txtPcsPort2.Text = Trim(Str(GetSetting(App.Title, "Settings", "PcsPORT2", "8009")))  '''NewCTS-Silo
+    txtPcsPort2.Text = Trim(str(GetSetting(App.Title, "Settings", "PcsPORT2", "8009")))  '''NewCTS-Silo
     
     
-    txtMaxHH.Text = Trim(Str(GetSetting(App.Title, "Settings", "MaxHH", "5000")))
-    txtBaseHH.Text = Trim(Str(GetSetting(App.Title, "Settings", "BaseHH", "100")))
+    txtMaxHH.Text = Trim(str(GetSetting(App.Title, "Settings", "MaxHH", "5000")))
+    txtBaseHH.Text = Trim(str(GetSetting(App.Title, "Settings", "BaseHH", "100")))
     
     txtMaxHH.Enabled = False
     txtBaseHH.Enabled = False

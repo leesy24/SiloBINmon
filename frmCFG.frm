@@ -229,6 +229,7 @@ Option Explicit
 
 
 Private Sub cmdCFGexit_Click()
+    frmSettings.Visible = False
     frmCFG.Visible = False
 End Sub
 
@@ -350,7 +351,7 @@ End Sub
 Private Sub cmdSetTYPE_Click()
 Dim i
     For i = 0 To 14
-        frmMain.ucSilo1(i).setScanTYPE CDbl(txtCtypes(i))
+        frmMain.ucSilo1(i).setScanTYPE CInt(txtCtypes(i))
     Next i
     
     tmrCFG.Enabled = False
@@ -424,9 +425,23 @@ Dim iTop As Long
         lbBinNO2(i).Visible = True
         txtCtypes(i).Visible = True
     Next i
-    
-    
-    
+'
+End Sub
+
+Private Sub lbBinNO2_Click(Index As Integer)
+'
+    If frmSettings.Visible = True Then
+        frmSettings.Show
+    End If
+'
+    frmSettings.Init _
+        Index, _
+        frmMain.ucSilo1(Index).CenterX, _
+        frmMain.ucSilo1(Index).CenterY, _
+        frmMain.ucSilo1(Index).Radius
+'
+    frmSettings.Visible = True
+'
 End Sub
 
 ''Private Sub Form_LostFocus()
@@ -443,6 +458,3 @@ Private Sub tmrCFG_Timer()
     frmCFG.Visible = False
     
 End Sub
-
-
-

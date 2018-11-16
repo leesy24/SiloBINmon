@@ -33,7 +33,7 @@ Begin VB.UserControl ucSilo
    Begin VB.Timer tmrReStart 
       Enabled         =   0   'False
       Interval        =   9000
-      Left            =   4260
+      Left            =   3240
       Top             =   3600
    End
    Begin VB.CommandButton cmdFilt 
@@ -233,6 +233,63 @@ Begin VB.UserControl ucSilo
          Top             =   3240
          Width           =   495
       End
+   End
+   Begin VB.Label lbRadius 
+      Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
+      BackColor       =   &H00C0C0C0&
+      Caption         =   "00.0"
+      BeginProperty Font 
+         Name            =   "±¼¸²Ã¼"
+         Size            =   8.25
+         Charset         =   129
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   135
+      Left            =   5040
+      TabIndex        =   39
+      Top             =   3495
+      Width           =   375
+   End
+   Begin VB.Label lbCenterY 
+      Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
+      BackColor       =   &H00C0C0C0&
+      Caption         =   "-00.0"
+      BeginProperty Font 
+         Name            =   "±¼¸²Ã¼"
+         Size            =   8.25
+         Charset         =   129
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   135
+      Left            =   4440
+      TabIndex        =   38
+      Top             =   3495
+      Width           =   495
+   End
+   Begin VB.Label lbCenterX 
+      Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
+      BackColor       =   &H00C0C0C0&
+      Caption         =   "-00.0"
+      BeginProperty Font 
+         Name            =   "±¼¸²Ã¼"
+         Size            =   8.25
+         Charset         =   129
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   135
+      Left            =   3840
+      TabIndex        =   37
+      Top             =   3495
+      Width           =   495
    End
    Begin VB.Label Label12 
       BackStyle       =   0  'Åõ¸í
@@ -643,6 +700,7 @@ Private AutoTiltMin As Double
 ''''''''''''''''''''''''''''''''
 
 Private ScanTYPE As Integer  '''LD-LRS-3100,, DPS-2590
+Public CenterX!, CenterY!, Radius!
 ''
 Private inBUF2590 As String   '''inBUF2590(100000) As Byte
 ''
@@ -787,6 +845,18 @@ Public Sub setScanTYPE(iScan As Integer)  '''LD-LRS-3100,, DPS-2590
     lbTiltRX.BackColor = &HFF8080
     lbTiltV.BackColor = &HFF8080
     
+End Sub
+
+Public Sub setBinSettings(CenterX_I!, CenterY_I!, Radius_I!)
+'
+    CenterX = CenterX_I
+    CenterY = CenterY_I
+    Radius = Radius_I
+'
+    lbCenterX = Format(CenterX, "0.0")
+    lbCenterY = Format(CenterY, "0.0")
+    lbRadius = Format(Radius, "0.0")
+'
 End Sub
 
 Public Function getScanTYPE() As Integer
@@ -1460,14 +1530,14 @@ Public Function getTXT() As String
 End Function
 
 Sub Ellipse(X As Single, Y As Single, RadiusX As Single, RadiusY As Single)
-  Dim ratio As Single, radius As Single
+  Dim ratio As Single, Radius As Single
     ratio = RadiusY / RadiusX
     If ratio < 1 Then
-        radius = RadiusX
+        Radius = RadiusX
     Else
-        radius = RadiusY
+        Radius = RadiusY
     End If
-    picSilo.Circle (X, Y), radius, , , , ratio
+    picSilo.Circle (X, Y), Radius, , , , ratio
 End Sub
 
 
@@ -2743,7 +2813,7 @@ Dim i As Integer
         If i < 100 Then strNo = strNo & " "
         If i < 10 Then strNo = strNo & " "
         ''
-        strNo = strNo & Trim(Str(i)) & " ;       "   '';''strNo = strNo & Trim(Str(i))
+        strNo = strNo & Trim(str(i)) & " ;       "   '';''strNo = strNo & Trim(Str(i))
         
         ''Debug.Print strNo & " "
         
