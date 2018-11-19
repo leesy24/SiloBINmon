@@ -974,7 +974,7 @@ Dim j As Integer
     For i = 0 To 14
         ucSilo1(i).setIDX i, ipAddr(i), ipPort(i)
         ''
-        typeTmp = Trim(str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 3100)))
+        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 3100)))
         ucSilo1(i).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
         centerXTmp = _
             GetSetting(App.Title, "Settings", "SILOcenterX_" & Format(i + 1, "00"), "Fail")
@@ -1012,20 +1012,20 @@ Dim j As Integer
         If IsNumeric(tiltMaxTmp) = False _
             Or CSng(Val(tiltMaxTmp)) > 48! Or CSng(Val(tiltMaxTmp)) < 1! _
             Then
-            tiltMaxTmp = "40.0"
+            tiltMaxTmp = "48.0"
             SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00") _
                 , tiltMaxTmp
         End If
         If IsNumeric(tiltMinTmp) = False _
             Or CSng(Val(tiltMinTmp)) < -48! Or CSng(Val(tiltMinTmp)) > -1! _
             Then
-            tiltMinTmp = "-40.0"
+            tiltMinTmp = "-48.0"
             SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00") _
                 , tiltMinTmp
         End If
         If CSng(Val(tiltMaxTmp)) <= CSng(Val(tiltMinTmp)) Then
-            tiltMaxTmp = "40.0"
-            tiltMinTmp = "-40.0"
+            tiltMaxTmp = "48.0"
+            tiltMinTmp = "-48.0"
             SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00") _
                 , tiltMaxTmp
             SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00") _
@@ -1052,7 +1052,7 @@ Dim j As Integer
 
 
     Dim TiltStr1 As String
-    TiltStr1 = Trim(str(GetSetting(App.Title, "Settings", "TiltStrBase", "-1")))
+    TiltStr1 = Trim(Str(GetSetting(App.Title, "Settings", "TiltStrBase", "-1")))
         
 
 
@@ -1083,7 +1083,7 @@ Dim j As Integer
         ''
         ''ucSilo1(i).setScanTYPE 12590  '''LD-LRS-3100,, DPS-2590  ==> UDP-Mode!(Rx_8056bytes)
         ''
-        typeTmp = Trim(str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 12590)))
+        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 12590)))
         ucSilo1(i).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
         
     Next i
@@ -1105,15 +1105,15 @@ Dim j As Integer
 '    cboIDX.Refresh
 
 
-    txtPcsPort.Text = Trim(str(GetSetting(App.Title, "Settings", "PcsPORT", "8005")))
+    txtPcsPort.Text = Trim(Str(GetSetting(App.Title, "Settings", "PcsPORT", "8005")))
     ''txtPcsIP.Text = Trim(Str(GetSetting(App.Title, "Settings", "PcsIP", "172.24.55.27")))
     txtPcsIP.Text = "172.24.55.27"  ''"127.0.0.1"  '''"172.24.55.27"
     
-    txtPcsPort2.Text = Trim(str(GetSetting(App.Title, "Settings", "PcsPORT2", "8009")))  '''NewCTS-Silo
+    txtPcsPort2.Text = Trim(Str(GetSetting(App.Title, "Settings", "PcsPORT2", "8009")))  '''NewCTS-Silo
     
     
-    txtMaxHH.Text = Trim(str(GetSetting(App.Title, "Settings", "MaxHH", "5000")))
-    txtBaseHH.Text = Trim(str(GetSetting(App.Title, "Settings", "BaseHH", "100")))
+    txtMaxHH.Text = Trim(Str(GetSetting(App.Title, "Settings", "MaxHH", "5000")))
+    txtBaseHH.Text = Trim(Str(GetSetting(App.Title, "Settings", "BaseHH", "100")))
     
     txtMaxHH.Enabled = False
     txtBaseHH.Enabled = False
