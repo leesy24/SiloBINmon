@@ -985,7 +985,7 @@ Dim j As Integer
         tiltMaxTmp = _
             GetSetting(App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00"), "Fail")
         tiltMinTmp = _
-            GetSetting(App.Title, "Settings", "SILOtileMin_" & Format(i + 1, "00"), "Fail")
+            GetSetting(App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00"), "Fail")
         tiltStepTmp = _
             GetSetting(App.Title, "Settings", "SILOtiltStep_" & Format(i + 1, "00"), "Fail")
         If IsNumeric(centerXTmp) = False _

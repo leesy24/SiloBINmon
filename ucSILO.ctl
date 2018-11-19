@@ -1810,7 +1810,7 @@ Dim bb() As Byte
                             strA = "SetAngle[-1]"
                             tmrSrun.Interval = 1000
                         ElseIf AutoTiltStarted = False Then
-                            RX_filt_Init
+                            'RX_filt_Init
                             Tilt3Dlog cmdCONN.Caption, _
                                 " " & lbCenterX _
                                 & " " & lbCenterY _
@@ -1831,7 +1831,7 @@ Dim bb() As Byte
                             ''''''''''''''''''''''''''''''''''''''''
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
                                 AutoTiltStarted = False
-                                AutoTiltOffDelayCnt = 6
+                                AutoTiltOffDelayCnt = 1
                                 lbTiltTX.BackColor = &HC000&
                                 lbTiltRX.BackColor = &HC000&
                                 lbTiltV.BackColor = &HC000&
@@ -2238,6 +2238,7 @@ Private Function LDrx12590(ix As Integer) As Integer
 Dim i As Integer
 Dim pointErr As Integer
 Dim rxAngleOK As Boolean
+Dim rxAngle#
 'Dim t As Long
 
     If rxWaitTime < 2500 And rxSTOP = 0 Then
@@ -2342,7 +2343,7 @@ Dim rxAngleOK As Boolean
                 ''
                 angleN = (i * 4) + 52  '''<==(i * 8)
                 Scan2590Dist(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
-                'Scan2590Dist(i) = Scan2590Dist(i) * 10
+                Scan2590Dist(i) = Scan2590Dist(i) * 10
                 ''angleN = angleN + 4
                 ''Scan2590Pulse(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 ''
@@ -2395,23 +2396,22 @@ Dim rxAngleOK As Boolean
             
             If (inCNT = 4086) Then  '''Do:8086??
             ''
-                Dim rxAngle As Variant  ''Double
                 ''
                 ''
                 ''Do:Max~??
                 
                 rxAngle = ((CDbl(inBUF(4056 + 12)) * 256) + (CDbl(inBUF(4056 + 11)))) / 11.3777778
-                rxAngle = rxAngle - 180
+                rxAngle = rxAngle - 180#
                 ''If (rxAngle > (-50)) And (rxAngle < (50)) Then
                     ''lbTiltTX.Caption = Trim(Str(CLng(rxAngle * 100) / 100))
-                    lbTiltTX = CLng(rxAngle * 100) / 100
+                    lbTiltTX = CLng(rxAngle * 100#) / 100
                 ''End If
                 ''
                 rxAngle = ((CDbl(inBUF(4056 + 18)) * 256) + (CDbl(inBUF(4056 + 17)))) / 11.3777778
-                rxAngle = rxAngle - 180
+                rxAngle = rxAngle - 180#
                 ''If (rxAngle > (-50)) And (rxAngle < (50)) Then
                     ''lbTiltRX.Caption = Trim(Str(CLng(rxAngle * 100) / 100))
-                    lbTiltRX = CLng(rxAngle * 100) / 100
+                    lbTiltRX = CLng(rxAngle * 100#) / 100
                 ''End If
                 rxAngleOK = True
             ''
@@ -2572,7 +2572,7 @@ AngleUp:
                 lbRXerr = lbRXerr / 10
             End If
 
-            If cmdFilt.BackColor = vbGreen Then
+            If (cmdFilt.BackColor = vbGreen) And (AutoTiltStarted = False) Then
                 RX_filt_DEEP
                 ''''''''''''
             End If
@@ -2593,7 +2593,7 @@ AngleUp:
     End If
     
     If (AutoTiltStarted = True) And (rxAngleOK = True) Then
-        If (Abs(lbTiltRX - AutoTiltNow) > 1) Then
+        If (Abs(rxAngle - AutoTiltNow) > 1.5) Then
             LDrx12590 = -6
             Exit Function  ''===>
         End If
