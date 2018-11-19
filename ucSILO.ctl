@@ -2349,7 +2349,7 @@ Dim rxAngle#
                 ''
                 angleN = (i * 4) + 52  '''<==(i * 8)
                 Scan2590Dist(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
-                Scan2590Dist(i) = Scan2590Dist(i) * 10
+                'Scan2590Dist(i) = Scan2590Dist(i) * 10
                 ''angleN = angleN + 4
                 ''Scan2590Pulse(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 ''
