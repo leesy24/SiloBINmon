@@ -435,10 +435,13 @@ Private Sub lbBinNO2_Click(Index As Integer)
     End If
 '
     frmSettings.Init _
-        Index, _
-        frmMain.ucSilo1(Index).CenterX, _
-        frmMain.ucSilo1(Index).CenterY, _
-        frmMain.ucSilo1(Index).Radius
+        Index _
+        , frmMain.ucSilo1(Index).CenterX _
+        , frmMain.ucSilo1(Index).CenterY _
+        , frmMain.ucSilo1(Index).Radius _
+        , frmMain.ucSilo1(Index).TiltMax _
+        , frmMain.ucSilo1(Index).TiltMin _
+        , frmMain.ucSilo1(Index).TiltStep
 '
     frmSettings.Visible = True
 '

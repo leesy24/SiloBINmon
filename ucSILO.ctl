@@ -684,11 +684,6 @@ Public Event upDXY()
 Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 ''''''''''''''''''''''''''''''''[ DPS2590-EX :: Tilt-Motion ] 201809~DPSex
-''    int    AutoTiltON = 0;
-''    double AutoTiltStep = 1.0;
-''    double AutoTiltNow = 0;
-''    double AutoTiltMax = 5.0;   //// Abs(angle) ~ {-5~+5}==10.0!
-
 Private AutoTiltON As Boolean
 Private AutoTiltStarted As Boolean
 Private AutoTiltOffDelayCnt As Integer
@@ -700,7 +695,7 @@ Private AutoTiltMin As Double
 ''''''''''''''''''''''''''''''''
 
 Private ScanTYPE As Integer  '''LD-LRS-3100,, DPS-2590
-Public CenterX!, CenterY!, Radius!
+Public CenterX!, CenterY!, Radius!, TiltMax!, TiltMin!, TiltStep!
 ''
 Private inBUF2590 As String   '''inBUF2590(100000) As Byte
 ''
@@ -847,11 +842,14 @@ Public Sub setScanTYPE(iScan As Integer)  '''LD-LRS-3100,, DPS-2590
     
 End Sub
 
-Public Sub setBinSettings(CenterX_I!, CenterY_I!, Radius_I!)
+Public Sub setBinSettings(CenterX_I!, CenterY_I!, Radius_I!, TiltMax_I!, TiltMin_I!, TiltStep_I!)
 '
     CenterX = CenterX_I
     CenterY = CenterY_I
     Radius = Radius_I
+    TiltMax = TiltMax_I
+    TiltMin = TiltMin_I
+    TiltStep = TiltStep_I
 '
     lbCenterX = Format(CenterX, "0.0")
     lbCenterY = Format(CenterY, "0.0")
@@ -1028,10 +1026,10 @@ Private Sub picSilo_Click()
             AutoTiltON = True
             AutoTiltOffDelayCnt = 0
             AutoTiltErrorCnt = 0
-            AutoTiltStep = -2#
-            AutoTiltNow = 40#
-            AutoTiltMax = 40#
-            AutoTiltMin = -40#
+            AutoTiltStep = TiltStep * (-1)
+            AutoTiltNow = TiltMax
+            AutoTiltMax = TiltMax
+            AutoTiltMin = TiltMin
         Else
             AutoTiltStarted = False
             AutoTiltOffDelayCnt = 6

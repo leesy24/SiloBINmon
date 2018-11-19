@@ -63,14 +63,14 @@ errFile1:
     
 End Sub
 
-Public Sub SaveBuffer2File(index As Integer, buffer() As Byte, size As Integer)
+Public Sub SaveBuffer2File(Index As Integer, buffer() As Byte, size As Integer)
     Dim dirName         As String
     Dim fileName        As String
     Dim fileNumber
     Dim i As Integer
     
     dirName = "C:\BIN_LOG\"
-    fileName = dirName & index & "_" & Format(Now, "YYYYMMDDhhmmss") & ".dat"
+    fileName = dirName & Index & "_" & Format(Now, "YYYYMMDDhhmmss") & ".dat"
 
 On Error GoTo errFile1
 
@@ -99,14 +99,14 @@ errFile1:
     
 End Sub
 
-Public Sub Tilt3Dlog(index As Integer, str As String)
+Public Sub Tilt3Dlog(FileNamePrefix As String, str As String)
     Dim dirName         As String
     Dim fileName        As String
     Dim fileNumber
     Dim i As Integer
     
     dirName = "C:\BIN_LOG\"
-    fileName = dirName & "3D_" & index & "_" & Format(Now, "YYYYMMDD") & ".dat"
+    fileName = dirName & FileNamePrefix & "_3D_" & Format(Now, "YYYYMMDD") & ".dat"
 
 On Error GoTo errFile1
 

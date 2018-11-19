@@ -17,19 +17,6 @@ Begin VB.Form frmMain
    ScaleHeight     =   8040
    ScaleWidth      =   16230
    ShowInTaskbar   =   0   'False
-   Begin ADSOCXLib.AdsOcx AdsOcx2 
-      Left            =   1860
-      Top             =   1380
-      _Version        =   131074
-      _ExtentX        =   900
-      _ExtentY        =   953
-      _StockProps     =   0
-      AdsAmsServerNetId=   ""
-      AdsAmsClientPort=   33019
-      AdsClientType   =   ""
-      AdsClientAdsState=   ""
-      AdsClientAdsControl=   ""
-   End
    Begin ADSOCXLib.AdsOcx AdsOcx1 
       Left            =   960
       Top             =   1320
@@ -39,6 +26,19 @@ Begin VB.Form frmMain
       _StockProps     =   0
       AdsAmsServerNetId=   ""
       AdsAmsClientPort=   33017
+      AdsClientType   =   ""
+      AdsClientAdsState=   ""
+      AdsClientAdsControl=   ""
+   End
+   Begin ADSOCXLib.AdsOcx AdsOcx2 
+      Left            =   1860
+      Top             =   1380
+      _Version        =   131074
+      _ExtentX        =   900
+      _ExtentY        =   953
+      _StockProps     =   0
+      AdsAmsServerNetId=   ""
+      AdsAmsClientPort=   33019
       AdsClientType   =   ""
       AdsClientAdsState=   ""
       AdsClientAdsControl=   ""
@@ -969,7 +969,7 @@ Dim j As Integer
     ipAddr(14) = "192.168.0.72": ipPort(14) = "7007"
     
     Dim typeTmp As Integer
-    Dim centerXTmp$, centerYTmp$, radiusTmp$
+    Dim centerXTmp$, centerYTmp$, radiusTmp$, tiltMaxTmp$, tiltMinTmp$, tiltStepTmp$
     
     For i = 0 To 14
         ucSilo1(i).setIDX i, ipAddr(i), ipPort(i)
@@ -982,29 +982,65 @@ Dim j As Integer
             GetSetting(App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00"), "Fail")
         radiusTmp = _
             GetSetting(App.Title, "Settings", "SILOradius_" & Format(i + 1, "00"), "Fail")
+        tiltMaxTmp = _
+            GetSetting(App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00"), "Fail")
+        tiltMinTmp = _
+            GetSetting(App.Title, "Settings", "SILOtileMin_" & Format(i + 1, "00"), "Fail")
+        tiltStepTmp = _
+            GetSetting(App.Title, "Settings", "SILOtiltStep_" & Format(i + 1, "00"), "Fail")
         If IsNumeric(centerXTmp) = False _
             Or Abs(CSng(Val(centerXTmp))) > 25! _
             Then
             centerXTmp = "0.0"
-            SaveSetting App.Title, "Settings", "SILOcenterX_" & Format(i + 1, "00"), _
-                centerXTmp
+            SaveSetting App.Title, "Settings", "SILOcenterX_" & Format(i + 1, "00") _
+                , centerXTmp
         End If
         If IsNumeric(centerYTmp) = False _
             Or Abs(CSng(Val(centerYTmp))) > 25! _
             Then
             centerYTmp = "0.0"
-            SaveSetting App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00"), _
-                centerYTmp
+            SaveSetting App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00") _
+                , centerYTmp
         End If
         If IsNumeric(radiusTmp) = False _
-            Or CSng(Val(radiusTmp)) < 1! _
-            Or CSng(Val(radiusTmp)) > 25! _
+            Or CSng(Val(radiusTmp)) < 1! Or CSng(Val(radiusTmp)) > 25! _
             Then
             radiusTmp = "19.0"
-            SaveSetting App.Title, "Settings", "SILOradius_" & Format(i + 1, "00"), _
-                radiusTmp
+            SaveSetting App.Title, "Settings", "SILOradius_" & Format(i + 1, "00") _
+                , radiusTmp
         End If
-        ucSilo1(i).setBinSettings CSng(centerXTmp), CSng(centerYTmp), CSng(radiusTmp)
+        If IsNumeric(tiltMaxTmp) = False _
+            Or CSng(Val(tiltMaxTmp)) > 48! Or CSng(Val(tiltMaxTmp)) < 1! _
+            Then
+            tiltMaxTmp = "40.0"
+            SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00") _
+                , tiltMaxTmp
+        End If
+        If IsNumeric(tiltMinTmp) = False _
+            Or CSng(Val(tiltMinTmp)) < -48! Or CSng(Val(tiltMinTmp)) > -1! _
+            Then
+            tiltMinTmp = "-40.0"
+            SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00") _
+                , tiltMinTmp
+        End If
+        If CSng(Val(tiltMaxTmp)) <= CSng(Val(tiltMinTmp)) Then
+            tiltMaxTmp = "40.0"
+            tiltMinTmp = "-40.0"
+            SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00") _
+                , tiltMaxTmp
+            SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00") _
+                , tiltMinTmp
+        End If
+        If IsNumeric(tiltStepTmp) = False _
+            Or CSng(Val(tiltStepTmp)) > 5! Or CSng(Val(tiltStepTmp)) < 0.5! _
+            Then
+            tiltStepTmp = "2.0"
+            SaveSetting App.Title, "Settings", "SILOtiltStep_" & Format(i + 1, "00") _
+                , tiltStepTmp
+        End If
+        ucSilo1(i).setBinSettings _
+            CSng(centerXTmp), CSng(centerYTmp), CSng(radiusTmp) _
+            , CSng(tiltMaxTmp), CSng(tiltMinTmp), CSng(tiltStepTmp)
     Next i
 
 ''    ucSilo1(2).setScanTYPE 2590  '''''LD-LRS-3100,, DPS-2590 ==> CONSOLE-Mode!
