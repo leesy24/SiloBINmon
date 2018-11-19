@@ -798,7 +798,7 @@ End Enum
 
 Private rxWaitTime As Integer
 
-
+Private tilt3Dlog_fn As Integer
 
 ''Private Declare Function Polygon Lib "gdi32" (ByVal hdc As Long, lpPoint As POINTAPI, ByVal nCount As Long) As Long
 
@@ -1021,7 +1021,7 @@ End Sub
 
 
 Private Sub picSilo_Click()
-    If ScanTYPE = 22590 Then
+    If ScanTYPE = 22590 And tSrunMode >= eSrunMode.SendCmd Then
         If AutoTiltStarted = False Then
             AutoTiltON = True
             AutoTiltOffDelayCnt = 0
@@ -1030,9 +1030,13 @@ Private Sub picSilo_Click()
             AutoTiltNow = TiltMax
             AutoTiltMax = TiltMax
             AutoTiltMin = TiltMin
+            lbTiltTX.BackColor = &HFF00&
+            lbTiltRX.BackColor = &HFF00&
+            lbTiltV.BackColor = &HFF00&
         Else
             AutoTiltStarted = False
-            AutoTiltOffDelayCnt = 6
+            Tilt3Dlog_end tilt3Dlog_fn
+            AutoTiltOffDelayCnt = 1
             lbTiltTX.BackColor = &HC000&
             lbTiltRX.BackColor = &HC000&
             lbTiltV.BackColor = &HC000&
@@ -1191,7 +1195,7 @@ cancleDRAW:
     picSilo.Line (minXL, 5500)-(minXR, 5500)
 
 
-    If (lbRXcnt > 2) And (AutoTiltON = False) Then
+    If (lbRXcnt > 2) And (AutoTiltON = False) And (cmdFilt.BackColor = vbGreen) Then
     
         Dim YY(300) As Long
         Dim CC As Long
@@ -1789,12 +1793,12 @@ Dim bb() As Byte
         
         Case ReceiveData
             rxWaitTime = rxWaitTime + tmrSrun.Interval
-            
+'
             If ScanTYPE = 22590 Then
 
                 '''''''''
                 ret = LDrx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
-            
+'
                 If ret = 0 Then
                     If AutoTiltON = True Then
                         If AutoTiltOffDelayCnt <> 0 Then
@@ -1805,21 +1809,21 @@ Dim bb() As Byte
                                 lbTiltRX.BackColor = &HFF8080
                                 lbTiltV.BackColor = &HFF8080
                             End If
-                            
+'
                             lbTiltV = "-1"
                             strA = "SetAngle[-1]"
                             tmrSrun.Interval = 1000
                         ElseIf AutoTiltStarted = False Then
                             'RX_filt_Init
-                            Tilt3Dlog cmdCONN.Caption, _
-                                " " & lbCenterX _
-                                & " " & lbCenterY _
-                                & " " & lbRadius
+                            tilt3Dlog_fn = _
+                                Tilt3Dlog_start( _
+                                    cmdCONN.Caption, _
+                                    " " & lbCenterX _
+                                    & " " & lbCenterY _
+                                    & " " & lbRadius)
+'
                             AutoTiltStarted = True
-                            lbTiltTX.BackColor = &HFF00&
-                            lbTiltRX.BackColor = &HFF00&
-                            lbTiltV.BackColor = &HFF00&
-                            
+'
                             strA = Trim(str(CInt(AutoTiltNow * 100) / 100))
                             lbTiltV.Caption = strA
                             strA = "SetAngle[" & strA & "]"
@@ -1831,11 +1835,12 @@ Dim bb() As Byte
                             ''''''''''''''''''''''''''''''''''''''''
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
                                 AutoTiltStarted = False
+                                Tilt3Dlog_end tilt3Dlog_fn
                                 AutoTiltOffDelayCnt = 1
                                 lbTiltTX.BackColor = &HC000&
                                 lbTiltRX.BackColor = &HC000&
                                 lbTiltV.BackColor = &HC000&
-                                
+ '
                                 lbTiltV = "-1"
                                 strA = "SetAngle[-1]"
                                 tmrSrun.Interval = 1000
@@ -1852,25 +1857,26 @@ Dim bb() As Byte
                         strA = "SetAngle[-1]"
                         tmrSrun.Interval = 2000
                     End If
-    
+'
                     bb = StrConv(strA, vbFromUnicode)
                     ''
                     SEND_wsickLD bb
                     '''''''''''''''
-                
+'
                     tSrunMode = eSrunMode.SendCmd
-                    
+'
                     'tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
                 ElseIf ret < 0 Then
                     If AutoTiltStarted = True Then
                         AutoTiltErrorCnt = AutoTiltErrorCnt + 1
                         If AutoTiltErrorCnt > 5 Then
                             AutoTiltStarted = False
+                            Tilt3Dlog_end tilt3Dlog_fn
                             AutoTiltOffDelayCnt = 1
                             lbTiltTX.BackColor = &HC000&
                             lbTiltRX.BackColor = &HC000&
                             lbTiltV.BackColor = &HC000&
-                            
+'
                             lbTiltV = "-1"
                             strA = "SetAngle[-1]"
                             tmrSrun.Interval = 1000
@@ -1886,17 +1892,17 @@ Dim bb() As Byte
                         strA = "SetAngle[-1]"
                         tmrSrun.Interval = 2000
                     End If
-    
+'
                     bb = StrConv(strA, vbFromUnicode)
                     ''
                     SEND_wsickLD bb
                     '''''''''''''''
-                
+'
                     tSrunMode = eSrunMode.SendCmd
                     
                     'tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
                 End If
-            
+'
             ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
                 ret = LDrx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
                 
@@ -2330,8 +2336,8 @@ Dim rxAngle#
             
             ''''cmdCONN.BackColor = vbGreen
             
-            If cmdFilt.BackColor <> vbGreen Then
-                SaveBuffer2File UCindex, inBUF, 4056
+            If (cmdFilt.BackColor <> vbGreen) And (AutoTiltStarted <> True) Then
+                SaveBuffer2File cmdCONN.Caption & "_raw_", inBUF, inCNT
             End If
             
             Dim angleN As Integer
@@ -2597,68 +2603,38 @@ AngleUp:
             LDrx12590 = -6
             Exit Function  ''===>
         End If
-        
+'
+        If (cmdFilt.BackColor = vbGreen) And (AutoTiltStarted = True) Then
+            SaveBuffer2File cmdCONN.Caption & "_raw_" & Format(rxAngle, "0.00") & "_", inBUF, inCNT
+        End If
+'
         Dim X As Double
         Dim Y As Double
         Dim z As Double
         Dim r As Double
-        
+'
         i = 30
-        r = (rxWORD(i) + rxWORD(i + 1) + rxWORD(i + 1) / 2#) / 2.5
-        X = r _
-            * Cos(((i / 2) + 30) * (PI / 180)) _
-            / 1000#
-        Y = r _
-            * Sin(((i / 2) + 30) * (PI / 180)) _
-            * Sin(lbTiltRX * (PI / 180)) _
-            / 1000#
-        z = 50# _
-            - (r _
-            * Sin(((i / 2) + 30) * (PI / 180)) _
-            * Cos(lbTiltRX * (PI / 180)) _
-            / 1000#)
-        'DGPSLog vbTab & lbTiltRX & vbTab & (i / 2) + 30 _
-        '    & vbTab & r
-        'DGPSLog vbTab & AutoTiltNow _
-        '    & vbTab & lbTiltRX _
-        '
-        'DGPSLog vbTab & i _
-        '
-        'DGPSLog vbTab & lbTiltRX _
-        '
-        Tilt3Dlog cmdCONN.Caption, _
+        r = (rxWORD(i) + rxWORD(i + 1) + rxWORD(i + 2) / 2#) / 2.5
+        X = r * Cos(((i / 2) + 30) * (PI / 180)) / 1000#
+        Y = r * Sin(((i / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
+        z = 50# - (r * Sin(((i / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
+        Tilt3Dlog_add tilt3Dlog_fn, _
             " " & lbTiltRX _
             & vbTab & (i / 2) + 30 _
             & vbTab & vbTab & X _
             & " " & vbTab & Y _
             & " " & vbTab & z
         For i = 34 To xcMax - 30 - 2 Step 4
-            r = (rxWORD(i - 2) / 2# _
-                + rxWORD(i - 1) + rxWORD(i) + rxWORD(i + 1) _
-                + rxWORD(i + 2) / 2#) _
+            r = ( _
+                    rxWORD(i - 2) / 2# + rxWORD(i - 1) _
+                    + rxWORD(i) _
+                    + rxWORD(i + 1) + rxWORD(i + 2) / 2# _
+                ) _
                 / 4#
-            X = r _
-                * Cos(((i / 2) + 30) * (PI / 180)) _
-                / 1000#
-            Y = r _
-                * Sin(((i / 2) + 30) * (PI / 180)) _
-                * Sin(lbTiltRX * (PI / 180)) _
-                / 1000#
-            z = 50# _
-                - (r _
-                * Sin(((i / 2) + 30) * (PI / 180)) _
-                * Cos(lbTiltRX * (PI / 180)) _
-                / 1000#)
-            'DGPSLog vbTab & lbTiltRX & vbTab & (i / 2) + 30 _
-            '    & vbTab & r
-            'DGPSLog vbTab & AutoTiltNow _
-            '    & vbTab & lbTiltRX _
-            '
-            'DGPSLog vbTab & i _
-            '
-            'DGPSLog vbTab & lbTiltRX _
-            '
-            Tilt3Dlog cmdCONN.Caption, _
+            X = r * Cos(((i / 2) + 30) * (PI / 180)) / 1000#
+            Y = r * Sin(((i / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
+            z = 50# - (r * Sin(((i / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
+            Tilt3Dlog_add tilt3Dlog_fn, _
                 " " & lbTiltRX _
                 & vbTab & (i / 2) + 30 _
                 & vbTab & vbTab & X _
@@ -2667,40 +2643,22 @@ AngleUp:
         Next i
         'i = xcMax - 30 - 2
         r = (rxWORD(i - 2) / 2# + rxWORD(i - 1) + rxWORD(i)) / 2.5
-        X = r _
-            * Cos(((i / 2) + 30) * (PI / 180)) _
-            / 1000#
-        Y = r _
-            * Sin(((i / 2) + 30) * (PI / 180)) _
-            * Sin(lbTiltRX * (PI / 180)) _
-            / 1000#
-        z = 50# _
-            - (r _
-            * Sin(((i / 2) + 30) * (PI / 180)) _
-            * Cos(lbTiltRX * (PI / 180)) _
-            / 1000#)
-        'DGPSLog vbTab & lbTiltRX & vbTab & (i / 2) + 30 _
-        '    & vbTab & r
-        'DGPSLog vbTab & AutoTiltNow _
-        '    & vbTab & lbTiltRX _
-        '
-        'DGPSLog vbTab & i _
-        '
-        'DGPSLog vbTab & lbTiltRX _
-        '
-        Tilt3Dlog cmdCONN.Caption, _
+        X = r * Cos(((i / 2) + 30) * (PI / 180)) / 1000#
+        Y = r * Sin(((i / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
+        z = 50# - (r * Sin(((i / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
+        Tilt3Dlog_add tilt3Dlog_fn, _
             " " & lbTiltRX _
             & vbTab & (i / 2) + 30 _
             & vbTab & vbTab & X _
             & " " & vbTab & Y _
             & " " & vbTab & z
     End If
-
+'
     LDrx12590 = 0
-
+'
     't = GetTickCount - t
     'DGPSLog "LDrx12590(" & UCindex & ") END " & t & "", "SILO"
-
+'
 End Function
 
 
