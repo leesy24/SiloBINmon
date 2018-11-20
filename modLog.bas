@@ -130,7 +130,9 @@ On Error GoTo errFile1
     End If
     Put #FileNumber, , Message & vbCrLf
 '
-    FileRegister.Add fileName, str(FileNumber)
+On Error Resume Next
+'
+    FileRegister.Add fileName, Str(FileNumber)
 '
 errFile1:
     dirName = ""
@@ -143,14 +145,13 @@ End Function
 Public Sub Tilt3Dlog_add(FileNumber As Integer, Message As String)
     Dim fileName        As String
 '
-    fileName = FileRegister(str(FileNumber))
+On Error Resume Next
+'
+    fileName = FileRegister.Item(Str(FileNumber))
 '
 On Error GoTo errFile1
 '
-    If Not FileExists(fileName) Then
-        Put #FileNumber, , Message & vbCrLf
-    Else
-        Seek #FileNumber, LOF(FileNumber) + 1
+    If FileExists(fileName) Then
         Put #FileNumber, , Message & vbCrLf
     End If
 '
@@ -166,8 +167,9 @@ On Error GoTo errFile1
     Close #FileNumber
 '
 errFile1:
-    FileRegister.Remove str(FileNumber)
     ''''''''''''(just-cancle~)
 '
+On Error Resume Next
+    FileRegister.Remove Str(FileNumber)
+'
 End Sub
-

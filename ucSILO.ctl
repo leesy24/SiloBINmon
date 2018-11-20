@@ -1022,24 +1022,34 @@ End Sub
 
 Private Sub picSilo_Click()
     If ScanTYPE = 22590 And tSrunMode >= eSrunMode.SendCmd Then
-        If AutoTiltStarted = False Then
-            AutoTiltON = True
-            AutoTiltOffDelayCnt = 0
-            AutoTiltErrorCnt = 0
-            AutoTiltStep = TiltStep * (-1)
-            AutoTiltNow = TiltMax
-            AutoTiltMax = TiltMax
-            AutoTiltMin = TiltMin
-            lbTiltTX.BackColor = &HFF00&
-            lbTiltRX.BackColor = &HFF00&
-            lbTiltV.BackColor = &HFF00&
-        Else
-            AutoTiltStarted = False
-            Tilt3Dlog_end tilt3Dlog_fn
-            AutoTiltOffDelayCnt = 1
-            lbTiltTX.BackColor = &HC000&
-            lbTiltRX.BackColor = &HC000&
-            lbTiltV.BackColor = &HC000&
+        If AutoTiltON = False Then
+            If AutoTiltStarted = False Then
+                AutoTiltON = True
+                AutoTiltOffDelayCnt = 0
+                AutoTiltErrorCnt = 0
+                AutoTiltStep = TiltStep * (-1)
+                AutoTiltNow = TiltMax
+                AutoTiltMax = TiltMax
+                AutoTiltMin = TiltMin
+                lbTiltTX.BackColor = &HFF00&
+                lbTiltRX.BackColor = &HFF00&
+                lbTiltV.BackColor = &HFF00&
+            End If
+        Else ' of If AutoTiltON = False Then
+            '' Check not yet started
+            If AutoTiltStarted = False Then
+                AutoTiltON = False
+                lbTiltTX.BackColor = &HFF8080
+                lbTiltRX.BackColor = &HFF8080
+                lbTiltV.BackColor = &HFF8080
+            Else
+                AutoTiltStarted = False
+                Tilt3Dlog_end tilt3Dlog_fn
+                AutoTiltOffDelayCnt = 1
+                lbTiltTX.BackColor = &HC000&
+                lbTiltRX.BackColor = &HC000&
+                lbTiltV.BackColor = &HC000&
+            End If
         End If
     End If
 End Sub
@@ -1824,7 +1834,7 @@ Dim bb() As Byte
 '
                             AutoTiltStarted = True
 '
-                            strA = Trim(str(CInt(AutoTiltNow * 100) / 100))
+                            strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
                             lbTiltV.Caption = strA
                             strA = "SetAngle[" & strA & "]"
                             ''
@@ -1845,7 +1855,7 @@ Dim bb() As Byte
                                 strA = "SetAngle[-1]"
                                 tmrSrun.Interval = 1000
                             Else
-                                strA = Trim(str(CInt(AutoTiltNow * 100) / 100))
+                                strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
                                 lbTiltV = strA
                                 strA = "SetAngle[" & strA & "]"
                                 ''
@@ -1881,7 +1891,7 @@ Dim bb() As Byte
                             strA = "SetAngle[-1]"
                             tmrSrun.Interval = 1000
                         Else
-                            strA = Trim(str(CInt(AutoTiltNow * 100) / 100))
+                            strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
                             lbTiltV.Caption = strA
                             strA = "SetAngle[" & strA & "]"
                             ''
@@ -2762,7 +2772,7 @@ Dim i As Integer
         If i < 100 Then strNo = strNo & " "
         If i < 10 Then strNo = strNo & " "
         ''
-        strNo = strNo & Trim(str(i)) & " ;       "   '';''strNo = strNo & Trim(Str(i))
+        strNo = strNo & Trim(Str(i)) & " ;       "   '';''strNo = strNo & Trim(Str(i))
         
         ''Debug.Print strNo & " "
         
