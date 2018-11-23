@@ -1045,7 +1045,7 @@ Private Sub picSilo_Click()
             Else
                 AutoTiltStarted = False
                 Tilt3Dlog_end tilt3Dlog_fn
-                AutoTiltOffDelayCnt = 1
+                AutoTiltOffDelayCnt = 6
                 lbTiltTX.BackColor = &HC000&
                 lbTiltRX.BackColor = &HC000&
                 lbTiltV.BackColor = &HC000&
@@ -1824,7 +1824,7 @@ Dim bb() As Byte
                             strA = "SetAngle[-1]"
                             tmrSrun.Interval = 1000
                         ElseIf AutoTiltStarted = False Then
-                            'RX_filt_Init
+                            RX_filt_Init
                             tilt3Dlog_fn = _
                                 Tilt3Dlog_start( _
                                     cmdCONN.Caption, _
@@ -1846,7 +1846,7 @@ Dim bb() As Byte
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
                                 AutoTiltStarted = False
                                 Tilt3Dlog_end tilt3Dlog_fn
-                                AutoTiltOffDelayCnt = 1
+                                AutoTiltOffDelayCnt = 6
                                 lbTiltTX.BackColor = &HC000&
                                 lbTiltRX.BackColor = &HC000&
                                 lbTiltV.BackColor = &HC000&
@@ -1882,7 +1882,7 @@ Dim bb() As Byte
                         If AutoTiltErrorCnt > 5 Then
                             AutoTiltStarted = False
                             Tilt3Dlog_end tilt3Dlog_fn
-                            AutoTiltOffDelayCnt = 1
+                            AutoTiltOffDelayCnt = 6
                             lbTiltTX.BackColor = &HC000&
                             lbTiltRX.BackColor = &HC000&
                             lbTiltV.BackColor = &HC000&
@@ -2588,7 +2588,7 @@ AngleUp:
                 lbRXerr = lbRXerr / 10
             End If
 
-            If (cmdFilt.BackColor = vbGreen) And (AutoTiltStarted = False) Then
+            If (cmdFilt.BackColor = vbGreen) Then
                 RX_filt_DEEP
                 ''''''''''''
             End If
