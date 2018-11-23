@@ -900,6 +900,13 @@ Public Sub scan_STOP()
 ''    If wsock1.State = sckConnected Then
 ''        wsock1.SendData stopString
 ''    End If
+    If AutoTiltON = True Then
+        If AutoTiltStarted = False Then
+            autoTilt_off
+        Else
+            autoTilt_stop
+        End If
+    End If
     
     tmrSrun.Enabled = False
 End Sub
@@ -1025,37 +1032,52 @@ Private Sub picSilo_Click()
     If ScanTYPE = 22590 And tSrunMode >= eSrunMode.SendCmd Then
         If AutoTiltON = False Then
             If AutoTiltStarted = False Then
-                AutoTiltON = True
-                AutoTiltOffDelayCnt = 0
-                AutoTiltCnt = 0
-                AutoTiltErrorCnt = 0
-                AutoTiltStep = TiltStep * (-1)
-                AutoTiltNow = TiltMax
-                AutoTiltMax = TiltMax
-                AutoTiltMin = TiltMin
-                lbTiltTX.BackColor = &HFF00&
-                lbTiltRX.BackColor = &HFF00&
-                lbTiltV.BackColor = &HFF00&
+                autoTilt_on
             End If
         Else ' of If AutoTiltON = False Then
             '' Check not yet started
             If AutoTiltStarted = False Then
-                AutoTiltON = False
-                lbTiltTX.BackColor = &HFF8080
-                lbTiltRX.BackColor = &HFF8080
-                lbTiltV.BackColor = &HFF8080
+                autoTilt_off
             Else
-                AutoTiltStarted = False
-                Tilt3Dlog_end tilt3Dlog_fn
-                AutoTiltOffDelayCnt = 6
-                lbTiltTX.BackColor = &HC000&
-                lbTiltRX.BackColor = &HC000&
-                lbTiltV.BackColor = &HC000&
+                autoTilt_stop
             End If
         End If
     End If
 End Sub
 
+Private Sub autoTilt_on()
+    AutoTiltON = True
+    AutoTiltOffDelayCnt = 0
+    AutoTiltCnt = 0
+    AutoTiltErrorCnt = 0
+    AutoTiltStep = TiltStep * (-1)
+    AutoTiltNow = TiltMax
+    AutoTiltMax = TiltMax
+    AutoTiltMin = TiltMin
+    lbTiltTX.BackColor = &HFF00&
+    lbTiltRX.BackColor = &HFF00&
+    lbTiltV.BackColor = &HFF00&
+End Sub
+
+
+Private Sub autoTilt_start()
+End Sub
+
+Private Sub autoTilt_stop()
+    AutoTiltStarted = False
+    Tilt3Dlog_end tilt3Dlog_fn
+    AutoTiltOffDelayCnt = 6
+    lbTiltTX.BackColor = &HC000&
+    lbTiltRX.BackColor = &HC000&
+    lbTiltV.BackColor = &HC000&
+End Sub
+
+Private Sub autoTilt_off()
+    AutoTiltON = False
+    lbTiltTX.BackColor = &HFF8080
+    lbTiltRX.BackColor = &HFF8080
+    lbTiltV.BackColor = &HFF8080
+End Sub
 
 Private Sub picSiloDrawInit()
 Dim i As Integer
@@ -1816,10 +1838,7 @@ Dim bb() As Byte
                         If AutoTiltOffDelayCnt <> 0 Then
                             AutoTiltOffDelayCnt = AutoTiltOffDelayCnt - 1
                             If AutoTiltOffDelayCnt = 0 Then
-                                AutoTiltON = False
-                                lbTiltTX.BackColor = &HFF8080
-                                lbTiltRX.BackColor = &HFF8080
-                                lbTiltV.BackColor = &HFF8080
+                                autoTilt_off
                             End If
 '
                             lbTiltV = "-1"
@@ -1847,13 +1866,8 @@ Dim bb() As Byte
                             AutoTiltCnt = AutoTiltCnt + 1
                             ''''''''''''''''''''''''''''''''''''''''
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
-                                AutoTiltStarted = False
-                                Tilt3Dlog_end tilt3Dlog_fn
-                                AutoTiltOffDelayCnt = 6
-                                lbTiltTX.BackColor = &HC000&
-                                lbTiltRX.BackColor = &HC000&
-                                lbTiltV.BackColor = &HC000&
- '
+                                autoTilt_stop
+'
                                 lbTiltV = "-1"
                                 strA = "SetAngle[-1]"
                                 tmrSrun.Interval = 1000
@@ -1883,12 +1897,7 @@ Dim bb() As Byte
                     If AutoTiltStarted = True Then
                         AutoTiltErrorCnt = AutoTiltErrorCnt + 1
                         If AutoTiltErrorCnt > 5 Then
-                            AutoTiltStarted = False
-                            Tilt3Dlog_end tilt3Dlog_fn
-                            AutoTiltOffDelayCnt = 6
-                            lbTiltTX.BackColor = &HC000&
-                            lbTiltRX.BackColor = &HC000&
-                            lbTiltV.BackColor = &HC000&
+                            autoTilt_stop
 '
                             lbTiltV = "-1"
                             strA = "SetAngle[-1]"
