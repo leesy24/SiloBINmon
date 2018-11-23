@@ -688,6 +688,7 @@ Private AutoTiltON As Boolean
 Private AutoTiltStarted As Boolean
 Private AutoTiltOffDelayCnt As Integer
 Private AutoTiltErrorCnt As Integer
+Private AutoTiltCnt As Integer
 Private AutoTiltStep As Double
 Private AutoTiltNow As Double
 Private AutoTiltMax As Double
@@ -1026,6 +1027,7 @@ Private Sub picSilo_Click()
             If AutoTiltStarted = False Then
                 AutoTiltON = True
                 AutoTiltOffDelayCnt = 0
+                AutoTiltCnt = 0
                 AutoTiltErrorCnt = 0
                 AutoTiltStep = TiltStep * (-1)
                 AutoTiltNow = TiltMax
@@ -1842,6 +1844,7 @@ Dim bb() As Byte
                         Else
                             AutoTiltErrorCnt = 0
                             AutoTiltNow = AutoTiltNow + AutoTiltStep
+                            AutoTiltCnt = AutoTiltCnt + 1
                             ''''''''''''''''''''''''''''''''''''''''
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
                                 AutoTiltStarted = False
@@ -2615,7 +2618,7 @@ AngleUp:
         End If
 '
         If (cmdFilt.BackColor = vbGreen) And (AutoTiltStarted = True) Then
-            SaveBuffer2File cmdCONN.Caption & "_raw_" & Format(rxAngle, "0.00") & "_", inBUF, inCNT
+            SaveBuffer2File cmdCONN.Caption & "_" & Format(AutoTiltCnt, "00") & "_" & Format(rxAngle, "0.00") & "_", inBUF, inCNT
         End If
 '
         Dim X As Double
