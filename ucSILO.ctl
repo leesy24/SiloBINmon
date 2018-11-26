@@ -1027,23 +1027,6 @@ Private Sub UserControl_Initialize()
 
 End Sub
 
-Private Sub picSilo_Click()
-    If ScanTYPE = 22590 And tSrunMode >= eSrunMode.SendCmd Then
-        If AutoTiltON = False Then
-            If AutoTiltStarted = False Then
-                autoTilt_on
-            End If
-        Else ' of If AutoTiltON = False Then
-            '' Check not yet started
-            If AutoTiltStarted = False Then
-                autoTilt_off
-            Else
-                autoTilt_stop
-            End If
-        End If
-    End If
-End Sub
-
 Private Sub autoTilt_on()
     AutoTiltON = True
     AutoTiltOffDelayCnt = 0
