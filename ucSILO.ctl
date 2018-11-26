@@ -766,7 +766,7 @@ Dim RxHeader As Variant  ''HDmsg = Chr(2) + Chr(2) + Chr(2) + Chr(2) + Chr(0) + 
     Dim r(0 To 2000) As Double                  'radius data
     Dim X(0 To 2000) As Double                  'x - cartesian coordinate
     Dim Y(0 To 2000) As Double                  'y - cartesian coordinate
-    Dim N As Integer                            'number of data values
+    Dim n As Integer                            'number of data values
 
     
     Dim minXL As Double
@@ -1032,10 +1032,6 @@ Private Sub picSilo_Click()
         If AutoTiltON = False Then
             If AutoTiltStarted = False Then
                 autoTilt_on
-                'If UCindex = 10 Then _
-                '    SurFit_Open "C:\BIN_LOG\S11_3D_20181126_124339_875.dat"
-                'If UCindex = 13 Then _
-                '    SurFit_Open "C:\BIN_LOG\S14_3D_20181126_124923_265.dat"
             End If
         Else ' of If AutoTiltON = False Then
             '' Check not yet started
@@ -1083,7 +1079,7 @@ Private Sub autoTilt_off()
 End Sub
 
 Private Sub picSiloDrawInit()
-Dim I As Integer
+Dim i As Integer
     
     minxrange = 0
     maxxrange = 6000  ''20000
@@ -1116,15 +1112,15 @@ Dim I As Integer
         
         If baseHH > 50 Then
             picSilo.ForeColor = &H808080               ''vbCyan  ''&H404040  ''vbMagenta  '' vbCyan  ''&H707000
-            For I = 25 To (baseHH) Step 25
-                Ellipse 3000, 500 + I, 2050, 205  ''2250, 225    ''2480, 248
-            Next I
+            For i = 25 To (baseHH) Step 25
+                Ellipse 3000, 500 + i, 2050, 205  ''2250, 225    ''2480, 248
+            Next i
         End If
         
         picSilo.ForeColor = &H4080               ''vbCyan  ''&H404040  ''vbMagenta  '' vbCyan  ''&H707000
-        For I = baseHH To baseHH + (CLng(lbHH) * 100) Step 25
-            Ellipse 3000, 500 + I, 2050, 205  ''2250, 225    ''2480, 248
-        Next I
+        For i = baseHH To baseHH + (CLng(lbHH) * 100) Step 25
+            Ellipse 3000, 500 + i, 2050, 205  ''2250, 225    ''2480, 248
+        Next i
 
         DoEvents
       End If
@@ -1134,19 +1130,19 @@ End Sub
 
 Public Sub picSiloDRAW()
 
-Dim K As Double
+Dim k As Double
 Dim s As Double
 Dim cut As Integer
 
-Dim I As Integer
-Dim J As Integer
-Dim D As Integer
+Dim i As Integer
+Dim j As Integer
+Dim d As Integer
 
 Dim SideD As Integer  '';20160617~
 
 
 
-    N = xcMax  ''119
+    n = xcMax  ''119
     
 '    x(1) = 0
 '    Y(1) = 0
@@ -1165,11 +1161,11 @@ Dim SideD As Integer  '';20160617~
         cut = 30 '''60
     End If
     
-    For K = cut To N - cut + 2   '''{0 to n}'''
+    For k = cut To n - cut + 2   '''{0 to n}'''
 
-            s = K / 2#
+            s = k / 2#
 
-            X(K) = (rxWORD(K) / 10) * Cos(((s) + 30 + lbAngle) * (PI / 180)) + 3000
+            X(k) = (rxWORD(k) / 10) * Cos(((s) + 30 + lbAngle) * (PI / 180)) + 3000
     
             ''x(k) = x(k) + Val(txtOpX.Text)
     
@@ -1177,54 +1173,54 @@ Dim SideD As Integer  '';20160617~
             
             ''Y(k) = maxyrange - 500 - (((rxWORD(k) / 10) * Sin(((s) + 30 + lbAngle) * (PI / 180))) * 0.97)
             
-            Y(K) = (rxWORD(K) / 10) * Sin(((s) + 30 + lbAngle) * (PI / 180))
+            Y(k) = (rxWORD(k) / 10) * Sin(((s) + 30 + lbAngle) * (PI / 180))
 ''            Y(k) = Y(k) * 0.97
 ''            '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''';;HHHHHHH<---(50M+@):SILO
             
             
             ''Y(k) = maxyrange - 500 - Y(k)   ''; Y(x)=0 ==> 5500
 ''20171229
-            Y(K) = maxyrange - 500 - Y(K)   ''; Y(x)=0 ==> 5500
+            Y(k) = maxyrange - 500 - Y(k)   ''; Y(x)=0 ==> 5500
 
             
             
             
-            If (X(K) < 500) Or (X(K) > 5500) Then GoTo cancleDRAW
-            If (Y(K) < 10) Or (Y(K) > 5500) Then GoTo cancleDRAW
+            If (X(k) < 500) Or (X(k) > 5500) Then GoTo cancleDRAW
+            If (Y(k) < 10) Or (Y(k) > 5500) Then GoTo cancleDRAW
             
             
-            If (X(K) < minXL) Then
-                                    minXL = X(K)
+            If (X(k) < minXL) Then
+                                    minXL = X(k)
             End If
-            If (X(K) > minXR) Then
-                                    minXR = X(K)
+            If (X(k) > minXR) Then
+                                    minXR = X(k)
             End If
             
             If DRAWmode = 0 Then
             
-                If K = cut Then
-                    X(K - 1) = X(K)
-                    Y(K - 1) = Y(K)
+                If k = cut Then
+                    X(k - 1) = X(k)
+                    Y(k - 1) = Y(k)
                         picSilo.ForeColor = vbRed
-                        picSilo.Circle (X(K), Y(K)), 60
+                        picSilo.Circle (X(k), Y(k)), 60
                 End If
     
                 'Draw lines between data points
                 picSilo.ForeColor = vbMagenta  ''vbBlue  ''vbRed  ''vbCyan  ''vbBlack
-                If K > 0 Then
-                    picSilo.Line (X(K - 1), Y(K - 1))-(X(K), Y(K))
+                If k > 0 Then
+                    picSilo.Line (X(k - 1), Y(k - 1))-(X(k), Y(k))
                 End If
         
                 'Plot the data points as circles
                 picSilo.ForeColor = vbMagenta  ''vbCyan  ''vbYellow  ''vbMagenta  ''vbBlack
-                picSilo.Circle (X(K), Y(K)), 30
+                picSilo.Circle (X(k), Y(k)), 30
             
             End If
             
 
 cancleDRAW:
             ''DoEvents
-    Next K
+    Next k
     
 
     ldWidth = CInt(minXR - minXL)
@@ -1237,38 +1233,38 @@ cancleDRAW:
         Dim YY(300) As Long
         Dim CC As Long
         Dim SS As Long
-        Dim S1 As String
+        Dim s1 As String
         
         '''
-        For I = 0 To 300
-            YY(I) = 0
-        Next I
+        For i = 0 To 300
+            YY(i) = 0
+        Next i
         
-        For I = 0 To 100
-            scanDfilt(I) = 0
-        Next I
+        For i = 0 To 100
+            scanDfilt(i) = 0
+        Next i
         
         SS = 0
         CC = 0
         
-        For I = cut To N - cut + 2   '''{0 to n}'''
+        For i = cut To n - cut + 2   '''{0 to n}'''
     
             If (minXR - minXL) < 3000 Then   ''''';20160617~  3000<--3300
 
-                If (Y(I) < 5500) And (Y(I) > 0) Then
+                If (Y(i) < 5500) And (Y(i) > 0) Then
                     
-                    YY(I) = Y(I)
-                    SS = SS + Y(I)
+                    YY(i) = Y(i)
+                    SS = SS + Y(i)
                     CC = CC + 1
                                         
                     '';; x(k)=(500~5500) y(k)=(500~5500)  ==> x(k)=(0~5000) ; 40M:(1000~5000) => (0~4000)
                     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''' 35M:(1250~4750) => (0~3500)
                     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''' 34M:(1300~4700) => (0~3400)
 ''''                    If DRAWmode > 0 Then
-                        K = (X(I) - 1300) / 34   ''k = (x(i) - 1250) / 35    ''k = (x(i) - 1000) / 40
-                        If K < 0 Then K = 0
-                        If K > 100 Then K = 100
-                        scanDfilt(CInt(K)) = Y(I)
+                        k = (X(i) - 1300) / 34   ''k = (x(i) - 1250) / 35    ''k = (x(i) - 1000) / 40
+                        If k < 0 Then k = 0
+                        If k > 100 Then k = 100
+                        scanDfilt(CInt(k)) = Y(i)
 ''''                    End If
                     ''''''''''''''''''''''''''''''''''''''
                     
@@ -1293,19 +1289,19 @@ cancleDRAW:
                     SideD = 200 '''''''''20180105
                 End If
                 ''
-                If (Y(I) < 5500) And (Y(I) > 0) And (X(I) > (minXL + SideD)) And (X(I) < (minXR - SideD)) Then
+                If (Y(i) < 5500) And (Y(i) > 0) And (X(i) > (minXL + SideD)) And (X(i) < (minXR - SideD)) Then
                 
                     
-                    YY(I) = Y(I)
-                    SS = SS + Y(I)
+                    YY(i) = Y(i)
+                    SS = SS + Y(i)
                     CC = CC + 1
                     
                     ''''''''''''''''''''''''''''''''''''''
 ''''                    If DRAWmode > 0 Then
-                        K = (X(I) - 1300) / 34   ''k = (x(i) - 1250) / 35    ''k = (x(i) - 1000) / 40
-                        If K < 0 Then K = 0
-                        If K > 100 Then K = 100
-                        scanDfilt(CInt(K)) = Y(I)
+                        k = (X(i) - 1300) / 34   ''k = (x(i) - 1250) / 35    ''k = (x(i) - 1000) / 40
+                        If k < 0 Then k = 0
+                        If k > 100 Then k = 100
+                        scanDfilt(CInt(k)) = Y(i)
 ''''                    End If
                     ''''''''''''''''''''''''''''''''''''''
                     
@@ -1314,46 +1310,46 @@ cancleDRAW:
             End If
             
             ''DoEvents
-        Next I
+        Next i
 
 
 ''''        If DRAWmode > 0 Then
             
-            For I = 51 To 95   '''0~100
-                If scanDfilt(I) = 0 Then
-                    K = 0
+            For i = 51 To 95   '''0~100
+                If scanDfilt(i) = 0 Then
+                    k = 0
                     s = 0
-                    For J = 1 To 5
-                        If scanDfilt(I + J) > 0 Then
-                            s = s + scanDfilt(I + J):   K = K + 1
+                    For j = 1 To 5
+                        If scanDfilt(i + j) > 0 Then
+                            s = s + scanDfilt(i + j):   k = k + 1
                         End If
-                        If scanDfilt(I - J) > 0 Then
-                            s = s + scanDfilt(I - J):   K = K + 1
+                        If scanDfilt(i - j) > 0 Then
+                            s = s + scanDfilt(i - j):   k = k + 1
                         End If
-                    Next J
+                    Next j
                     
-                    If K > 0 Then scanDfilt(I) = s / K
+                    If k > 0 Then scanDfilt(i) = s / k
                     
                 End If
-            Next I
+            Next i
             
-            For I = 50 To 5 Step -1  '''0~100
-                If scanDfilt(I) = 0 Then
-                    K = 0
+            For i = 50 To 5 Step -1  '''0~100
+                If scanDfilt(i) = 0 Then
+                    k = 0
                     s = 0
-                    For J = 1 To 5
-                        If scanDfilt(I + J) > 0 Then
-                            s = s + scanDfilt(I + J):   K = K + 1
+                    For j = 1 To 5
+                        If scanDfilt(i + j) > 0 Then
+                            s = s + scanDfilt(i + j):   k = k + 1
                         End If
-                        If scanDfilt(I - J) > 0 Then
-                            s = s + scanDfilt(I - J):   K = K + 1
+                        If scanDfilt(i - j) > 0 Then
+                            s = s + scanDfilt(i - j):   k = k + 1
                         End If
-                    Next J
+                    Next j
                     
-                    If K > 0 Then scanDfilt(I) = s / K
+                    If k > 0 Then scanDfilt(i) = s / k
                     
                 End If
-            Next I
+            Next i
             
             If scanDfilt(4) = 0 Then scanDfilt(4) = scanDfilt(5)
             If scanDfilt(3) = 0 Then scanDfilt(3) = scanDfilt(4)
@@ -1370,29 +1366,29 @@ cancleDRAW:
             
             If DRAWmode > 0 Then
             
-                For I = 0 To 100
+                For i = 0 To 100
 ''                    If scanDfilt(i) = 0 Then
 ''                        '''scanDfilt(i) = s
 ''                    End If
                     
-                    If scanDfilt(I) > 0 Then
+                    If scanDfilt(i) > 0 Then
                     
                         picSilo.ForeColor = &H4080   ''vbGreen  ''vbMagenta  ''vbBlue  ''vbRed  ''vbCyan  ''vbBlack
                         picSilo.DrawWidth = 2
-                        picSilo.Line (I * 40 + 1000, 500)-(I * 40 + 1000, scanDfilt(I))
+                        picSilo.Line (i * 40 + 1000, 500)-(i * 40 + 1000, scanDfilt(i))
                     Else
-                        Debug.Print "scanDfilt---Error: ", UCindex, I
+                        Debug.Print "scanDfilt---Error: ", UCindex, i
                     End If
                     
-                    scanDfiltX(I) = scanDfilt(I)
+                    scanDfiltX(i) = scanDfilt(i)
                     ''''''''''''''''''''''''''''
-                Next I
+                Next i
             
             End If
 
-            For I = 0 To 100
-                scanDfiltX(I) = scanDfilt(I)
-            Next I
+            For i = 0 To 100
+                scanDfiltX(i) = scanDfilt(i)
+            Next i
 
 ''''        End If
         
@@ -1464,18 +1460,18 @@ cancleDRAW:
 
     picSilo.ForeColor = vbWhite  ''vbBlack
     picSilo.Line (2000, 500)-(4000, 500)
-    For I = 1 To 4
-        picSilo.Line (2800, 500 + (1000 * I))-(3100, 500 + (1000 * I))
+    For i = 1 To 4
+        picSilo.Line (2800, 500 + (1000 * i))-(3100, 500 + (1000 * i))
 
         'Labeling the yaxis
         picSilo.CurrentX = 3120
-        picSilo.CurrentY = 500 + (1000 * I) + 100
-        picSilo.Print Trim(I * 10) & "M"
-    Next I
+        picSilo.CurrentY = 500 + (1000 * i) + 100
+        picSilo.Print Trim(i * 10) & "M"
+    Next i
 
-    For I = 1 To 9
-        picSilo.Line (2900, 500 + (500 * I))-(3100, 500 + (500 * I))
-    Next I
+    For i = 1 To 9
+        picSilo.Line (2900, 500 + (500 * i))-(3100, 500 + (500 * i))
+    Next i
 
 
     picSilo.ForeColor = vbYellow  ''vbWhite  ''vbBlack  ''vbRed
@@ -1537,24 +1533,24 @@ End Function
 
 
 
-Public Sub setIDX(ID As Integer, IP As String, port As String)
+Public Sub setIDX(id As Integer, ip As String, port As String)
     
-    UCindex = ID
+    UCindex = id
 
-    cmdCONN.Caption = "S" & Format(ID + 1, "00")
-    If (ID > 14) Then
+    cmdCONN.Caption = "S" & Format(id + 1, "00")
+    If (id > 14) Then
     
-        cmdCONN.Caption = "S" & Format(34 - ID, "00")  ''20180222 add edite
+        cmdCONN.Caption = "S" & Format(34 - id, "00")  ''20180222 add edite
     
-        cmdCONN.Caption = cmdCONN.Caption & "-CTS" & Trim(ID - 14)    ''New-CTS-Silo(15+4)!!  ''4x2==8''??
+        cmdCONN.Caption = cmdCONN.Caption & "-CTS" & Trim(id - 14)    ''New-CTS-Silo(15+4)!!  ''4x2==8''??
         
         
     End If
 
-    ipAddr = IP
+    ipAddr = ip
     ipPort = port
     
-    If IP <> "" Then wsockLD.RemoteHost = IP
+    If ip <> "" Then wsockLD.RemoteHost = ip
     If port <> "" Then wsockLD.RemotePort = port
     
     ''tmrRun.Enabled = True
@@ -1569,20 +1565,20 @@ Public Function getTXT() As String
 End Function
 
 Sub Ellipse(X As Single, Y As Single, RadiusX As Single, RadiusY As Single)
-  Dim RATIO As Single, Radius As Single
-    RATIO = RadiusY / RadiusX
-    If RATIO < 1 Then
+  Dim ratio As Single, Radius As Single
+    ratio = RadiusY / RadiusX
+    If ratio < 1 Then
         Radius = RadiusX
     Else
         Radius = RadiusY
     End If
-    picSilo.Circle (X, Y), Radius, , , , RATIO
+    picSilo.Circle (X, Y), Radius, , , , ratio
 End Sub
 
 
 Public Sub initStart()
 '
-    Dim I As Integer
+    Dim i As Integer
 '
     RX_filt_Init
 '
@@ -1597,7 +1593,7 @@ End Sub
 Private Sub tmrSrun_Timer()
 Dim ret As Integer
 Dim strA As String
-Dim BB() As Byte
+Dim bb() As Byte
 'Dim t As Long
     
     't = GetTickCount
@@ -1750,9 +1746,9 @@ Dim BB() As Byte
                     lbTiltV = "-1"
                     strA = "SetAngle[-1]"
     
-                    BB = StrConv(strA, vbFromUnicode)
+                    bb = StrConv(strA, vbFromUnicode)
                     ''
-                    SEND_wsickLD BB
+                    SEND_wsickLD bb
                     '''''''''''''''
                     
                     tSrunMode = eSrunMode.SendCmd
@@ -1869,11 +1865,7 @@ Dim BB() As Byte
                             AutoTiltCnt = AutoTiltCnt + 1
                             ''''''''''''''''''''''''''''''''''''''''
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
-                                Dim tilt3Dlog_fileName$
-                                tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
                                 autoTilt_stop
-'
-                                SurFit_Open tilt3Dlog_fileName$
 '
                                 lbTiltV = "-1"
                                 strA = "SetAngle[-1]"
@@ -1892,9 +1884,9 @@ Dim BB() As Byte
                         tmrSrun.Interval = 2000
                     End If
 '
-                    BB = StrConv(strA, vbFromUnicode)
+                    bb = StrConv(strA, vbFromUnicode)
                     ''
-                    SEND_wsickLD BB
+                    SEND_wsickLD bb
                     '''''''''''''''
 '
                     tSrunMode = eSrunMode.SendCmd
@@ -1922,9 +1914,9 @@ Dim BB() As Byte
                         tmrSrun.Interval = 2000
                     End If
 '
-                    BB = StrConv(strA, vbFromUnicode)
+                    bb = StrConv(strA, vbFromUnicode)
                     ''
-                    SEND_wsickLD BB
+                    SEND_wsickLD bb
                     '''''''''''''''
 '
                     tSrunMode = eSrunMode.SendCmd
@@ -2009,7 +2001,7 @@ End Sub
 Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
 
     Dim buffData As Variant     ''This stores the incoming data from the buffer
-    Dim I, J, C As Integer      ''These are general counters
+    Dim i, j, c As Integer      ''These are general counters
     
     Dim cCNT As Long
     Dim buff2590 As String
@@ -2032,9 +2024,9 @@ Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
             Exit Sub  ''''===============>>
         End If
         
-        For I = 0 To bytesTotal - 1
-            inBUF(inCNT + I) = buffData(I)
-        Next I
+        For i = 0 To bytesTotal - 1
+            inBUF(inCNT + i) = buffData(i)
+        Next i
         
         inCNT = inCNT + bytesTotal
         ''''''''''''''''''''''''''
@@ -2136,8 +2128,8 @@ Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
 ''        txtRx1 = txtRx1 & vbCrLf & "RX:"
 ''    End If
 
-    For I = 0 To bytesTotal - 1
-        inBUF(inCNT + I) = buffData(I)
+    For i = 0 To bytesTotal - 1
+        inBUF(inCNT + i) = buffData(i)
 
         ''txtRx1 = txtRx1 & Format(Trim(Hex(buffData(i))), "##") & " "
         ''
@@ -2147,7 +2139,7 @@ Private Sub wsockLD_DataArrival(ByVal bytesTotal As Long)
 ''            txtRx1 = txtRx1 & Hex(buffData(i)) & " "
 ''        End If
 
-    Next I
+    Next i
     
     inCNT = inCNT + bytesTotal
     ''''''''''''''''''''''''''
@@ -2199,32 +2191,32 @@ End Sub
 
 Private Function LDinitTXs() As Integer
 
-Dim I As Integer
+Dim i As Integer
 
     LDinitVAR
 
     txtRx1 = ""
     
-    For I = 0 To 3
+    For i = 0 To 3
         LDtxDATA (0)
         Sleep (10)
         rxWaitTime = 10
         If LDrxDATA(0) = 0 Then Exit For
         ''''''''''''''''''''''''''''''''
-    Next I
+    Next i
     
-    If I > 2 Then
+    If i > 2 Then
         LDinitTXs = -1
         Exit Function ''---->TX-RX:ERROR!
     End If
     
     
-    For I = 0 To 29  ''DWONLOAD-ALL!!
-        LDtxDATA I
+    For i = 0 To 29  ''DWONLOAD-ALL!!
+        LDtxDATA i
         Sleep (10)
         rxWaitTime = 10
-        LDrxDATA I
-    Next I
+        LDrxDATA i
+    Next i
     
     
     ''LDtxDATA 29
@@ -2241,14 +2233,14 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''DPS-2590::BIN-Mode!
 Private Function LDtx12590(ix As Integer) As Integer
 
-Dim I As Integer
+Dim i As Integer
 Dim tBuf As Variant
 
     ReDim tBuf(UBound(LD_sBUF(ix))) As Byte
     ''
-    For I = 0 To UBound(LD_sBUF(ix))
-        tBuf(I) = (LD_sBUF(ix)(I))
-    Next I
+    For i = 0 To UBound(LD_sBUF(ix))
+        tBuf(i) = (LD_sBUF(ix)(i))
+    Next i
     
     RxMSG = ""
     
@@ -2270,7 +2262,7 @@ End Function
 
 Private Function LDrx12590(ix As Integer) As Integer
 
-Dim I As Integer
+Dim i As Integer
 Dim pointErr As Integer
 Dim rxAngleOK As Boolean
 Dim rxAngle#
@@ -2373,11 +2365,11 @@ Dim rxAngle#
             '''
             pointErr = 0
             
-            For I = 0 To 999  '''1000
-                Scan2590Direc(I) = 45# + (I * 0.09)
+            For i = 0 To 999  '''1000
+                Scan2590Direc(i) = 45# + (i * 0.09)
                 ''
-                angleN = (I * 4) + 52  '''<==(i * 8)
-                Scan2590Dist(I) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
+                angleN = (i * 4) + 52  '''<==(i * 8)
+                Scan2590Dist(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 'Scan2590Dist(i) = Scan2590Dist(i) * 10
                 ''angleN = angleN + 4
                 ''Scan2590Pulse(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
@@ -2386,10 +2378,10 @@ Dim rxAngle#
                 '' or, the distance value is 2147483647 (0x7FFFFFFF) in case that the echo signal was noisy.
                 '' And Check the distance is near to 5meters.
                 '' 2147483646 <= 2147483647 - 1
-                If (Scan2590Dist(I) > 2147483646) _
-                    Or (Scan2590Dist(I) < 50000) _
+                If (Scan2590Dist(i) > 2147483646) _
+                    Or (Scan2590Dist(i) < 50000) _
                         Then
-                    Scan2590Dist(I) = 0
+                    Scan2590Dist(i) = 0
                     pointErr = pointErr + 1
                 End If
                 'If (UCindex = 0) Then
@@ -2397,7 +2389,7 @@ Dim rxAngle#
                 'ElseIf (UCindex >= 4) Then
                 '    Scan2590Dist(i) = Scan2590Dist(i) * 4
                 'End If
-            Next I
+            Next i
             
             lbPointErrCnt = pointErr
             
@@ -2498,25 +2490,25 @@ Dim rxAngle#
 
             ''Dim angleN As Integer
             '''
-            For I = 0 To 999  '''1000
-                Scan2590Direc(I) = 45# + (I * 0.09)
+            For i = 0 To 999  '''1000
+                Scan2590Direc(i) = 45# + (i * 0.09)
                 ''
-                angleN = (I * 8) + 52
-                Scan2590Dist(I) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
+                angleN = (i * 8) + 52
+                Scan2590Dist(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 angleN = angleN + 4
-                Scan2590Pulse(I) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
+                Scan2590Pulse(i) = (inBUF(angleN) * 2 ^ 24) + (inBUF(angleN + 1) * 2 ^ 16) + (inBUF(angleN + 2) * 2 ^ 8) + inBUF(angleN + 3)
                 ''
                 '' Check the distance value is -2147483648 (0x80000000) in case that the echo signal was too low.
                 '' or, the distance value is 2147483647 (0x7FFFFFFF) in case that the echo signal was noisy.
                 '' And Check the distance is near to 5meters.
                 '' 2147483646 <= 2147483647 - 1
-                If (Scan2590Dist(I) > 2147483646) _
-                    Or (Scan2590Dist(I) < 50000) _
+                If (Scan2590Dist(i) > 2147483646) _
+                    Or (Scan2590Dist(i) < 50000) _
                         Then
-                    Scan2590Dist(I) = 0
+                    Scan2590Dist(i) = 0
                     pointErr = pointErr + 1
                 End If
-            Next I
+            Next i
             
         End If
         
@@ -2526,9 +2518,9 @@ Dim rxAngle#
 
 
 
-    For I = 0 To 239
-        rxWORD(I) = 0
-    Next I
+    For i = 0 To 239
+        rxWORD(i) = 0
+    Next i
     
 
     Dim tAng As Double
@@ -2540,12 +2532,12 @@ Dim rxAngle#
     tCnt = 0
     tSum = 0
     ''
-    For I = 0 To 999  ''(1~1000)
+    For i = 0 To 999  ''(1~1000)
 
-        If (Scan2590Dist(I) > 0) Then
+        If (Scan2590Dist(i) > 0) Then
         
-            If (Scan2590Direc(I) < tAng + 0.25) Then
-                tSum = tSum + Scan2590Dist(I)
+            If (Scan2590Direc(i) < tAng + 0.25) Then
+                tSum = tSum + Scan2590Dist(i)
                 tCnt = tCnt + 1
             Else
                 If tCnt > 0 Then
@@ -2568,8 +2560,8 @@ Dim rxAngle#
 AngleUp:
                 tAng = tAng + 0.5
                 
-                If (Scan2590Direc(I) < tAng + 0.25) Then
-                    tSum = tSum + Scan2590Dist(I)
+                If (Scan2590Direc(i) < tAng + 0.25) Then
+                    tSum = tSum + Scan2590Dist(i)
                     tCnt = tCnt + 1
                 Else
                     GoTo AngleUp
@@ -2578,7 +2570,7 @@ AngleUp:
 
         End If
             
-    Next I
+    Next i
 
 
     If tCnt > 0 Then
@@ -2639,48 +2631,48 @@ AngleUp:
 '
         Dim X As Double
         Dim Y As Double
-        Dim Z As Double
+        Dim z As Double
         Dim r As Double
 '
-        I = 30
-        r = (rxWORD(I) + rxWORD(I + 1) + rxWORD(I + 2) / 2#) / 2.5
-        X = r * Cos(((I / 2) + 30) * (PI / 180)) / 1000#
-        Y = r * Sin(((I / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
-        Z = 50# - (r * Sin(((I / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
+        i = 30
+        r = (rxWORD(i) + rxWORD(i + 1) + rxWORD(i + 2) / 2#) / 2.5
+        X = r * Cos(((i / 2) + 30) * (PI / 180)) / 1000#
+        Y = r * Sin(((i / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
+        z = 50# - (r * Sin(((i / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
         Tilt3Dlog_add tilt3Dlog_fn, _
             " " & lbTiltRX _
-            & vbTab & (I / 2) + 30 _
+            & vbTab & (i / 2) + 30 _
             & vbTab & vbTab & X _
             & " " & vbTab & Y _
-            & " " & vbTab & Z
-        For I = 34 To xcMax - 30 - 2 Step 4
+            & " " & vbTab & z
+        For i = 34 To xcMax - 30 - 2 Step 4
             r = ( _
-                    rxWORD(I - 2) / 2# + rxWORD(I - 1) _
-                    + rxWORD(I) _
-                    + rxWORD(I + 1) + rxWORD(I + 2) / 2# _
+                    rxWORD(i - 2) / 2# + rxWORD(i - 1) _
+                    + rxWORD(i) _
+                    + rxWORD(i + 1) + rxWORD(i + 2) / 2# _
                 ) _
                 / 4#
-            X = r * Cos(((I / 2) + 30) * (PI / 180)) / 1000#
-            Y = r * Sin(((I / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
-            Z = 50# - (r * Sin(((I / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
+            X = r * Cos(((i / 2) + 30) * (PI / 180)) / 1000#
+            Y = r * Sin(((i / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
+            z = 50# - (r * Sin(((i / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
             Tilt3Dlog_add tilt3Dlog_fn, _
                 " " & lbTiltRX _
-                & vbTab & (I / 2) + 30 _
+                & vbTab & (i / 2) + 30 _
                 & vbTab & vbTab & X _
                 & " " & vbTab & Y _
-                & " " & vbTab & Z
-        Next I
+                & " " & vbTab & z
+        Next i
         'i = xcMax - 30 - 2
-        r = (rxWORD(I - 2) / 2# + rxWORD(I - 1) + rxWORD(I)) / 2.5
-        X = r * Cos(((I / 2) + 30) * (PI / 180)) / 1000#
-        Y = r * Sin(((I / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
-        Z = 50# - (r * Sin(((I / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
+        r = (rxWORD(i - 2) / 2# + rxWORD(i - 1) + rxWORD(i)) / 2.5
+        X = r * Cos(((i / 2) + 30) * (PI / 180)) / 1000#
+        Y = r * Sin(((i / 2) + 30) * (PI / 180)) * Sin(lbTiltRX * (PI / 180)) / 1000#
+        z = 50# - (r * Sin(((i / 2) + 30) * (PI / 180)) * Cos(lbTiltRX * (PI / 180)) / 1000#)
         Tilt3Dlog_add tilt3Dlog_fn, _
             " " & lbTiltRX _
-            & vbTab & (I / 2) + 30 _
+            & vbTab & (i / 2) + 30 _
             & vbTab & vbTab & X _
             & " " & vbTab & Y _
-            & " " & vbTab & Z
+            & " " & vbTab & z
     End If
 '
     LDrx12590 = 0
@@ -2698,14 +2690,14 @@ End Function
 
 Private Function LDtx2590(ix As Integer) As Integer
 
-Dim I As Integer
+Dim i As Integer
 Dim tBuf As Variant
 
     ReDim tBuf(UBound(LD_sBUF(ix))) As Byte
     ''
-    For I = 0 To UBound(LD_sBUF(ix))
-        tBuf(I) = (LD_sBUF(ix)(I))
-    Next I
+    For i = 0 To UBound(LD_sBUF(ix))
+        tBuf(i) = (LD_sBUF(ix)(i))
+    Next i
     
     
     RxMSG = ""
@@ -2728,7 +2720,7 @@ End Function
 
 Private Function LDrx2590(ix As Integer) As Integer
 
-Dim I As Integer
+Dim i As Integer
 
     If rxWaitTime < 7000 And rxSTOP = 0 Then
         LDrx2590 = 1
@@ -2785,33 +2777,33 @@ Dim I As Integer
   
     xcMax = 0
     
-    For I = 1 To 1000
+    For i = 1 To 1000
         strNo = "   "
-        If I < 1000 Then strNo = strNo & " "
-        If I < 100 Then strNo = strNo & " "
-        If I < 10 Then strNo = strNo & " "
+        If i < 1000 Then strNo = strNo & " "
+        If i < 100 Then strNo = strNo & " "
+        If i < 10 Then strNo = strNo & " "
         ''
-        strNo = strNo & Trim(Str(I)) & " ;       "   '';''strNo = strNo & Trim(Str(i))
+        strNo = strNo & Trim(Str(i)) & " ;       "   '';''strNo = strNo & Trim(Str(i))
         
         ''Debug.Print strNo & " "
         
         
-        Scan2590Echo(I) = 0
-        Scan2590Direc(I) = 0
+        Scan2590Echo(i) = 0
+        Scan2590Direc(i) = 0
         ''
-        Scan2590Dist(I) = 0
-        Scan2590Pulse(I) = 0
+        Scan2590Dist(i) = 0
+        Scan2590Pulse(i) = 0
         
         If InStr(inBUF2590, strNo) > 0 Then
         
             strLine = Mid(inBUF2590, InStr(inBUF2590, strNo), 60)
 
-            Scan2590Echo(I) = Val(Mid(strLine, 17, 1))
-            Scan2590Direc(I) = Val(Mid(strLine, 25, 7))
+            Scan2590Echo(i) = Val(Mid(strLine, 17, 1))
+            Scan2590Direc(i) = Val(Mid(strLine, 25, 7))
             ''
-            If Scan2590Echo(I) = 1 Then
-                Scan2590Dist(I) = Val(Mid(strLine, 38, 8))
-                Scan2590Pulse(I) = Val(Mid(strLine, 55, 5))
+            If Scan2590Echo(i) = 1 Then
+                Scan2590Dist(i) = Val(Mid(strLine, 38, 8))
+                Scan2590Pulse(i) = Val(Mid(strLine, 55, 5))
             End If
             
             xcMax = xcMax + 1
@@ -2821,7 +2813,7 @@ Dim I As Integer
     ''Debug.Print vbCrLf & i & vbTab & Scan2590Echo(i) & vbTab & Scan2590Direc(i) & vbTab & Scan2590Dist(i) & vbTab & Scan2590Pulse(i)
         
         
-    Next I
+    Next i
 
 
     '' xcMax = 238 Then '''> 230 Then                 ''[238]max....120~240:0.5degree
@@ -2832,9 +2824,9 @@ Dim I As Integer
 
 
 
-    For I = 1 To 239
-        rxWORD(I) = 0
-    Next I
+    For i = 1 To 239
+        rxWORD(i) = 0
+    Next i
     
 
   Dim tAng As Double
@@ -2849,15 +2841,15 @@ Dim I As Integer
     tCntH = 0
     tSumH = 0
     ''
-    For I = 2 To 999  ''(1~1000)
+    For i = 2 To 999  ''(1~1000)
 
-        If (Scan2590Dist(I) > 0) Then
+        If (Scan2590Dist(i) > 0) Then
         
-            If (Scan2590Direc(I) < tAng + 0.5) Then
-                tSum = tSum + Scan2590Dist(I)
+            If (Scan2590Direc(i) < tAng + 0.5) Then
+                tSum = tSum + Scan2590Dist(i)
                 tCnt = tCnt + 1
-            ElseIf (Scan2590Direc(I) < tAng + 1#) Then
-                tSumH = tSumH + Scan2590Dist(I)
+            ElseIf (Scan2590Direc(i) < tAng + 1#) Then
+                tSumH = tSumH + Scan2590Dist(i)
                 tCntH = tCntH + 1
             Else
             
@@ -2896,7 +2888,7 @@ Dim I As Integer
 
         End If
             
-    Next I
+    Next i
 
     xcMax = 238
     ''''''''''''''''''''''''''''
@@ -2933,14 +2925,14 @@ End Function
 
 Private Function LDtxDATA(ix As Integer) As Integer    ''(sBUF())
 
-Dim I As Integer
+Dim i As Integer
 Dim tBuf As Variant
 
     ReDim tBuf(UBound(LD_sBUF(ix))) As Byte
     ''
-    For I = 0 To UBound(LD_sBUF(ix))
-        tBuf(I) = (LD_sBUF(ix)(I))
-    Next I
+    For i = 0 To UBound(LD_sBUF(ix))
+        tBuf(i) = (LD_sBUF(ix)(i))
+    Next i
     
 
 '    txtRx1 = txtRx1 & vbCrLf & "TX:"
@@ -2971,9 +2963,9 @@ End Function
 
 Private Function LDrxDATA(ix As Integer) As Integer    ''(sBUF())
 
-Dim I As Integer
-Dim C As Integer
-Dim Z As Integer
+Dim i As Integer
+Dim c As Integer
+Dim z As Integer
 
 Dim strHD(8) As Integer
 
@@ -3004,25 +2996,25 @@ ONEmore:
 
     tmrTRX.Enabled = True
     
-    I = 0
+    i = 0
 
     Do While tmrTRX.Enabled = True
     
     
         If (tSrunMode < eSrunMode.SendCmd) And (inCNT > 10) Then   ''Command-RX
 
-            I = 1
+            i = 1
 
-            If (inBUF(I) = strHD(0)) And _
-                (inBUF(I + 1) = strHD(1)) And _
-                (inBUF(I + 2) = strHD(2)) And _
-                (inBUF(I + 3) = strHD(3)) And _
-                (inBUF(I + 4) = strHD(4)) _
+            If (inBUF(i) = strHD(0)) And _
+                (inBUF(i + 1) = strHD(1)) And _
+                (inBUF(i + 2) = strHD(2)) And _
+                (inBUF(i + 3) = strHD(3)) And _
+                (inBUF(i + 4) = strHD(4)) _
                 Then
     
-                Z = inBUF(I + 5) * 256 + inBUF(I + 6)
+                z = inBUF(i + 5) * 256 + inBUF(i + 6)
 
-                If (inCNT - I - 7) >= Z Then
+                If (inCNT - i - 7) >= z Then
                 
                         inCNT = 0
                         
@@ -3034,18 +3026,18 @@ ONEmore:
             
         ElseIf (tSrunMode >= eSrunMode.SendCmd) And (inCNT >= 516) Then  ''DATA-RX
     
-            I = 1
+            i = 1
 
-            If (inBUF(I) = strHD(0)) And _
-                (inBUF(I + 1) = strHD(1)) And _
-                (inBUF(I + 2) = strHD(2)) And _
-                (inBUF(I + 3) = strHD(3)) And _
-                (inBUF(I + 4) = strHD(4)) _
+            If (inBUF(i) = strHD(0)) And _
+                (inBUF(i + 1) = strHD(1)) And _
+                (inBUF(i + 2) = strHD(2)) And _
+                (inBUF(i + 3) = strHD(3)) And _
+                (inBUF(i + 4) = strHD(4)) _
                 Then
 
-                Z = inBUF(I + 5) * 256 + inBUF(I + 6)
+                z = inBUF(i + 5) * 256 + inBUF(i + 6)
 
-                If (inCNT - I - 7) >= Z Then  ''''''''(516-8==508)
+                If (inCNT - i - 7) >= z Then  ''''''''(516-8==508)
 
                             '''[SCAN-DATA]'''(RX:516bytes==HD+507)
                             '''RX:02 02 02 02 00 00 01 FB 73 52 41 00 62 00 FA 81 BA 01 02 00 4F 00 00 00 08 00 EF 07 88 03 CC 03 BF ~~ 17 B9 00 01 00 08 00 00 0F 00 CA
@@ -3055,10 +3047,10 @@ ONEmore:
                             '''''''''''''''''''''''':::##-00-01-02-03-04-05-06--7--8--9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26-27-hh-ll-hh-ll-
                             Dim X As Integer
                             Dim xc As Integer
-                            Dim Xs As String
+                            Dim xs As String
                             xc = 0
-                            Xs = vbCrLf & inCNT & ", " & I & ", " & Z & vbCrLf
-                            For X = I + 28 To inCNT - 10 Step 2  ''!!
+                            xs = vbCrLf & inCNT & ", " & i & ", " & z & vbCrLf
+                            For X = i + 28 To inCNT - 10 Step 2  ''!!
                             '''''''''''''''''''''''''''''''''''''''!!
                             
                                 '' rxWORD(xc) = inBUF(x) * 256 + inBUF(x + 1)  ''X''
@@ -3067,9 +3059,9 @@ ONEmore:
                                 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
                                 
                                 If (xc Mod 10) = 0 Then
-                                    Xs = Xs & vbCrLf
+                                    xs = xs & vbCrLf
                                 End If
-                                Xs = Xs & Trim(xc) & "-" & Trim(rxWORD(xc)) & vbTab
+                                xs = xs & Trim(xc) & "-" & Trim(rxWORD(xc)) & vbTab
                                 
                                 xcMax = xc
                                 xc = xc + 1
@@ -3194,12 +3186,12 @@ End Function
 
 Private Sub RX_filt_Init()
 '
-    Dim I%
+    Dim i%
 '
-    For I = 0 To 300 - 1
-        rxWdeepSum(I) = 0
-        rxWdeepCnt(I) = 0
-    Next I
+    For i = 0 To 300 - 1
+        rxWdeepSum(i) = 0
+        rxWdeepCnt(i) = 0
+    Next i
 '
     cnWdeep = 0
     cnWring = 0
@@ -3214,27 +3206,27 @@ Private Sub RX_filt_DEEP()
 'Private cnWdeep As Integer
 '''-------------------------------------
 
-Dim I As Integer
-Dim J As Integer
+Dim i As Integer
+Dim j As Integer
     
-    For I = 0 To xcMax - 1  ''Just~238
+    For i = 0 To xcMax - 1  ''Just~238
     
-        If (rxWORD(I) < 2000) Or (rxWORD(I) > 80000) Then
-            rxWORD(I) = 0 ''''''''''''''''''''''''''''''''''Miss-Value!
+        If (rxWORD(i) < 2000) Or (rxWORD(i) > 80000) Then
+            rxWORD(i) = 0 ''''''''''''''''''''''''''''''''''Miss-Value!
         End If
         If cnWdeep > 4 Then
-            If rxWdeep(cnWring, I) <> 0 Then
-                rxWdeepSum(I) = rxWdeepSum(I) - rxWdeep(cnWring, I)
-                rxWdeepCnt(I) = rxWdeepCnt(I) - 1
+            If rxWdeep(cnWring, i) <> 0 Then
+                rxWdeepSum(i) = rxWdeepSum(i) - rxWdeep(cnWring, i)
+                rxWdeepCnt(i) = rxWdeepCnt(i) - 1
             End If
         End If
-        If rxWORD(I) <> 0 Then
-            rxWdeepSum(I) = rxWdeepSum(I) + rxWORD(I)
-            rxWdeepCnt(I) = rxWdeepCnt(I) + 1
+        If rxWORD(i) <> 0 Then
+            rxWdeepSum(i) = rxWdeepSum(i) + rxWORD(i)
+            rxWdeepCnt(i) = rxWdeepCnt(i) + 1
         End If
-        rxWdeep(cnWring, I) = rxWORD(I)
+        rxWdeep(cnWring, i) = rxWORD(i)
     
-    Next I
+    Next i
 
     cnWring = cnWring + 1
     If cnWring > 4 Then
@@ -3253,72 +3245,72 @@ Dim J As Integer
 
 
     ''(Miss Proce)''
-    Dim C As Integer
+    Dim c As Integer
     Dim s As Long
     Dim minVal As Long
     Dim maxVal As Long
   
     If cnWdeep >= 3 Then
     
-        For I = 10 To xcMax - 11
+        For i = 10 To xcMax - 11
     
-            If rxWORD(I) = 0 Then
+            If rxWORD(i) = 0 Then
                 '''''''''''''''''''''''''''''''''(Time-Filt)!
-                s = rxWdeepSum(I - 1) + rxWdeepSum(I) + rxWdeepSum(I + 1)
-                C = rxWdeepCnt(I - 1) + rxWdeepCnt(I) + rxWdeepCnt(I + 1)
+                s = rxWdeepSum(i - 1) + rxWdeepSum(i) + rxWdeepSum(i + 1)
+                c = rxWdeepCnt(i - 1) + rxWdeepCnt(i) + rxWdeepCnt(i + 1)
                 '''''''''''''''''''''''''''''''''
                 ''If UCindex = 9 And c > 0 Then
                 ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & "", "SILO"
                 ''End If
-                If C >= 5 Then
-                    rxWORD(I) = s / C
+                If c >= 5 Then
+                    rxWORD(i) = s / c
                     ''If UCindex = 5 Then
                     ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
                     ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":zero" & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
                     ''End If
                 End If
             Else
-                C = 0
+                c = 0
                 s = 0
                 maxVal = &H80000000 ' min of Long
                 minVal = &H7FFFFFFF ' max of Long
                 '''''''''''''''''''''''''''''''''(Time-Filt)!
-                For J = 0 To 4
-                    If rxWdeep(J, I) > 0 Then
-                        If rxWdeep(J, I) > maxVal Then
-                            maxVal = rxWdeep(J, I)
+                For j = 0 To 4
+                    If rxWdeep(j, i) > 0 Then
+                        If rxWdeep(j, i) > maxVal Then
+                            maxVal = rxWdeep(j, i)
                         End If
-                        If rxWdeep(J, I) < minVal Then
-                            minVal = rxWdeep(J, I)
+                        If rxWdeep(j, i) < minVal Then
+                            minVal = rxWdeep(j, i)
                         End If
-                        s = s + rxWdeep(J, I)
-                        C = C + 1
+                        s = s + rxWdeep(j, i)
+                        c = c + 1
                     End If
-                Next J
-                s = s + rxWdeepSum(I - 1) + rxWdeepSum(I + 1)
-                C = C + rxWdeepCnt(I - 1) + rxWdeepCnt(I + 1)
+                Next j
+                s = s + rxWdeepSum(i - 1) + rxWdeepSum(i + 1)
+                c = c + rxWdeepCnt(i - 1) + rxWdeepCnt(i + 1)
                 ''If UCindex = 9 And c > 0 Then
                 ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
                 ''End If
                 '''''''''''''''''''''''''''''''''
-                If C >= 7 Then
+                If c >= 7 Then
                     '' Check max & min value over 5meters with average
-                    If (maxVal > s / C + 5000) And (minVal < s / C - 5000) Then
-                        rxWORD(I) = (s - maxVal - minVal) / (C - 2)
+                    If (maxVal > s / c + 5000) And (minVal < s / c - 5000) Then
+                        rxWORD(i) = (s - maxVal - minVal) / (c - 2)
                         ''If UCindex = 5 Then
                         ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
                         ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":max." & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
                         ''End If
                     '' Check max value over 5meters with average
-                    ElseIf maxVal > s / C + 5000 Then
-                        rxWORD(I) = (s - maxVal) / (C - 1)
+                    ElseIf maxVal > s / c + 5000 Then
+                        rxWORD(i) = (s - maxVal) / (c - 1)
                         ''If UCindex = 5 Then
                         ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
                         ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":max." & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
                         ''End If
                     '' Check min value over 5meters with average
-                    ElseIf minVal < s / C - 5000 Then
-                        rxWORD(I) = (s - minVal) / (C - 1)
+                    ElseIf minVal < s / c - 5000 Then
+                        rxWORD(i) = (s - minVal) / (c - 1)
                         ''If UCindex = 5 Then
                         ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":i=" & i & ",c=" & c & ",s/c=" & CLng(s / c) & ",maxVal=" & maxVal & ",minVal=" & minVal & "", "SILO"
                         ''    DGPSLog "RX_filt_DEEP(" & UCindex & ")" & ":min." & ",rxWORD(" & i & ")=" & rxWORD(i) & "", "SILO"
@@ -3326,7 +3318,7 @@ Dim J As Integer
                     End If
                 End If
             End If
-        Next I
+        Next i
     
         ''If UCindex = 9 Then
         ''    For i = 10 To xcMax - 11
@@ -3341,120 +3333,120 @@ End Sub
 
 Private Sub RX_filt()
 
-Dim I, J As Integer
+Dim i, j As Integer
 Dim Dsum As Long
 Dim Dcnt As Integer
-Dim x1 As Integer
-Dim y1 As Long
+Dim X1 As Integer
+Dim Y1 As Long
 Dim s As Integer
 
     If cmdFilt.BackColor = vbGreen Then
         'Filter by equation of a line from 2 points.
-        x1 = 0
-        y1 = 0
+        X1 = 0
+        Y1 = 0
         s = 0
 
-        For I = 30 To (xcMax - 30) Step 1
-            If rxWORD(I) >= 5000 Then '' 5meter
+        For i = 30 To (xcMax - 30) Step 1
+            If rxWORD(i) >= 5000 Then '' 5meter
                 If s = 0 Then
                     s = 1
-                    x1 = I
+                    X1 = i
                 ElseIf s = 1 Then
-                    x1 = I
+                    X1 = i
                 ElseIf s = 2 Then
                     Dsum = 0
                     Dcnt = 0
-                    For J = x1 To x1 - 5 Step -1
-                        If rxWORD(J) >= 5000 Then
-                            Dsum = Dsum + rxWORD(J)
+                    For j = X1 To X1 - 5 Step -1
+                        If rxWORD(j) >= 5000 Then
+                            Dsum = Dsum + rxWORD(j)
                             Dcnt = Dcnt + 1
                         End If
-                        y1 = Dsum / Dcnt
-                    Next J
-                    For J = x1 + 1 To I - 1 Step 1
-                        rxWORD(J) = (rxWORD(I) - y1) * (J - x1) / (I - x1) + y1
-                    Next J
+                        Y1 = Dsum / Dcnt
+                    Next j
+                    For j = X1 + 1 To i - 1 Step 1
+                        rxWORD(j) = (rxWORD(i) - Y1) * (j - X1) / (i - X1) + Y1
+                    Next j
                     s = 1
-                    x1 = I
+                    X1 = i
                 End If
             Else '' under 5meter
                 If s = 1 Then
                     s = 2
                 End If
             End If
-        Next I
+        Next i
         
-        For I = 30 To (xcMax - 30) Step 1     '''(Right--to--Left)''   '';<--[238]word
+        For i = 30 To (xcMax - 30) Step 1     '''(Right--to--Left)''   '';<--[238]word
             Dsum = 0
             Dcnt = 0
         
-            If rxWORD(I) < 5000 Then  ''2001
-                For J = 1 To 5  ''3ea
-                    If rxWORD(I - J) >= 5000 Then
-                        Dsum = Dsum + rxWORD(I - J)
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i - j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i - j)
                         Dcnt = Dcnt + 1
                     End If
-                Next J
+                Next j
         
                 If Dcnt > 0 Then
-                    rxWORD(I) = Dsum / Dcnt   '''3
+                    rxWORD(i) = Dsum / Dcnt   '''3
                 End If
             End If
-        Next I
+        Next i
 
-        For I = (xcMax - 30) To 30 Step -1   '''(Left--to--Right)''   '';<--[238]word
+        For i = (xcMax - 30) To 30 Step -1   '''(Left--to--Right)''   '';<--[238]word
             Dsum = 0
             Dcnt = 0
         
-            If rxWORD(I) < 5000 Then  ''2001
-                For J = 1 To 5  ''3ea
-                    If rxWORD(I + J) >= 5000 Then
-                        Dsum = Dsum + rxWORD(I + J)
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i + j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i + j)
                         Dcnt = Dcnt + 1
                     End If
-                Next J
+                Next j
         
                 If Dcnt > 0 Then
-                    rxWORD(I) = Dsum / Dcnt   '''3
+                    rxWORD(i) = Dsum / Dcnt   '''3
                 End If
             End If
-        Next I
+        Next i
 
-        For I = 29 To 0 Step -1     '''(Right--to--End)''   '';<--[238]word
+        For i = 29 To 0 Step -1     '''(Right--to--End)''   '';<--[238]word
             Dsum = 0
             Dcnt = 0
             
-            If rxWORD(I) < 5000 Then  ''2001
-                For J = 1 To 5  ''3ea
-                    If rxWORD(I + J) >= 5000 Then
-                        Dsum = Dsum + rxWORD(I + J)
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i + j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i + j)
                         Dcnt = Dcnt + 1
                     End If
-                Next J
+                Next j
         
                 If Dcnt > 0 Then
-                    rxWORD(I) = Dsum / Dcnt * 0.955   '''3
+                    rxWORD(i) = Dsum / Dcnt * 0.955   '''3
                 End If
             End If
-        Next I
+        Next i
     
-        For I = (xcMax - 29) To xcMax Step 1     '''(Left--to--End)''   '';<--[238]word
+        For i = (xcMax - 29) To xcMax Step 1     '''(Left--to--End)''   '';<--[238]word
             Dsum = 0
             Dcnt = 0
             
-            If rxWORD(I) < 5000 Then  ''2001
-                For J = 1 To 5  ''3ea
-                    If rxWORD(I - J) >= 5000 Then
-                        Dsum = Dsum + rxWORD(I - J)
+            If rxWORD(i) < 5000 Then  ''2001
+                For j = 1 To 5  ''3ea
+                    If rxWORD(i - j) >= 5000 Then
+                        Dsum = Dsum + rxWORD(i - j)
                         Dcnt = Dcnt + 1
                     End If
-                Next J
+                Next j
         
                 If Dcnt > 0 Then
-                    rxWORD(I) = Dsum / Dcnt * 0.955   '''3
+                    rxWORD(i) = Dsum / Dcnt * 0.955   '''3
                 End If
             End If
-        Next I
+        Next i
     End If
 End Sub
 

@@ -70,7 +70,7 @@ Public Sub SaveBuffer2File(FileNamePrefix As String, buffer() As Byte, size As L
     Dim dirName         As String
     Dim fileName        As String
     Dim FileNumber
-    Dim I As Long
+    Dim i As Long
 '
     dirName = "C:\BIN_LOG\"
     fileName = _
@@ -91,9 +91,9 @@ On Error GoTo errFile1
     FileNumber = FreeFile
     Open fileName For Binary Access Write As #FileNumber
 '
-    For I = 0 To size - 1
-        Put #FileNumber, , buffer(I)
-    Next I
+    For i = 0 To size - 1
+        Put #FileNumber, , buffer(i)
+    Next i
 '
     Close #FileNumber
 '
