@@ -25,7 +25,7 @@ Begin VB.Form frmMain
       _ExtentY        =   953
       _StockProps     =   0
       AdsAmsServerNetId=   ""
-      AdsAmsClientPort=   33017
+      AdsAmsClientPort=   32863
       AdsClientType   =   ""
       AdsClientAdsState=   ""
       AdsClientAdsControl=   ""
@@ -38,7 +38,7 @@ Begin VB.Form frmMain
       _ExtentY        =   953
       _StockProps     =   0
       AdsAmsServerNetId=   ""
-      AdsAmsClientPort=   33019
+      AdsAmsClientPort=   32861
       AdsClientType   =   ""
       AdsClientAdsState=   ""
       AdsClientAdsControl=   ""
@@ -569,8 +569,8 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private Const relVersion = "v2.00.02-c"
-Private Const relDate = "2018-11-20"
+Private Const relVersion = "v2.00.02_3D"
+Private Const relDate = "2018-11-26"
 
 Dim d1 As Single
 
@@ -602,13 +602,13 @@ End Function
 Private Sub cmdADS1_Click()
 
 Dim ioD(33) As Integer
-Dim i As Long
+Dim I As Long
     
     tmrAoDo.Enabled = False  '''for Test!!
 
-    For i = 0 To 32
-        ioD(i) = 0
-    Next i
+    For I = 0 To 32
+        ioD(I) = 0
+    Next I
 
 '''SILO'''
 ''''''''''[BackHoff]-IO-MAP
@@ -665,14 +665,14 @@ End Sub
 
 
 Private Sub cmdADSclr_Click()
-Dim i As Integer
-Dim d As Integer
+Dim I As Integer
+Dim D As Integer
 
    
     Dim ioD(33) As Integer  ''(0~31)
-    For i = 0 To 31
-        ioD(i) = 0
-    Next i
+    For I = 0 To 31
+        ioD(I) = 0
+    Next I
     
 '    AdsOcx1.AdsSyncWriteReq &HF020&, &H64&, 40, ioD   ''SILO:[40]==4*5=20channel!
 '
@@ -715,16 +715,16 @@ Private Sub tmrDRAWmode_Timer()
     
     cmdDRAWmode.BackColor = vbGreen
     
-    Dim i As Integer
-    For i = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
-        ucSilo1(i).set_DRAWmode 0
-    Next i
+    Dim I As Integer
+    For I = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
+        ucSilo1(I).set_DRAWmode 0
+    Next I
     
 End Sub
 
 Private Sub cmdDRAWmode_Click()
 
-Dim i As Integer
+Dim I As Integer
         
     If cmdDRAWmode.BackColor = vbGreen Then
         cmdDRAWmode.BackColor = &H808080
@@ -732,9 +732,9 @@ Dim i As Integer
         tmrDRAWmode.Interval = 5000
         tmrDRAWmode.Enabled = True
         
-        For i = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
-            ucSilo1(i).set_DRAWmode 1
-        Next i
+        For I = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
+            ucSilo1(I).set_DRAWmode 1
+        Next I
     Else
             ''cmdFilt.BackColor = vbGreen
         If tmrDRAWmode.Enabled = True Then
@@ -742,9 +742,9 @@ Dim i As Integer
             tmrDRAWmode.Interval = 10000
             tmrDRAWmode.Enabled = True
             
-            For i = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
-                ucSilo1(i).set_DRAWmode 1
-            Next i
+            For I = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
+                ucSilo1(I).set_DRAWmode 1
+            Next I
         End If
     End If
 End Sub
@@ -777,7 +777,7 @@ Private Sub cmdPcsRun_Click()
     ''&H00008000& ''G
     ''&H00000080& ''R
     ''QBColor
-  Dim i As Integer
+  Dim I As Integer
   
     If cmdPcsRun.BackColor = &H8000& Then  ''run
         wsPcs.Close
@@ -802,26 +802,26 @@ Private Sub cmdRunStop_Click()
     ''&H00000080& ''R
     ''QBColor
     
-  Dim i As Integer
+  Dim I As Integer
 
     If cmdRunStop.BackColor = &H8000& Then  ''run
-        For i = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
-            ucSilo1(i).scan_STOP:   DoEvents
-            ucSilo1(i).scan_STOP:   DoEvents
-            ucSilo1(i).scan_STOP:   DoEvents
-        Next i
+        For I = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
+            ucSilo1(I).scan_STOP:   DoEvents
+            ucSilo1(I).scan_STOP:   DoEvents
+            ucSilo1(I).scan_STOP:   DoEvents
+        Next I
         cmdRunStop.BackColor = &H80&        ''stop
         
         txtMaxHH.Enabled = True
         txtBaseHH.Enabled = True
         
     Else  ''stop
-        For i = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
-            ucSilo1(i).set_maxHH CLng(txtMaxHH)
-            ucSilo1(i).set_baseHH CLng(txtBaseHH)
+        For I = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
+            ucSilo1(I).set_maxHH CLng(txtMaxHH)
+            ucSilo1(I).set_baseHH CLng(txtBaseHH)
 
-            ucSilo1(i).scan_RUN:   DoEvents
-        Next i
+            ucSilo1(I).scan_RUN:   DoEvents
+        Next I
         cmdRunStop.BackColor = &H8000&        ''run
         
         txtMaxHH.Enabled = False
@@ -843,8 +843,8 @@ End Sub
 
 Private Sub Form_Load()
 
-Dim i As Integer
-Dim j As Integer
+Dim I As Integer
+Dim J As Integer
 
     If App.PrevInstance Then
        MsgBox "프로그램이 이미 실행되었습니다."
@@ -888,11 +888,11 @@ Dim j As Integer
     AOdeepCNT = 0
     AOdeepCNT2 = 0
     
-    For i = 0 To 18  '''''''''''''''''''''''''''''''''''''''''''''14   '''New-CTS
-        For j = 0 To 99  ''AOdeepMAX
-            AOdeep(i, j) = 0
-        Next j
-    Next i
+    For I = 0 To 18  '''''''''''''''''''''''''''''''''''''''''''''14   '''New-CTS
+        For J = 0 To 99  ''AOdeepMAX
+            AOdeep(I, J) = 0
+        Next J
+    Next I
 
 
     txtSD1.Left = (Width / 5) * 4 + 100  '''Width - 5000   '''100
@@ -930,26 +930,26 @@ Dim j As Integer
         lbRelDate.Left = picTop.Width - 6050
         lbRelDate = relDate
         
-    For i = 0 To 32
-        AOdata(i) = 0
-    Next i
+    For I = 0 To 32
+        AOdata(I) = 0
+    Next I
 
 
-    For i = 1 To 14  ''3  '''10
-        Load ucSilo1(i)
-    Next i
+    For I = 1 To 14  ''3  '''10
+        Load ucSilo1(I)
+    Next I
 
-    For i = 0 To 14  ''"SILO*15"
+    For I = 0 To 14  ''"SILO*15"
 
-        ucSilo1(i).Width = 5500 ''3500  ''Width / 11 - 30
-        ucSilo1(i).Height = 3700  ''4000 ''3500
+        ucSilo1(I).Width = 5500 ''3500  ''Width / 11 - 30
+        ucSilo1(I).Height = 3700  ''4000 ''3500
 
-        ucSilo1(i).Left = ((i \ 3) * (Width / 5)) + 150  ''(i * (Width / 11)) + 20
-        ucSilo1(i).Top = ((i Mod 3) * 3700) + 1200  ''(i * (Width / 11)) + 20
+        ucSilo1(I).Left = ((I \ 3) * (Width / 5)) + 150  ''(i * (Width / 11)) + 20
+        ucSilo1(I).Top = ((I Mod 3) * 3700) + 1200  ''(i * (Width / 11)) + 20
 
-        ucSilo1(i).setIDX i, "", ""
-        ucSilo1(i).Visible = True
-    Next i
+        ucSilo1(I).setIDX I, "", ""
+        ucSilo1(I).Visible = True
+    Next I
 
     ipAddr(0) = "192.168.0.71": ipPort(0) = "7001"
     ipAddr(1) = "192.168.0.71": ipPort(1) = "7002"
@@ -971,77 +971,77 @@ Dim j As Integer
     Dim typeTmp As Integer
     Dim centerXTmp$, centerYTmp$, radiusTmp$, tiltMaxTmp$, tiltMinTmp$, tiltStepTmp$
     
-    For i = 0 To 14
-        ucSilo1(i).setIDX i, ipAddr(i), ipPort(i)
+    For I = 0 To 14
+        ucSilo1(I).setIDX I, ipAddr(I), ipPort(I)
         ''
-        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 3100)))
-        ucSilo1(i).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
+        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(I + 1, "00"), 3100)))
+        ucSilo1(I).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
         centerXTmp = _
-            GetSetting(App.Title, "Settings", "SILOcenterX_" & Format(i + 1, "00"), "Fail")
+            GetSetting(App.Title, "Settings", "SILOcenterX_" & Format(I + 1, "00"), "Fail")
         centerYTmp = _
-            GetSetting(App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00"), "Fail")
+            GetSetting(App.Title, "Settings", "SILOcenterY_" & Format(I + 1, "00"), "Fail")
         radiusTmp = _
-            GetSetting(App.Title, "Settings", "SILOradius_" & Format(i + 1, "00"), "Fail")
+            GetSetting(App.Title, "Settings", "SILOradius_" & Format(I + 1, "00"), "Fail")
         tiltMaxTmp = _
-            GetSetting(App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00"), "Fail")
+            GetSetting(App.Title, "Settings", "SILOtiltMax_" & Format(I + 1, "00"), "Fail")
         tiltMinTmp = _
-            GetSetting(App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00"), "Fail")
+            GetSetting(App.Title, "Settings", "SILOtiltMin_" & Format(I + 1, "00"), "Fail")
         tiltStepTmp = _
-            GetSetting(App.Title, "Settings", "SILOtiltStep_" & Format(i + 1, "00"), "Fail")
+            GetSetting(App.Title, "Settings", "SILOtiltStep_" & Format(I + 1, "00"), "Fail")
         If IsNumeric(centerXTmp) = False _
             Or Abs(CSng(Val(centerXTmp))) > 25! _
             Then
             centerXTmp = "0.0"
-            SaveSetting App.Title, "Settings", "SILOcenterX_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOcenterX_" & Format(I + 1, "00") _
                 , centerXTmp
         End If
         If IsNumeric(centerYTmp) = False _
             Or Abs(CSng(Val(centerYTmp))) > 25! _
             Then
             centerYTmp = "0.0"
-            SaveSetting App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOcenterY_" & Format(I + 1, "00") _
                 , centerYTmp
         End If
         If IsNumeric(radiusTmp) = False _
             Or CSng(Val(radiusTmp)) < 1! Or CSng(Val(radiusTmp)) > 25! _
             Then
             radiusTmp = "19.0"
-            SaveSetting App.Title, "Settings", "SILOradius_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOradius_" & Format(I + 1, "00") _
                 , radiusTmp
         End If
         If IsNumeric(tiltMaxTmp) = False _
             Or CSng(Val(tiltMaxTmp)) > 48! Or CSng(Val(tiltMaxTmp)) < 1! _
             Then
             tiltMaxTmp = "48.0"
-            SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(I + 1, "00") _
                 , tiltMaxTmp
         End If
         If IsNumeric(tiltMinTmp) = False _
             Or CSng(Val(tiltMinTmp)) < -48! Or CSng(Val(tiltMinTmp)) > -1! _
             Then
             tiltMinTmp = "-48.0"
-            SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(I + 1, "00") _
                 , tiltMinTmp
         End If
         If CSng(Val(tiltMaxTmp)) <= CSng(Val(tiltMinTmp)) Then
             tiltMaxTmp = "48.0"
             tiltMinTmp = "-48.0"
-            SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(I + 1, "00") _
                 , tiltMaxTmp
-            SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(I + 1, "00") _
                 , tiltMinTmp
         End If
         If IsNumeric(tiltStepTmp) = False _
             Or CSng(Val(tiltStepTmp)) > 5! Or CSng(Val(tiltStepTmp)) < 0.5! _
             Then
             tiltStepTmp = "2.0"
-            SaveSetting App.Title, "Settings", "SILOtiltStep_" & Format(i + 1, "00") _
+            SaveSetting App.Title, "Settings", "SILOtiltStep_" & Format(I + 1, "00") _
                 , tiltStepTmp
         End If
-        ucSilo1(i).setBinSettings _
+        ucSilo1(I).setBinSettings _
             CSng(centerXTmp), CSng(centerYTmp), CSng(radiusTmp) _
             , CSng(tiltMaxTmp), CSng(tiltMinTmp), CSng(tiltStepTmp)
-    Next i
+    Next I
 
 ''    ucSilo1(2).setScanTYPE 2590  '''''LD-LRS-3100,, DPS-2590 ==> CONSOLE-Mode!
 ''
@@ -1057,36 +1057,36 @@ Dim j As Integer
 
 
     '''''''''''''''''''''''''"New-CTS-SILO*4x2==8"
-    For i = 15 To 18
-        Load ucSilo1(i)
-    Next i
+    For I = 15 To 18
+        Load ucSilo1(I)
+    Next I
 
-    For i = 15 To 18
+    For I = 15 To 18
 
-        ucSilo1(i).Width = 5500 ''3500  ''Width / 11 - 30
-        ucSilo1(i).Height = 3700  ''4000 ''3500
+        ucSilo1(I).Width = 5500 ''3500  ''Width / 11 - 30
+        ucSilo1(I).Height = 3700  ''4000 ''3500
 
-        ucSilo1(i).Left = ((i - 15) * (Width / 5)) + 150  ''(i * (Width / 11)) + 20
-        ucSilo1(i).Top = ((3) * 3700) + 1200  ''(i * (Width / 11)) + 20
+        ucSilo1(I).Left = ((I - 15) * (Width / 5)) + 150  ''(i * (Width / 11)) + 20
+        ucSilo1(I).Top = ((3) * 3700) + 1200  ''(i * (Width / 11)) + 20
 
-        ucSilo1(i).setIDX i, "", ""
-        ucSilo1(i).Visible = True
-    Next i
+        ucSilo1(I).setIDX I, "", ""
+        ucSilo1(I).Visible = True
+    Next I
 
     ipAddr(15) = "192.168.0.171": ipPort(15) = "7002"  ''"7001"  '''
     ipAddr(16) = "192.168.0.171": ipPort(16) = "7004"  '''"7003"
     ipAddr(17) = "192.168.0.171": ipPort(17) = "7006"  '''"7005"
     ipAddr(18) = "192.168.0.171": ipPort(18) = "7007"  '''"7007"
 
-    For i = 15 To 18
-        ucSilo1(i).setIDX i, ipAddr(i), ipPort(i)
+    For I = 15 To 18
+        ucSilo1(I).setIDX I, ipAddr(I), ipPort(I)
         ''
         ''ucSilo1(i).setScanTYPE 12590  '''LD-LRS-3100,, DPS-2590  ==> UDP-Mode!(Rx_8056bytes)
         ''
-        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(i + 1, "00"), 12590)))
-        ucSilo1(i).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
+        typeTmp = Trim(Str(GetSetting(App.Title, "Settings", "SILOtypes_" & Format(I + 1, "00"), 12590)))
+        ucSilo1(I).setScanTYPE typeTmp  ''3100  '''LD-LRS-3100,, DPS-2590
         
-    Next i
+    Next I
 
 '    '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''((Test))
 '    ipAddr(2) = "192.168.0.171": ipPort(2) = "7001"
@@ -1135,21 +1135,21 @@ Dim j As Integer
 ''    ucSilo1(13).set_Angle 0
 ''    ucSilo1(14).set_Angle 0
    
-    For i = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
-        ucSilo1(i).set_Angle CDbl(GetSetting(App.Title, "Settings", "SILOang_" & Format(i + 1, "00"), 0))
-    Next i
+    For I = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
+        ucSilo1(I).set_Angle CDbl(GetSetting(App.Title, "Settings", "SILOang_" & Format(I + 1, "00"), 0))
+    Next I
     
     
     cmdDRAWmode.BackColor = vbGreen
     ''
-    For i = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
+    For I = 0 To 18  '''14  '''New-CTS-Silo(15+4)!
         
-        ucSilo1(i).set_DRAWmode 0
+        ucSilo1(I).set_DRAWmode 0
         
-        ucSilo1(i).set_maxHH CLng(txtMaxHH)
-        ucSilo1(i).set_baseHH CLng(txtBaseHH)
+        ucSilo1(I).set_maxHH CLng(txtMaxHH)
+        ucSilo1(I).set_baseHH CLng(txtBaseHH)
             
-    Next i
+    Next I
 
 ''Port: 800, IGrp: 0xF020, IOffs: 0x64, Len: 2
 
@@ -1180,8 +1180,8 @@ End Sub
 
 Private Sub tmrAoDo2_Timer()  '''New-CTS-SILO--4(x2)
 
-Dim i As Integer
-Dim j As Integer
+Dim I As Integer
+Dim J As Integer
 
 Dim ioD(33) As Integer
 Dim str1 As String
@@ -1193,26 +1193,26 @@ Dim avrDsum(20) As Long
 
 
 
-    For i = 15 To 18
-        aaD(i) = ucSilo1(i).ret_AOd
+    For I = 15 To 18
+        aaD(I) = ucSilo1(I).ret_AOd
         '''''''''''''''''''''''''''''
-    Next i
+    Next I
 
 
     ''SAVE--First!!
-    For i = 15 To 18
-        If (aaD(i) > 0) And (aaD(i) < 32768) Then
-            SaveSetting App.Title, "Settings", "AV_" & Trim(i), aaD(i)
+    For I = 15 To 18
+        If (aaD(I) > 0) And (aaD(I) < 32768) Then
+            SaveSetting App.Title, "Settings", "AV_" & Trim(I), aaD(I)
         Else
-            aaD(i) = GetSetting(App.Title, "Settings", "AV_" & Trim(i), 0)
+            aaD(I) = GetSetting(App.Title, "Settings", "AV_" & Trim(I), 0)
         End If
-    Next i
+    Next I
 
 
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''<AVR)
-    For i = 15 To 18
-        AOdeep(i, AOdeepCNT2) = aaD(i)
-    Next i
+    For I = 15 To 18
+        AOdeep(I, AOdeepCNT2) = aaD(I)
+    Next I
     ''
     AOdeepCNT2 = AOdeepCNT2 + 1
     ''
@@ -1222,69 +1222,69 @@ Dim avrDsum(20) As Long
     End If
 
 
-    For i = 15 To 18
-        avrDsum(i) = 0
-    Next i
+    For I = 15 To 18
+        avrDsum(I) = 0
+    Next I
 
 
     ''//??????????
     If AOdeepFull = True Then
     ''
-        For i = 15 To 18
-            For j = 0 To AOdeepMAX - 1
-                avrDsum(i) = avrDsum(i) + AOdeep(i, j)
-            Next j
-            avrD(i) = CInt(avrDsum(i) / AOdeepMAX)
-        Next i
+        For I = 15 To 18
+            For J = 0 To AOdeepMAX - 1
+                avrDsum(I) = avrDsum(I) + AOdeep(I, J)
+            Next J
+            avrD(I) = CInt(avrDsum(I) / AOdeepMAX)
+        Next I
     ''
     ElseIf AOdeepCNT2 > 1 Then
     ''
       txtAVRcnt = Trim(AOdeepCNT2 + 1)
-        For i = 15 To 18
-            For j = 0 To AOdeepCNT2 - 1
-                avrDsum(i) = avrDsum(i) + AOdeep(i, j)
-            Next j
-            avrD(i) = CInt(avrDsum(i) / AOdeepCNT2)
-        Next i
+        For I = 15 To 18
+            For J = 0 To AOdeepCNT2 - 1
+                avrDsum(I) = avrDsum(I) + AOdeep(I, J)
+            Next J
+            avrD(I) = CInt(avrDsum(I) / AOdeepCNT2)
+        Next I
     ''
     Else
         txtAVRcnt = Trim(AOdeepCNT2 + 1)
-        For i = 15 To 18
-            avrD(i) = aaD(i)
-        Next i
+        For I = 15 To 18
+            avrD(I) = aaD(I)
+        Next I
     End If
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''>AVR)
 
     ''set_avrHH for View
-    For i = 15 To 18
-        ucSilo1(i).set_avrHH avrD(i)
-    Next i
+    For I = 15 To 18
+        ucSilo1(I).set_avrHH avrD(I)
+    Next I
 
 
     ''''===[ LOG Save aaD(i),avrD(i) ]==='''
     str1 = ""  ''"BIN> "
-    For i = 15 To 18
+    For I = 15 To 18
     ''  str1 = str1 & Trim(i + 1) & ")" & Format(aaD(i), "00000") & "," & Format(avrD(i), "00000") & "," & Format((avrD(i) / 32768 * 100), "00.0") & "% "
-        str1 = str1 & Trim(i + 1) & ")" & Format((avrD(i) / 32768 * 100), "00.0") & "% "
-    Next i
+        str1 = str1 & Trim(I + 1) & ")" & Format((avrD(I) / 32768 * 100), "00.0") & "% "
+    Next I
     ''
     DGPSLog str1, "SILO"
 
 
     ''Replace!!
-    For i = 15 To 18
-        aaD(i) = avrD(i)
-    Next i
+    For I = 15 To 18
+        aaD(I) = avrD(I)
+    Next I
 
 
     ''SAVE--Replace!!
-    For i = 15 To 18
-        If (aaD(i) > 0) And (aaD(i) < 32768) Then
-            SaveSetting App.Title, "Settings", "AV_" & Trim(i), aaD(i)
+    For I = 15 To 18
+        If (aaD(I) > 0) And (aaD(I) < 32768) Then
+            SaveSetting App.Title, "Settings", "AV_" & Trim(I), aaD(I)
         Else
-            aaD(i) = GetSetting(App.Title, "Settings", "AV_" & Trim(i), 0)
+            aaD(I) = GetSetting(App.Title, "Settings", "AV_" & Trim(I), 0)
         End If
-    Next i
+    Next I
 
 
 
@@ -1321,7 +1321,7 @@ Dim avrDsum(20) As Long
     ioD(19) = 1 ''0
 
 
-    For i = 0 To 19  ''31
+    For I = 0 To 19  ''31
     ''--------------------------------------------------------(Temp)
 ''        If (ioD(i) > 0) And (ioD(i) <= 32767) Then
 ''            AOdata(i) = ioD(i)
@@ -1333,9 +1333,9 @@ Dim avrDsum(20) As Long
 ''            ''=========>> Cancle for Next~~ /(protect_Zero_send)
 ''        End If
     ''--------------------------------------------------------(Temp)
-        AOdata(i) = ioD(i)
+        AOdata(I) = ioD(I)
         ''''''''''''''''''
-    Next i
+    Next I
     
 
 On Error GoTo wsErrADS2
@@ -1369,8 +1369,8 @@ End Sub
 
 Private Sub tmrAoDo_Timer()
 
-Dim i As Integer
-Dim j As Integer
+Dim I As Integer
+Dim J As Integer
 
 Dim ioD(33) As Integer
 Dim str1 As String
@@ -1392,25 +1392,25 @@ Dim avrDsum(15) As Long
         txtSD1 = Mid(txtSD1, 5000)
     End If
 
-    For i = 0 To 14
-        aaD(i) = ucSilo1(i).ret_AOd
+    For I = 0 To 14
+        aaD(I) = ucSilo1(I).ret_AOd
         '''''''''''''''''''''''''''''
-    Next i
+    Next I
 
     ''SAVE--First!!
-    For i = 0 To 14
-        If (aaD(i) > 0) And (aaD(i) < 32768) Then
-            SaveSetting App.Title, "Settings", "AV_" & Trim(i), aaD(i)
+    For I = 0 To 14
+        If (aaD(I) > 0) And (aaD(I) < 32768) Then
+            SaveSetting App.Title, "Settings", "AV_" & Trim(I), aaD(I)
         Else
-            aaD(i) = GetSetting(App.Title, "Settings", "AV_" & Trim(i), 0)
+            aaD(I) = GetSetting(App.Title, "Settings", "AV_" & Trim(I), 0)
         End If
-    Next i
+    Next I
     
     
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''<AVR)
-    For i = 0 To 14
-        AOdeep(i, AOdeepCNT) = aaD(i)
-    Next i
+    For I = 0 To 14
+        AOdeep(I, AOdeepCNT) = aaD(I)
+    Next I
     ''
     AOdeepCNT = AOdeepCNT + 1
     ''
@@ -1420,69 +1420,69 @@ Dim avrDsum(15) As Long
     End If
 
 
-    For i = 0 To 14
-        avrDsum(i) = 0
-    Next i
+    For I = 0 To 14
+        avrDsum(I) = 0
+    Next I
     
     ''//??????????
     If AOdeepFull = True Then
     ''
-        For i = 0 To 14
-            For j = 0 To AOdeepMAX - 1
-                avrDsum(i) = avrDsum(i) + AOdeep(i, j)
-            Next j
-            avrD(i) = CInt(avrDsum(i) / AOdeepMAX)
-        Next i
+        For I = 0 To 14
+            For J = 0 To AOdeepMAX - 1
+                avrDsum(I) = avrDsum(I) + AOdeep(I, J)
+            Next J
+            avrD(I) = CInt(avrDsum(I) / AOdeepMAX)
+        Next I
     ''
     ElseIf AOdeepCNT > 1 Then
     ''
       txtAVRcnt = Trim(AOdeepCNT + 1)
-        For i = 0 To 14
-            For j = 0 To AOdeepCNT - 1
-                avrDsum(i) = avrDsum(i) + AOdeep(i, j)
-            Next j
-            avrD(i) = CInt(avrDsum(i) / AOdeepCNT)
-        Next i
+        For I = 0 To 14
+            For J = 0 To AOdeepCNT - 1
+                avrDsum(I) = avrDsum(I) + AOdeep(I, J)
+            Next J
+            avrD(I) = CInt(avrDsum(I) / AOdeepCNT)
+        Next I
     ''
     Else
         txtAVRcnt = Trim(AOdeepCNT + 1)
-        For i = 0 To 14
-            avrD(i) = aaD(i)
-        Next i
+        For I = 0 To 14
+            avrD(I) = aaD(I)
+        Next I
     End If
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''>AVR)
 
     ''set_avrHH for View
-    For i = 0 To 14
-        ucSilo1(i).set_avrHH avrD(i)
-    Next i
+    For I = 0 To 14
+        ucSilo1(I).set_avrHH avrD(I)
+    Next I
 
 
 
     ''''===[ LOG Save aaD(i),avrD(i) ]==='''
     str1 = ""  ''"BIN> "
-    For i = 0 To 14
+    For I = 0 To 14
     ''  str1 = str1 & Trim(i + 1) & ")" & Format(aaD(i), "00000") & "," & Format(avrD(i), "00000") & "," & Format((avrD(i) / 32768 * 100), "00.0") & "% "
-        str1 = str1 & Trim(i + 1) & ")" & Format((avrD(i) / 32768 * 100), "00.0") & "% "
-    Next i
+        str1 = str1 & Trim(I + 1) & ")" & Format((avrD(I) / 32768 * 100), "00.0") & "% "
+    Next I
     ''
     DGPSLog str1, "SILO"
 
 
     ''Replace!!
-    For i = 0 To 14
-        aaD(i) = avrD(i)
-    Next i
+    For I = 0 To 14
+        aaD(I) = avrD(I)
+    Next I
 
 
     ''SAVE--Replace!!
-    For i = 0 To 14
-        If (aaD(i) > 0) And (aaD(i) < 32768) Then
-            SaveSetting App.Title, "Settings", "AV_" & Trim(i), aaD(i)
+    For I = 0 To 14
+        If (aaD(I) > 0) And (aaD(I) < 32768) Then
+            SaveSetting App.Title, "Settings", "AV_" & Trim(I), aaD(I)
         Else
-            aaD(i) = GetSetting(App.Title, "Settings", "AV_" & Trim(i), 0)
+            aaD(I) = GetSetting(App.Title, "Settings", "AV_" & Trim(I), 0)
         End If
-    Next i
+    Next I
 
 
 
@@ -1526,7 +1526,7 @@ Dim avrDsum(15) As Long
     ioD(19) = 1 ''0
 
 
-    For i = 0 To 19  ''31
+    For I = 0 To 19  ''31
     ''--------------------------------------------------------(Temp)
 ''        If (ioD(i) > 0) And (ioD(i) <= 32767) Then
 ''            AOdata(i) = ioD(i)
@@ -1538,9 +1538,9 @@ Dim avrDsum(15) As Long
 ''            ''=========>> Cancle for Next~~ /(protect_Zero_send)
 ''        End If
     ''--------------------------------------------------------(Temp)
-        AOdata(i) = ioD(i)
+        AOdata(I) = ioD(I)
         ''''''''''''''''''
-    Next i
+    Next I
     
 
 On Error GoTo wsErrADS
@@ -1578,8 +1578,8 @@ Private Sub EditPcsData2(Pno As Integer)
 ''
 Dim sendbuf(840) As Byte  ''NewCTS-Silo((201801))
 ''
-Dim i As Integer
-Dim j As Integer
+Dim I As Integer
+Dim J As Integer
 Dim cnt1 As Integer
 Dim ret1 As Integer
 Dim str1 As String
@@ -1623,54 +1623,54 @@ Dim H8 As Byte
     sendbuf(6) = &H0:     sendbuf(7) = &H0      ''spare
 
 '<08>''
-    For i = 0 To 3  ''14  ''SILO
-        sendbuf(8 + i * 2) = CByte(ucSilo1(i + 15).ret_Act) ''BIN_Comm_Act
-        sendbuf(8 + i * 2 + 1) = &H0
-    Next i
+    For I = 0 To 3  ''14  ''SILO
+        sendbuf(8 + I * 2) = CByte(ucSilo1(I + 15).ret_Act) ''BIN_Comm_Act
+        sendbuf(8 + I * 2 + 1) = &H0
+    Next I
 
 '<16>''
-    For i = 0 To 3  ''14  ''SILO
-        ret1 = ucSilo1(i + 15).ret_HH
-        sendbuf(16 + i * 2) = CByte(ret1 Mod 256)
-        sendbuf(16 + i * 2 + 1) = CByte(ret1 \ 256) ''Height...AVR
+    For I = 0 To 3  ''14  ''SILO
+        ret1 = ucSilo1(I + 15).ret_HH
+        sendbuf(16 + I * 2) = CByte(ret1 Mod 256)
+        sendbuf(16 + I * 2 + 1) = CByte(ret1 \ 256) ''Height...AVR
         
-    Next i
+    Next I
     
 '<22>''
-    For i = 0 To 3  ''14  ''SILO
-        ret1 = ucSilo1(i + 15).ret_VV
-        sendbuf(22 + i * 2) = CByte(ret1 Mod 256)
-        sendbuf(22 + i * 2 + 1) = CByte(ret1 \ 256) ''VVV...AVR
+    For I = 0 To 3  ''14  ''SILO
+        ret1 = ucSilo1(I + 15).ret_VV
+        sendbuf(22 + I * 2) = CByte(ret1 Mod 256)
+        sendbuf(22 + I * 2 + 1) = CByte(ret1 \ 256) ''VVV...AVR
                 
-    Next i
+    Next I
 
 '<30>''
     ''''74''((+(11*202)==2222==>((2296))  ''5소결
     ''''56''((+(08*202)==1616==>((1672))   ''1234미분광
-    For j = 0 To 3  ''14  ''SILO
+    For J = 0 To 3  ''14  ''SILO
     
-      If ucSilo1(j + 15).ret_Act > 0 Then
+      If ucSilo1(J + 15).ret_Act > 0 Then
       ''''''''''''''''''''''''''''''''
-        For i = 0 To 100
-            ret1 = ucSilo1(j + 15).GETscanD(i)
+        For I = 0 To 100
+            ret1 = ucSilo1(J + 15).GETscanD(I)
             ''''''''''''''''''''''''''''''''''scan_Data''
             If ret1 < 0 Then ret1 = 0
             
-            cnt1 = 30 + (j * 202) + (i * 2)
+            cnt1 = 30 + (J * 202) + (I * 2)
             sendbuf(cnt1) = ret1 Mod 256  ''L8
             sendbuf(cnt1 + 1) = ret1 \ 256  ''H8
             
-        Next i
+        Next I
         
       Else
-        For i = 0 To 100
-            cnt1 = 30 + (j * 202) + (i * 2)
+        For I = 0 To 100
+            cnt1 = 30 + (J * 202) + (I * 2)
             sendbuf(cnt1) = 0
             sendbuf(cnt1 + 1) = 0
-        Next i
+        Next I
       End If
       
-    Next j
+    Next J
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -1695,8 +1695,8 @@ End Sub
 Private Sub EditPcsData(Pno As Integer)
 
 Dim sendbuf(3128) As Byte  ''Variant  ''1672!! '''2295
-Dim i As Integer
-Dim j As Integer
+Dim I As Integer
+Dim J As Integer
 Dim cnt1 As Integer
 Dim ret1 As Integer
 Dim str1 As String
@@ -1787,43 +1787,43 @@ Dim H8 As Byte
     sendbuf(6) = &H0:     sendbuf(7) = &H0      ''spare
 
 '<08>''
-    For i = 0 To 14  ''SILO
-        sendbuf(8 + i * 2) = CByte(ucSilo1(i).ret_Act)   ''BIN_Comm_Act
-        sendbuf(8 + i * 2 + 1) = &H0
-    Next i
+    For I = 0 To 14  ''SILO
+        sendbuf(8 + I * 2) = CByte(ucSilo1(I).ret_Act)   ''BIN_Comm_Act
+        sendbuf(8 + I * 2 + 1) = &H0
+    Next I
 
 '<38>''
-    For i = 0 To 14  ''SILO
-        ret1 = ucSilo1(i).ret_HH
-        sendbuf(38 + i * 2) = CByte(ret1 Mod 256)
-        sendbuf(38 + i * 2 + 1) = CByte(ret1 \ 256) ''Height...AVR
+    For I = 0 To 14  ''SILO
+        ret1 = ucSilo1(I).ret_HH
+        sendbuf(38 + I * 2) = CByte(ret1 Mod 256)
+        sendbuf(38 + I * 2 + 1) = CByte(ret1 \ 256) ''Height...AVR
         
-    Next i
+    Next I
     
 '<68>''
-    For i = 0 To 14  ''SILO
-        ret1 = ucSilo1(i).ret_VV
-        sendbuf(68 + i * 2) = CByte(ret1 Mod 256)
-        sendbuf(68 + i * 2 + 1) = CByte(ret1 \ 256) ''VVV...AVR
+    For I = 0 To 14  ''SILO
+        ret1 = ucSilo1(I).ret_VV
+        sendbuf(68 + I * 2) = CByte(ret1 Mod 256)
+        sendbuf(68 + I * 2 + 1) = CByte(ret1 \ 256) ''VVV...AVR
                 
-    Next i
+    Next I
 
 '<98>''
     ''''74''((+(11*202)==2222==>((2296))  ''5소결
     ''''56''((+(08*202)==1616==>((1672))   ''1234미분광
-    For j = 0 To 14  ''SILO
+    For J = 0 To 14  ''SILO
     
-      If ucSilo1(j).ret_Act > 0 Then
+      If ucSilo1(J).ret_Act > 0 Then
       ''''''''''''''''''''''''''''''''
-        For i = 0 To 100
-            ret1 = ucSilo1(j).GETscanD(i)
+        For I = 0 To 100
+            ret1 = ucSilo1(J).GETscanD(I)
             ''''''''''''''''''''''''''''''''''scan_Data''
             If ret1 < 0 Then ret1 = 0
             
-            cnt1 = 98 + (j * 202) + (i * 2)
+            cnt1 = 98 + (J * 202) + (I * 2)
             sendbuf(cnt1) = ret1 Mod 256  ''L8
             sendbuf(cnt1 + 1) = ret1 \ 256  ''H8
-        Next i
+        Next I
         
 ''        If j = 4 Then  '''Debug-Draw
 ''            str1 = "SendDRAW: "
@@ -1841,14 +1841,14 @@ Dim H8 As Byte
 ''        End If
         
       Else
-        For i = 0 To 100
-            cnt1 = 98 + (j * 202) + (i * 2)
+        For I = 0 To 100
+            cnt1 = 98 + (J * 202) + (I * 2)
             sendbuf(cnt1) = 0
             sendbuf(cnt1 + 1) = 0
-        Next i
+        Next I
       End If
       
-    Next j
+    Next J
 
 
 
@@ -1970,16 +1970,16 @@ End Sub
 '''
 
 Private Sub tmrSinit_Timer()
-Dim i
+Dim I
 
     '======================!
     tmrSinit.Enabled = False
     '''''''''''''''''''''''!
     '''''''''''''''''''''''!
     
-    For i = 0 To 18   '''14  '''New-CTS-Silo(15+4)!
-        ucSilo1(i).initStart
-    Next i
+    For I = 0 To 18   '''14  '''New-CTS-Silo(15+4)!
+        ucSilo1(I).initStart
+    Next I
 
 End Sub
 

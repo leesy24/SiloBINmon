@@ -70,7 +70,7 @@ Public Sub SaveBuffer2File(FileNamePrefix As String, buffer() As Byte, size As L
     Dim dirName         As String
     Dim fileName        As String
     Dim FileNumber
-    Dim i As Long
+    Dim I As Long
 '
     dirName = "C:\BIN_LOG\"
     fileName = _
@@ -91,9 +91,9 @@ On Error GoTo errFile1
     FileNumber = FreeFile
     Open fileName For Binary Access Write As #FileNumber
 '
-    For i = 0 To size - 1
-        Put #FileNumber, , buffer(i)
-    Next i
+    For I = 0 To size - 1
+        Put #FileNumber, , buffer(I)
+    Next I
 '
     Close #FileNumber
 '
@@ -139,6 +139,24 @@ errFile1:
     ''''''''''''(just-cancle~)
 '
     Tilt3Dlog_start = FileNumber
+'
+End Function
+
+Public Function Tilt3Dlog_get_fileName(FileNumber As Integer) As String
+    Dim fileName        As String
+'
+On Error Resume Next
+'
+    fileName = FileRegister.Item(Str(FileNumber))
+'
+On Error GoTo errFile1
+'
+    If FileExists(fileName) Then
+        Tilt3Dlog_get_fileName = fileName
+    End If
+'
+errFile1:
+    ''''''''''''(just-cancle~)
 '
 End Function
 
