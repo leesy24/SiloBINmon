@@ -3348,7 +3348,7 @@ Dim i, j As Integer
 Dim Dsum As Long
 Dim Dcnt As Integer
 Dim X1 As Integer
-Dim Y1 As Long
+Dim Y1&, Y2&
 Dim s As Integer
 
     If cmdFilt.BackColor = vbGreen Then
@@ -3374,11 +3374,29 @@ Dim s As Integer
                         End If
                         Y1 = Dsum / Dcnt
                     Next j
-                    For j = X1 + 1 To i - 1 Step 1
-                        rxWORD(j) = (rxWORD(i) - Y1) * (j - X1) / (i - X1) + Y1
+                    If Abs(Y1 - rxWORD(X1)) < 5000 Then
+                        Y1 = rxWORD(X1)
+                    End If
+                    Dsum = 0
+                    Dcnt = 0
+                    For j = i To i + 5 Step 1
+                        If rxWORD(j) >= 5000 Then
+                            Dsum = Dsum + rxWORD(j)
+                            Dcnt = Dcnt + 1
+                        End If
+                        Y2 = Dsum / Dcnt
                     Next j
-                    s = 1
-                    X1 = i
+                    If Abs(Y2 - rxWORD(i)) < 5000 Then
+                        Y2 = rxWORD(i)
+                    End If
+                    If (Y1 / 2) <= 5000 Or Abs(Y2 - Y1) < (Y1 / 2) Then
+                        For j = X1 + 1 To i - 1 Step 1
+                            rxWORD(j) = (Y2 - Y1) * (j - X1) / (i - X1) + Y1
+                        Next j
+                        s = 1
+                        X1 = i
+                    Else
+                    End If
                 End If
             Else '' under 5meter
                 If s = 1 Then
