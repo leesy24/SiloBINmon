@@ -439,6 +439,7 @@ Private Sub lbBinNO2_Click(Index As Integer)
         , frmMain.ucSilo1(Index).CenterX _
         , frmMain.ucSilo1(Index).CenterY _
         , frmMain.ucSilo1(Index).Radius _
+        , frmMain.ucSilo1(Index).TiltDefault _
         , frmMain.ucSilo1(Index).TiltMax _
         , frmMain.ucSilo1(Index).TiltMin _
         , frmMain.ucSilo1(Index).TiltStep

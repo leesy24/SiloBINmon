@@ -1,22 +1,31 @@
 VERSION 5.00
 Begin VB.Form frmSettings 
    Caption         =   "Settings"
-   ClientHeight    =   2415
+   ClientHeight    =   2790
    ClientLeft      =   60
    ClientTop       =   450
-   ClientWidth     =   4680
+   ClientWidth     =   4770
    LinkTopic       =   "Form1"
-   ScaleHeight     =   2415
-   ScaleWidth      =   4680
+   ScaleHeight     =   2790
+   ScaleWidth      =   4770
    StartUpPosition =   3  'Windows 기본값
    Visible         =   0   'False
+   Begin VB.TextBox txtBinTiltDefault 
+      Alignment       =   1  '오른쪽 맞춤
+      Height          =   270
+      Left            =   1080
+      TabIndex        =   20
+      Text            =   "0"
+      Top             =   1275
+      Width           =   555
+   End
    Begin VB.TextBox txtBinTiltStep 
       Alignment       =   1  '오른쪽 맞춤
       Height          =   270
       Left            =   1080
       TabIndex        =   17
       Text            =   "0"
-      Top             =   1980
+      Top             =   2340
       Width           =   555
    End
    Begin VB.TextBox txtBinTiltMax 
@@ -25,7 +34,7 @@ Begin VB.Form frmSettings
       Left            =   1080
       TabIndex        =   12
       Text            =   "0"
-      Top             =   1260
+      Top             =   1620
       Width           =   555
    End
    Begin VB.TextBox txtBinTiltMin 
@@ -34,7 +43,7 @@ Begin VB.Form frmSettings
       Left            =   1080
       TabIndex        =   11
       Text            =   "0"
-      Top             =   1620
+      Top             =   1980
       Width           =   555
    End
    Begin VB.CommandButton cmdSettingsApply 
@@ -44,7 +53,7 @@ Begin VB.Form frmSettings
       Left            =   3000
       Style           =   1  '그래픽
       TabIndex        =   10
-      Top             =   1320
+      Top             =   1560
       Width           =   1575
    End
    Begin VB.CommandButton cmdSettingsExit 
@@ -54,7 +63,7 @@ Begin VB.Form frmSettings
       Left            =   3000
       Style           =   1  '그래픽
       TabIndex        =   6
-      Top             =   1800
+      Top             =   2040
       Width           =   1575
    End
    Begin VB.TextBox txtBinRadius 
@@ -72,7 +81,7 @@ Begin VB.Form frmSettings
       Left            =   1080
       TabIndex        =   4
       Text            =   "0"
-      Top             =   520
+      Top             =   525
       Width           =   555
    End
    Begin VB.TextBox txtBinCenterX 
@@ -84,107 +93,124 @@ Begin VB.Form frmSettings
       Top             =   180
       Width           =   555
    End
+   Begin VB.Label Label8 
+      Caption         =   "°, 48~-48"
+      Height          =   195
+      Left            =   1680
+      TabIndex        =   22
+      Top             =   1320
+      Width           =   1275
+   End
+   Begin VB.Label lbBinTiltDefault 
+      Alignment       =   1  '오른쪽 맞춤
+      Caption         =   "Tilt default:"
+      Height          =   195
+      Left            =   0
+      TabIndex        =   21
+      Top             =   1320
+      Width           =   1035
+   End
    Begin VB.Label Label6 
       Caption         =   "°, 0.5~5.0"
       Height          =   195
       Left            =   1680
       TabIndex        =   19
-      Top             =   2040
+      Top             =   2400
       Width           =   1275
    End
    Begin VB.Label lbBinTiltStep 
       Alignment       =   1  '오른쪽 맞춤
-      Caption         =   "Tilt Step"
+      Caption         =   "Tilt step:"
       Height          =   195
-      Left            =   120
+      Left            =   0
       TabIndex        =   18
-      Top             =   2040
-      Width           =   795
+      Top             =   2400
+      Width           =   1035
    End
    Begin VB.Label lbBinTiltMax 
       Alignment       =   1  '오른쪽 맞춤
-      Caption         =   "Tilt Max"
+      Caption         =   "Tilt max.:"
       Height          =   195
-      Left            =   120
+      Left            =   0
       TabIndex        =   16
-      Top             =   1320
-      Width           =   795
+      Top             =   1680
+      Width           =   1035
    End
    Begin VB.Label lbBinTiltMin 
       Alignment       =   1  '오른쪽 맞춤
-      Caption         =   "Tilt Min."
+      Caption         =   "Tilt min.:"
       Height          =   195
-      Left            =   120
+      Left            =   0
       TabIndex        =   15
-      Top             =   1680
-      Width           =   795
+      Top             =   2040
+      Width           =   1035
    End
    Begin VB.Label Label5 
-      Caption         =   "°, 48~1"
+      Caption         =   "°, 48.0~1.0"
       Height          =   195
       Left            =   1680
       TabIndex        =   14
-      Top             =   1320
-      Width           =   1275
-   End
-   Begin VB.Label Label4 
-      Caption         =   "°, -48~-1"
-      Height          =   195
-      Left            =   1680
-      TabIndex        =   13
       Top             =   1680
       Width           =   1275
    End
+   Begin VB.Label Label4 
+      Caption         =   "°, -48.0~-1.0"
+      Height          =   195
+      Left            =   1680
+      TabIndex        =   13
+      Top             =   2040
+      Width           =   1275
+   End
    Begin VB.Label Label3 
-      Caption         =   "meter, 1~25"
+      Caption         =   "meter, 1.0~25.0"
       Height          =   195
       Left            =   1680
       TabIndex        =   9
       Top             =   960
-      Width           =   1275
+      Width           =   1635
    End
    Begin VB.Label Label2 
-      Caption         =   "meter, -25~25"
+      Caption         =   "meter, -25.0~25.0"
       Height          =   195
       Left            =   1680
       TabIndex        =   8
       Top             =   600
-      Width           =   1275
+      Width           =   1755
    End
    Begin VB.Label Label1 
-      Caption         =   "meter, -25~25"
+      Caption         =   "meter, -25.0~25.0"
       Height          =   195
       Left            =   1680
       TabIndex        =   7
       Top             =   240
-      Width           =   1275
+      Width           =   1695
    End
    Begin VB.Label lbBinRadius 
       Alignment       =   1  '오른쪽 맞춤
-      Caption         =   "Radius"
+      Caption         =   "Radius:"
       Height          =   195
-      Left            =   120
+      Left            =   0
       TabIndex        =   2
       Top             =   960
-      Width           =   795
+      Width           =   1035
    End
    Begin VB.Label lbBinCenterY 
       Alignment       =   1  '오른쪽 맞춤
-      Caption         =   "Center Y"
+      Caption         =   "Center Y:"
       Height          =   195
-      Left            =   120
+      Left            =   0
       TabIndex        =   1
       Top             =   600
-      Width           =   795
+      Width           =   1035
    End
    Begin VB.Label lbBinCenterX 
       Alignment       =   1  '오른쪽 맞춤
-      Caption         =   "Center X"
+      Caption         =   "Center X:"
       Height          =   195
-      Left            =   120
+      Left            =   0
       TabIndex        =   0
       Top             =   240
-      Width           =   795
+      Width           =   1035
    End
 End
 Attribute VB_Name = "frmSettings"
@@ -196,7 +222,8 @@ Option Explicit
 '
 Dim Index%
 
-Public Sub Init(Index_I%, CenterX_I!, CenterY_I!, Radius_I!, TiltMax_I!, TiltMin_I!, TiltStep_I!)
+Public Sub Init(Index_I%, CenterX_I!, CenterY_I!, Radius_I!, _
+    TiltDefault_I%, TiltMax_I!, TiltMin_I!, TiltStep_I!)
 '
     Index = Index_I
 '
@@ -205,6 +232,7 @@ Public Sub Init(Index_I%, CenterX_I!, CenterY_I!, Radius_I!, TiltMax_I!, TiltMin
     txtBinCenterX = CenterX_I
     txtBinCenterY = CenterY_I
     txtBinRadius = Radius_I
+    txtBinTiltDefault = TiltDefault_I
     txtBinTiltMax = TiltMax_I
     txtBinTiltMin = TiltMin_I
     txtBinTiltStep = TiltStep_I
@@ -230,6 +258,13 @@ Private Sub cmdSettingsApply_Click()
         Or CSng(Val(txtBinRadius)) > 25! _
         Then
         MsgBox lbBinRadius & "는 1.0 ~ 25.0 사이의 값 이어야 합니다.", vbOKOnly
+        Exit Sub
+    End If
+    If IsNumeric(txtBinTiltDefault) = False _
+        Or CSng(CInt(Val(txtBinTiltDefault))) <> CSng(Val(txtBinTiltDefault)) _
+        Or CInt(Val(txtBinTiltDefault)) > 48! Or CInt(Val(txtBinTiltDefault)) < -48! _
+        Then
+        MsgBox lbBinTiltDefault & "는 48 ~ -48 사이의 정수 값 이어야 합니다.", vbOKOnly
         Exit Sub
     End If
     If IsNumeric(txtBinTiltMax) = False _
@@ -261,6 +296,8 @@ Private Sub cmdSettingsApply_Click()
         , txtBinCenterY
     SaveSetting App.Title, "Settings", "SILOradius_" & Format(Index + 1, "00") _
         , txtBinRadius
+    SaveSetting App.Title, "Settings", "SILOtiltDefault_" & Format(Index + 1, "00") _
+        , txtBinTiltDefault
     SaveSetting App.Title, "Settings", "SILOtiltMax_" & Format(Index + 1, "00") _
         , txtBinTiltMax
     SaveSetting App.Title, "Settings", "SILOtiltMin_" & Format(Index + 1, "00") _
@@ -269,7 +306,8 @@ Private Sub cmdSettingsApply_Click()
         , txtBinTiltStep
 '
     frmMain.ucSilo1(Index).setBinSettings _
-        txtBinCenterX, txtBinCenterY, txtBinRadius, txtBinTiltMax, txtBinTiltMin, txtBinTiltStep
+        txtBinCenterX, txtBinCenterY, txtBinRadius _
+        , txtBinTiltDefault, txtBinTiltMax, txtBinTiltMin, txtBinTiltStep
 '
 End Sub
 
@@ -278,3 +316,4 @@ Private Sub cmdSettingsExit_Click()
     frmSettings.Visible = False
 '
 End Sub
+

@@ -969,7 +969,8 @@ Dim j As Integer
     ipAddr(14) = "192.168.0.72": ipPort(14) = "7007"
     
     Dim typeTmp As Integer
-    Dim centerXTmp$, centerYTmp$, radiusTmp$, tiltMaxTmp$, tiltMinTmp$, tiltStepTmp$
+    Dim centerXTmp$, centerYTmp$, radiusTmp$
+    Dim tiltDefaultTmp$, tiltMaxTmp$, tiltMinTmp$, tiltStepTmp$
     
     For i = 0 To 14
         ucSilo1(i).setIDX i, ipAddr(i), ipPort(i)
@@ -982,6 +983,8 @@ Dim j As Integer
             GetSetting(App.Title, "Settings", "SILOcenterY_" & Format(i + 1, "00"), "Fail")
         radiusTmp = _
             GetSetting(App.Title, "Settings", "SILOradius_" & Format(i + 1, "00"), "Fail")
+        tiltDefaultTmp = _
+            GetSetting(App.Title, "Settings", "SILOtiltDefault_" & Format(i + 1, "00"), "Fail")
         tiltMaxTmp = _
             GetSetting(App.Title, "Settings", "SILOtiltMax_" & Format(i + 1, "00"), "Fail")
         tiltMinTmp = _
@@ -1008,6 +1011,14 @@ Dim j As Integer
             radiusTmp = "19.0"
             SaveSetting App.Title, "Settings", "SILOradius_" & Format(i + 1, "00") _
                 , radiusTmp
+        End If
+        If IsNumeric(tiltDefaultTmp) = False _
+            Or CSng(CInt(Val(tiltDefaultTmp))) <> CSng(Val(tiltDefaultTmp)) _
+            Or CInt(Val(tiltDefaultTmp)) > 48! Or CInt(Val(tiltDefaultTmp)) < -48! _
+            Then
+            tiltDefaultTmp = "-1"
+            SaveSetting App.Title, "Settings", "SILOtiltDefault_" & Format(i + 1, "00") _
+                , tiltDefaultTmp
         End If
         If IsNumeric(tiltMaxTmp) = False _
             Or CSng(Val(tiltMaxTmp)) > 48! Or CSng(Val(tiltMaxTmp)) < 1! _
@@ -1040,7 +1051,7 @@ Dim j As Integer
         End If
         ucSilo1(i).setBinSettings _
             CSng(centerXTmp), CSng(centerYTmp), CSng(radiusTmp) _
-            , CSng(tiltMaxTmp), CSng(tiltMinTmp), CSng(tiltStepTmp)
+            , CInt(tiltDefaultTmp), CSng(tiltMaxTmp), CSng(tiltMinTmp), CSng(tiltStepTmp)
     Next i
 
 ''    ucSilo1(2).setScanTYPE 2590  '''''LD-LRS-3100,, DPS-2590 ==> CONSOLE-Mode!

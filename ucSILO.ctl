@@ -696,7 +696,8 @@ Private AutoTiltMin As Double
 ''''''''''''''''''''''''''''''''
 
 Private ScanTYPE As Integer  '''LD-LRS-3100,, DPS-2590
-Public CenterX!, CenterY!, Radius!, TiltMax!, TiltMin!, TiltStep!
+Public CenterX!, CenterY!, Radius!
+Public TiltDefault%, TiltMax!, TiltMin!, TiltStep!
 ''
 Private inBUF2590 As String   '''inBUF2590(100000) As Byte
 ''
@@ -843,11 +844,13 @@ Public Sub setScanTYPE(iScan As Integer)  '''LD-LRS-3100,, DPS-2590
     
 End Sub
 
-Public Sub setBinSettings(CenterX_I!, CenterY_I!, Radius_I!, TiltMax_I!, TiltMin_I!, TiltStep_I!)
+Public Sub setBinSettings(CenterX_I!, CenterY_I!, Radius_I! _
+    , TiltDefault_I%, TiltMax_I!, TiltMin_I!, TiltStep_I!)
 '
     CenterX = CenterX_I
     CenterY = CenterY_I
     Radius = Radius_I
+    TiltDefault = TiltDefault_I
     TiltMax = TiltMax_I
     TiltMin = TiltMin_I
     TiltStep = TiltStep_I
@@ -1726,8 +1729,8 @@ Dim bb() As Byte
                 ret = LDrx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
                 
                 If ret = 0 Or ret < 0 Then
-                    lbTiltV = "-1"
-                    strA = "SetAngle[-1]"
+                    lbTiltV = Str(TiltDefault)
+                    strA = "SetAngle[" & TiltDefault & "]"
     
                     bb = StrConv(strA, vbFromUnicode)
                     ''
@@ -1823,8 +1826,8 @@ Dim bb() As Byte
                                 autoTilt_off
                             End If
 '
-                            lbTiltV = "-1"
-                            strA = "SetAngle[-1]"
+                            lbTiltV = Str(TiltDefault)
+                            strA = "SetAngle[" & TiltDefault & "]"
                             tmrSrun.Interval = 1000
                         ElseIf AutoTiltStarted = False Then
                             RX_filt_Init
@@ -1850,8 +1853,8 @@ Dim bb() As Byte
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
                                 autoTilt_stop
 '
-                                lbTiltV = "-1"
-                                strA = "SetAngle[-1]"
+                                lbTiltV = Str(TiltDefault)
+                                strA = "SetAngle[" & TiltDefault & "]"
                                 tmrSrun.Interval = 1000
                             Else
                                 strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
@@ -1862,8 +1865,8 @@ Dim bb() As Byte
                             End If
                         End If
                     Else
-                        lbTiltV = "-1"
-                        strA = "SetAngle[-1]"
+                        lbTiltV = Str(TiltDefault)
+                        strA = "SetAngle[" & TiltDefault & "]"
                         tmrSrun.Interval = 2000
                     End If
 '
@@ -1881,8 +1884,8 @@ Dim bb() As Byte
                         If AutoTiltErrorCnt > 5 Then
                             autoTilt_stop
 '
-                            lbTiltV = "-1"
-                            strA = "SetAngle[-1]"
+                            lbTiltV = Str(TiltDefault)
+                            strA = "SetAngle[" & TiltDefault & "]"
                             tmrSrun.Interval = 1000
                         Else
                             strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
@@ -1892,8 +1895,8 @@ Dim bb() As Byte
                         End If
                         tmrSrun.Interval = 1000
                     Else
-                        lbTiltV = "-1"
-                        strA = "SetAngle[-1]"
+                        lbTiltV = Str(TiltDefault)
+                        strA = "SetAngle[" & TiltDefault & "]"
                         tmrSrun.Interval = 2000
                     End If
 '
