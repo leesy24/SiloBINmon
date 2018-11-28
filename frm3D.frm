@@ -951,7 +951,7 @@ Private Function Picture3D(ByVal Sheet As PictureBox, _
     Sheet.FontSize = 8
     Sheet.DrawWidth = 1
     Sheet.ForeColor = RifCol
-    Sheet.DRAWmode = vbCopyPen
+    Sheet.DrawMode = vbCopyPen
 '
     ' Check the separation of the labels:
     Dim TxW!

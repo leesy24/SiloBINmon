@@ -980,7 +980,7 @@ Public Function Painting(ByVal Sheet As PictureBox, _
     Po4_X = Sheet.ScaleX(4, vbPoints, vbUser)
     Po4_Y = Sheet.ScaleY(4, vbPoints, vbUser)
 '
-    Sheet.DRAWmode = vbCopyPen
+    Sheet.DrawMode = vbCopyPen
     Sheet.DrawWidth = 1
     Sheet.DrawStyle = vbDash
     Sheet.ForeColor = vbGreen
@@ -1132,7 +1132,7 @@ Public Function MIN0(ParamArray vD() As Variant) As Long
 End Function
 
 Public Function BreakDown(ByVal Full$, Optional ByRef PName$, _
-    Optional ByRef Fname$, Optional ByRef Ext$) As Boolean
+    Optional ByRef FName$, Optional ByRef Ext$) As Boolean
 '
 '   Breaks a complete Path file name into its parts:
 '    Full$  = Full name of the file.
@@ -1147,17 +1147,17 @@ Public Function BreakDown(ByVal Full$, Optional ByRef PName$, _
     BreakDown = FileExists(Full$)
 '
     If InStr(Full$, "\") Then
-        Fname$ = Full$
+        FName$ = Full$
         PName$ = ""
-        Sloc = InStr(Fname$, "\")
+        Sloc = InStr(FName$, "\")
         Do While Sloc <> 0
-            PName$ = PName$ & Left$(Fname$, Sloc)
-            Fname$ = Mid$(Fname$, Sloc + 1)
-            Sloc = InStr(Fname$, "\")
+            PName$ = PName$ & Left$(FName$, Sloc)
+            FName$ = Mid$(FName$, Sloc + 1)
+            Sloc = InStr(FName$, "\")
         Loop
     Else
         PName$ = ""
-        Fname$ = Full$
+        FName$ = Full$
     End If
 '
     Dot = InStr(Full$, ".")
