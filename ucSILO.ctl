@@ -764,10 +764,10 @@ Dim RxHeader As Variant  ''HDmsg = Chr(2) + Chr(2) + Chr(2) + Chr(2) + Chr(0) + 
     Dim maxxrange As Double                     'sets max x range of scan
     Dim minxrange As Double                     'sets min x range of scan
 
-    Dim r(0 To 2000) As Double                  'radius data
+    'Dim g_r(0 To 2000) As Double                  'radius data
     Dim X(0 To 2000) As Double                  'x - cartesian coordinate
     Dim Y(0 To 2000) As Double                  'y - cartesian coordinate
-    Dim n As Integer                            'number of data values
+    Dim g_n As Integer                            'number of data values
 
     
     Dim minXL As Double
@@ -1030,6 +1030,27 @@ Private Sub UserControl_Initialize()
 
 End Sub
 
+'Private Sub picSilo_Click()
+'    If ScanTYPE = 22590 And tSrunMode >= eSrunMode.SendCmd Then
+'        If AutoTiltON = False Then
+'            If AutoTiltStarted = False Then
+'                autoTilt_on
+'                'If UCindex = 10 Then _
+'                '    SurFit_Open "C:\BIN_LOG\S11_3D_20181126_124339_875.dat"
+'                'If UCindex = 13 Then _
+'                '    SurFit_Open "C:\BIN_LOG\S14_3D_20181126_124923_265.dat"
+'            End If
+'        Else ' of If AutoTiltON = False Then
+'            '' Check not yet started
+'            If AutoTiltStarted = False Then
+'                autoTilt_off
+'            Else
+'                autoTilt_stop
+'            End If
+'        End If
+'    End If
+'End Sub
+
 Private Sub autoTilt_on()
     AutoTiltON = True
     AutoTiltOffDelayCnt = 0
@@ -1051,7 +1072,7 @@ End Sub
 Private Sub autoTilt_stop()
     AutoTiltStarted = False
     Tilt3Dlog_end tilt3Dlog_fn
-    AutoTiltOffDelayCnt = 6
+    AutoTiltOffDelayCnt = 1
     lbTiltTX.BackColor = &HC000&
     lbTiltRX.BackColor = &HC000&
     lbTiltV.BackColor = &HC000&
@@ -1128,7 +1149,7 @@ Dim SideD As Integer  '';20160617~
 
 
 
-    n = xcMax  ''119
+    g_n = xcMax  ''119
     
 '    x(1) = 0
 '    Y(1) = 0
@@ -1147,7 +1168,7 @@ Dim SideD As Integer  '';20160617~
         cut = 30 '''60
     End If
     
-    For k = cut To n - cut + 2   '''{0 to n}'''
+    For k = cut To g_n - cut + 2   '''{0 to g_n}'''
 
             s = k / 2#
 
@@ -1155,7 +1176,7 @@ Dim SideD As Integer  '';20160617~
     
             ''x(k) = x(k) + Val(txtOpX.Text)
     
-            ''y(k) = r(k) * Sin((angle(k) + 40) * (3.14159 / 180)) ''180
+            ''y(k) = g_r(k) * Sin((angle(k) + 40) * (3.14159 / 180)) ''180
             
             ''Y(k) = maxyrange - 500 - (((rxWORD(k) / 10) * Sin(((s) + 30 + lbAngle) * (PI / 180))) * 0.97)
             
@@ -1233,7 +1254,7 @@ cancleDRAW:
         SS = 0
         CC = 0
         
-        For i = cut To n - cut + 2   '''{0 to n}'''
+        For i = cut To g_n - cut + 2   '''{0 to g_n}'''
     
             If (minXR - minXL) < 3000 Then   ''''';20160617~  3000<--3300
 
@@ -1580,23 +1601,24 @@ Private Sub tmrSrun_Timer()
 Dim ret As Integer
 Dim strA As String
 Dim bb() As Byte
+Dim tilt3Dlog_fileName$
 'Dim t As Long
-    
+'
     't = GetTickCount
     'DGPSLog "tmrSrun_Timer(" & UCindex & ") START " & tSrunMode & "", "SILO"
-
+'
     tmrSrun.Enabled = False
     '''''''''''''''''''''''
-    
+'
     lbMode = tSrunMode
-
+'
     Select Case tSrunMode
         Case InitConn
             lbRXerr = 0
             lbRXcnt = 0
-        
+
             cmdCONN.BackColor = vbRed
-            
+
             CONN_wsockLD
             
             tSrunMode = eSrunMode.CheckConn
@@ -1851,12 +1873,19 @@ Dim bb() As Byte
                             AutoTiltCnt = AutoTiltCnt + 1
                             ''''''''''''''''''''''''''''''''''''''''
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
+                                tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
                                 autoTilt_stop
+'
+                                SurFit_Open tilt3Dlog_fileName$
 '
                                 lbTiltV = Str(TiltDefault)
                                 strA = "SetAngle[" & TiltDefault & "]"
                                 tmrSrun.Interval = 1000
                             Else
+                                lbTiltTX.BackColor = &HFF00&
+                                lbTiltRX.BackColor = &HFF00&
+                                lbTiltV.BackColor = &HFF00&
+'
                                 strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
                                 lbTiltV = strA
                                 strA = "SetAngle[" & strA & "]"
@@ -1880,13 +1909,40 @@ Dim bb() As Byte
                     'tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
                 ElseIf ret < 0 Then
                     If AutoTiltStarted = True Then
+                        lbTiltTX.BackColor = vbRed
+                        lbTiltRX.BackColor = vbRed
+                        lbTiltV.BackColor = vbRed
                         AutoTiltErrorCnt = AutoTiltErrorCnt + 1
-                        If AutoTiltErrorCnt > 5 Then
-                            autoTilt_stop
 '
-                            lbTiltV = Str(TiltDefault)
-                            strA = "SetAngle[" & TiltDefault & "]"
-                            tmrSrun.Interval = 1000
+                        If AutoTiltErrorCnt > 5 Then
+                            If ret = -6 Then
+                                AutoTiltErrorCnt = 3
+                                AutoTiltNow = AutoTiltNow + AutoTiltStep
+                                AutoTiltCnt = AutoTiltCnt + 1
+                                ''''''''''''''''''''''''''''''''''''''''
+                                If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
+                                    tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
+                                    autoTilt_stop
+'
+                                    SurFit_Open tilt3Dlog_fileName$
+'
+                                    lbTiltV = Str(TiltDefault)
+                                    strA = "SetAngle[" & TiltDefault & "]"
+                                    tmrSrun.Interval = 1000
+                                Else
+                                    strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
+                                    lbTiltV = strA
+                                    strA = "SetAngle[" & strA & "]"
+                                    ''
+                                    tmrSrun.Interval = 1000
+                                End If
+                            Else
+                                autoTilt_stop
+'
+                                lbTiltV = Str(TiltDefault)
+                                strA = "SetAngle[" & TiltDefault & "]"
+                                tmrSrun.Interval = 1000
+                            End If
                         Else
                             strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
                             lbTiltV.Caption = strA
@@ -2585,7 +2641,7 @@ AngleUp:
                 lbRXerr = lbRXerr / 10
             End If
 
-            If (cmdFilt.BackColor = vbGreen) Then
+            If (cmdFilt.BackColor = vbGreen) And (AutoTiltStarted = False) Then
                 RX_filt_DEEP
                 ''''''''''''
             End If
