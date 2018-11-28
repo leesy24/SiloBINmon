@@ -1601,23 +1601,24 @@ Private Sub tmrSrun_Timer()
 Dim ret As Integer
 Dim strA As String
 Dim bb() As Byte
+Dim tilt3Dlog_fileName$
 'Dim t As Long
-    
+'
     't = GetTickCount
     'DGPSLog "tmrSrun_Timer(" & UCindex & ") START " & tSrunMode & "", "SILO"
-
+'
     tmrSrun.Enabled = False
     '''''''''''''''''''''''
-    
+'
     lbMode = tSrunMode
-
+'
     Select Case tSrunMode
         Case InitConn
             lbRXerr = 0
             lbRXcnt = 0
-        
+
             cmdCONN.BackColor = vbRed
-            
+
             CONN_wsockLD
             
             tSrunMode = eSrunMode.CheckConn
@@ -1872,7 +1873,6 @@ Dim bb() As Byte
                             AutoTiltCnt = AutoTiltCnt + 1
                             ''''''''''''''''''''''''''''''''''''''''
                             If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
-                                Dim tilt3Dlog_fileName$
                                 tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
                                 autoTilt_stop
 '
@@ -1882,6 +1882,10 @@ Dim bb() As Byte
                                 strA = "SetAngle[" & TiltDefault & "]"
                                 tmrSrun.Interval = 1000
                             Else
+                                lbTiltTX.BackColor = &HFF00&
+                                lbTiltRX.BackColor = &HFF00&
+                                lbTiltV.BackColor = &HFF00&
+'
                                 strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
                                 lbTiltV = strA
                                 strA = "SetAngle[" & strA & "]"
@@ -1905,13 +1909,40 @@ Dim bb() As Byte
                     'tmrSrun.Interval = 2000  '''100  ''1000 ''after-Done!! ''2000  ''<===!
                 ElseIf ret < 0 Then
                     If AutoTiltStarted = True Then
+                        lbTiltTX.BackColor = vbRed
+                        lbTiltRX.BackColor = vbRed
+                        lbTiltV.BackColor = vbRed
                         AutoTiltErrorCnt = AutoTiltErrorCnt + 1
-                        If AutoTiltErrorCnt > 5 Then
-                            autoTilt_stop
 '
-                            lbTiltV = Str(TiltDefault)
-                            strA = "SetAngle[" & TiltDefault & "]"
-                            tmrSrun.Interval = 1000
+                        If AutoTiltErrorCnt > 5 Then
+                            If ret = -6 Then
+                                AutoTiltErrorCnt = 3
+                                AutoTiltNow = AutoTiltNow + AutoTiltStep
+                                AutoTiltCnt = AutoTiltCnt + 1
+                                ''''''''''''''''''''''''''''''''''''''''
+                                If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
+                                    tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
+                                    autoTilt_stop
+'
+                                    SurFit_Open tilt3Dlog_fileName$
+'
+                                    lbTiltV = Str(TiltDefault)
+                                    strA = "SetAngle[" & TiltDefault & "]"
+                                    tmrSrun.Interval = 1000
+                                Else
+                                    strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
+                                    lbTiltV = strA
+                                    strA = "SetAngle[" & strA & "]"
+                                    ''
+                                    tmrSrun.Interval = 1000
+                                End If
+                            Else
+                                autoTilt_stop
+'
+                                lbTiltV = Str(TiltDefault)
+                                strA = "SetAngle[" & TiltDefault & "]"
+                                tmrSrun.Interval = 1000
+                            End If
                         Else
                             strA = Trim(Str(CInt(AutoTiltNow * 100) / 100))
                             lbTiltV.Caption = strA
