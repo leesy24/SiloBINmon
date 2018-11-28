@@ -1072,7 +1072,7 @@ End Sub
 Private Sub autoTilt_stop()
     AutoTiltStarted = False
     Tilt3Dlog_end tilt3Dlog_fn
-    AutoTiltOffDelayCnt = 6
+    AutoTiltOffDelayCnt = 1
     lbTiltTX.BackColor = &HC000&
     lbTiltRX.BackColor = &HC000&
     lbTiltV.BackColor = &HC000&
@@ -2610,7 +2610,7 @@ AngleUp:
                 lbRXerr = lbRXerr / 10
             End If
 
-            If (cmdFilt.BackColor = vbGreen) Then
+            If (cmdFilt.BackColor = vbGreen) And (AutoTiltStarted = False) Then
                 RX_filt_DEEP
                 ''''''''''''
             End If
