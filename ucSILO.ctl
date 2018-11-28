@@ -764,10 +764,10 @@ Dim RxHeader As Variant  ''HDmsg = Chr(2) + Chr(2) + Chr(2) + Chr(2) + Chr(0) + 
     Dim maxxrange As Double                     'sets max x range of scan
     Dim minxrange As Double                     'sets min x range of scan
 
-    Dim r(0 To 2000) As Double                  'radius data
+    'Dim g_r(0 To 2000) As Double                  'radius data
     Dim X(0 To 2000) As Double                  'x - cartesian coordinate
     Dim Y(0 To 2000) As Double                  'y - cartesian coordinate
-    Dim n As Integer                            'number of data values
+    Dim g_n As Integer                            'number of data values
 
     
     Dim minXL As Double
@@ -1149,7 +1149,7 @@ Dim SideD As Integer  '';20160617~
 
 
 
-    n = xcMax  ''119
+    g_n = xcMax  ''119
     
 '    x(1) = 0
 '    Y(1) = 0
@@ -1168,7 +1168,7 @@ Dim SideD As Integer  '';20160617~
         cut = 30 '''60
     End If
     
-    For k = cut To n - cut + 2   '''{0 to n}'''
+    For k = cut To g_n - cut + 2   '''{0 to g_n}'''
 
             s = k / 2#
 
@@ -1176,7 +1176,7 @@ Dim SideD As Integer  '';20160617~
     
             ''x(k) = x(k) + Val(txtOpX.Text)
     
-            ''y(k) = r(k) * Sin((angle(k) + 40) * (3.14159 / 180)) ''180
+            ''y(k) = g_r(k) * Sin((angle(k) + 40) * (3.14159 / 180)) ''180
             
             ''Y(k) = maxyrange - 500 - (((rxWORD(k) / 10) * Sin(((s) + 30 + lbAngle) * (PI / 180))) * 0.97)
             
@@ -1254,7 +1254,7 @@ cancleDRAW:
         SS = 0
         CC = 0
         
-        For i = cut To n - cut + 2   '''{0 to n}'''
+        For i = cut To g_n - cut + 2   '''{0 to g_n}'''
     
             If (minXR - minXL) < 3000 Then   ''''';20160617~  3000<--3300
 
