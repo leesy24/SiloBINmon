@@ -281,11 +281,12 @@ Private Sub ProcessDataFile(ByVal FileN$)
             ND = ND + 1
             ReDim Preserve PhiD(1 To ND), ThetaD(1 To ND), XD(1 To ND), YD(1 To ND), ZD(1 To ND)
             Input #FF, PhiD(ND), ThetaD(ND), XD(ND), YD(ND), ZD(ND)
-            'XD(ND) = XD(ND) - OXD
-            'YD(ND) = YD(ND) - OYD
-            'If (Sqr(XD(ND) ^ 2 + YD(ND) ^ 2) > 19#) Then
-            '    ND = ND - 1
-            'End If
+            If (XD(ND) = 0 And YD(ND) = 0 And ZD(ND) = 50) Then
+                ND = ND - 1
+            Else
+                XD(ND) = XD(ND) - OXD
+                YD(ND) = YD(ND) - OYD
+            End If
         Loop
         'lblNAdd = 0
     Else ' Else of If (bFilterEnabled = False) Then
@@ -296,11 +297,17 @@ Private Sub ProcessDataFile(ByVal FileN$)
             ReDim Preserve lPhiD(1 To lND), lThetaD(1 To lND), _
                             lXD(1 To lND), lYD(1 To lND), lZD(1 To lND)
             Input #FF, lPhiD(lND), lThetaD(lND), lXD(lND), lYD(lND), lZD(lND)
+            If (lXD(lND) = 0 And lYD(lND) = 0 And lZD(lND) = 50) Then
+                lND = lND - 1
+                GoTo Continue
+            End If
             lXD(lND) = lXD(lND) - OXD
             lYD(lND) = lYD(lND) - OYD
             If (RD <> 0) And (Sqr(lXD(lND) ^ 2 + lYD(lND) ^ 2) > RD) Then
                 lND = lND - 1
+                GoTo Continue
             End If
+Continue:
         Loop
 '
         ' Sort the vectors so that the points with major Z remain behind:
@@ -321,7 +328,7 @@ Private Sub ProcessDataFile(ByVal FileN$)
                 If (lDSkip(J) = False) Then
                     If (Abs(lXD(I) - lXD(J)) < 2#) And (Abs(lYD(I) - lYD(J)) < 2#) Then
                         lZOverCnt = lZOverCnt + 1
-                        If (lZD(I) < lZD(J) + 3#) Then
+                        If (lZD(I) < lZD(J) + 2#) Then
                             lZOk = True
                             Exit For
                         End If
@@ -423,6 +430,3 @@ ProcessDataFile_ERR:
 '
 '
 End Sub
-
-
-
