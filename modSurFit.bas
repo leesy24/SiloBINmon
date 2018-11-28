@@ -225,19 +225,13 @@ End Sub
 
 Private Sub DefaultParameters()
 '
-'   Attribuisce i valori di default ai parametri delle
-'   routines di interpolazione.  Questa routine viene
-'   richiamata ogni volta che si generano nuovi dati
-'   casuali o si leggono i dati di un file.
+'   It assigns the default values to the parameters of interpolation routines.
+'   This routine is invoked whenever you generate new random data or read data
+'    from a file.
 '
-    ' Impostazione parametri per MASUB:
-    'IEX = 1     ' E' richiesta l' estrapolazione.
-    TP = 10#    ' Tensione della superficie (TP >= 0).
-'
-    ' Impostazione dei parametri per QSHEP2:
-    NQ = 13  ' 5 <= NQ <= MIN(40,ND-1)
-    NW = 19  ' 1 <= NW <= MIN(40,ND-1)
-    NR = MAX0(1, Sqr(ND / 3))       ' 1 <= NR
+    ' Parameter setting for MASUB:
+    'IEX = 1     ' Extrapolation is required.
+    TP = 100#    ' Surface tension (TP >= 0).
 '
 '
 '
