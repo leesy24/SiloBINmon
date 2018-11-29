@@ -237,7 +237,7 @@ Begin VB.UserControl ucSilo
    Begin VB.Label lbRadius 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
       BackColor       =   &H00C0C0C0&
-      Caption         =   "00.0"
+      Caption         =   "0.0"
       BeginProperty Font 
          Name            =   "±¼¸²Ã¼"
          Size            =   8.25
@@ -256,7 +256,7 @@ Begin VB.UserControl ucSilo
    Begin VB.Label lbCenterY 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
       BackColor       =   &H00C0C0C0&
-      Caption         =   "-00.0"
+      Caption         =   "0.0"
       BeginProperty Font 
          Name            =   "±¼¸²Ã¼"
          Size            =   8.25
@@ -275,7 +275,7 @@ Begin VB.UserControl ucSilo
    Begin VB.Label lbCenterX 
       Alignment       =   2  '°¡¿îµ¥ ¸ÂÃã
       BackColor       =   &H00C0C0C0&
-      Caption         =   "-00.0"
+      Caption         =   "0.0"
       BeginProperty Font 
          Name            =   "±¼¸²Ã¼"
          Size            =   8.25
