@@ -907,7 +907,12 @@ Public Sub scan_STOP()
         If AutoTiltStarted = False Then
             autoTilt_off
         Else
+            Dim tilt3Dlog_fileName$
+            tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
             autoTilt_stop
+            If AutoTiltCnt <= (AutoTiltMax - AutoTiltMin) / Abs(AutoTiltStep) / 2 Then
+                Kill tilt3Dlog_fileName$
+            End If
         End If
     End If
     
@@ -1043,9 +1048,32 @@ Private Sub picSilo_Click()
         Else ' of If AutoTiltON = False Then
             '' Check not yet started
             If AutoTiltStarted = False Then
-                autoTilt_off
+                If AutoTiltOffDelayCnt = 0 Then
+                    autoTilt_off
+                End If
             Else
+                Dim tilt3Dlog_fileName$
+                tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
                 autoTilt_stop
+                If AutoTiltCnt <= (AutoTiltMax - AutoTiltMin) / Abs(AutoTiltStep) / 2 Then
+                    Kill tilt3Dlog_fileName$
+                End If
+            End If
+'
+            Dim FilePattern$, FileName$, FileNameLast$
+            FilePattern = "C:\BIN_LOG\" & cmdCONN.Caption & "_3D_*.dat"   ' Set the path.
+            FileName = Dir(FilePattern)   ' Retrieve the first entry.
+            FileNameLast = FileName
+            Do While FileName <> ""   ' Start the loop.
+                FileName = Dir   ' Get next entry.
+                If StrComp(FileName, FileNameLast, 1) > 0 Then
+                    FileNameLast = FileName
+                End If
+            Loop
+            If FileNameLast <> "" Then
+                SurFit_Open "C:\BIN_LOG\" & FileNameLast
+            Else
+                MsgBox "저장되어 있는 3D 데이터가 없습니다.", vbOKOnly
             End If
         End If
     End If
@@ -1876,7 +1904,11 @@ Dim tilt3Dlog_fileName$
                                 tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
                                 autoTilt_stop
 '
-                                SurFit_Open tilt3Dlog_fileName$
+                                If AutoTiltCnt > (AutoTiltMax - AutoTiltMin) / Abs(AutoTiltStep) / 2 Then
+                                    SurFit_Open tilt3Dlog_fileName$
+                                Else
+                                    Kill tilt3Dlog_fileName$
+                                End If
 '
                                 lbTiltV = Str(TiltDefault)
                                 strA = "SetAngle[" & TiltDefault & "]"
@@ -1918,13 +1950,16 @@ Dim tilt3Dlog_fileName$
                             If ret = -6 Then
                                 AutoTiltErrorCnt = 3
                                 AutoTiltNow = AutoTiltNow + AutoTiltStep
-                                AutoTiltCnt = AutoTiltCnt + 1
                                 ''''''''''''''''''''''''''''''''''''''''
                                 If AutoTiltNow > AutoTiltMax Or AutoTiltNow < AutoTiltMin Then
                                     tilt3Dlog_fileName$ = Tilt3Dlog_get_fileName(tilt3Dlog_fn)
                                     autoTilt_stop
 '
-                                    SurFit_Open tilt3Dlog_fileName$
+                                    If AutoTiltCnt > (AutoTiltMax - AutoTiltMin) / Abs(AutoTiltStep) / 2 Then
+                                        SurFit_Open tilt3Dlog_fileName$
+                                    Else
+                                        Kill tilt3Dlog_fileName$
+                                    End If
 '
                                     lbTiltV = Str(TiltDefault)
                                     strA = "SetAngle[" & TiltDefault & "]"
