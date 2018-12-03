@@ -1905,7 +1905,7 @@ Dim tilt3Dlog_fileName$
                                 autoTilt_stop
 '
                                 If AutoTiltCnt > (AutoTiltMax - AutoTiltMin) / Abs(AutoTiltStep) / 2 Then
-                                    SurFit_Open tilt3Dlog_fileName$
+                                    'SurFit_Open tilt3Dlog_fileName$
                                 Else
                                     Kill tilt3Dlog_fileName$
                                 End If
@@ -1956,7 +1956,7 @@ Dim tilt3Dlog_fileName$
                                     autoTilt_stop
 '
                                     If AutoTiltCnt > (AutoTiltMax - AutoTiltMin) / Abs(AutoTiltStep) / 2 Then
-                                        SurFit_Open tilt3Dlog_fileName$
+                                        'SurFit_Open tilt3Dlog_fileName$
                                     Else
                                         Kill tilt3Dlog_fileName$
                                     End If
