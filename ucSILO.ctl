@@ -1674,26 +1674,44 @@ Dim tilt3Dlog_fileName$
                 ''ret = LDtx12590(55) ''' Red laser marker status temporary off
                 ret = LDtx12590(51)   '''DPS_SPRM_SDC4 SDC(Scan Data Content) to 4(=distances olny)
             
-                tSrunMode = eSrunMode.Check1Device  '''==>
-                rxWaitTime = 0
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
 
-                tmrSrun.Interval = 100
+                    tmrSrun.Interval = 1000
+                Else
+                    tSrunMode = eSrunMode.Check1Device  '''==>
+                    rxWaitTime = 0
+    
+                    tmrSrun.Interval = 100
+                End If
 
             ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
                 ret = LDtx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
             
-                tSrunMode = eSrunMode.Check1Device
-                rxWaitTime = 0
-            
-                tmrSrun.Interval = 100
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
+
+                    tmrSrun.Interval = 1000
+                Else
+                    tSrunMode = eSrunMode.Check1Device
+                    rxWaitTime = 0
+                
+                    tmrSrun.Interval = 100
+                End If
 
             ElseIf ScanTYPE = 2590 Then  '''DPS-2590
                 ret = LDtx2590(41)   '''DPS-2590:Terminal-Mode!!
             
-                tSrunMode = eSrunMode.Check1Device
-                rxWaitTime = 0
-                
-                tmrSrun.Interval = 100
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
+
+                    tmrSrun.Interval = 1000
+                Else
+                    tSrunMode = eSrunMode.Check1Device
+                    rxWaitTime = 0
+                    
+                    tmrSrun.Interval = 100
+                End If
 
             Else
                 If LDinitTXs <> 0 Then  '''LD-LRS-3100
@@ -1758,10 +1776,16 @@ Dim tilt3Dlog_fileName$
             If ScanTYPE = 22590 Then
                 ret = LDtx12590(45)   '''DPS-2590:BIN-Mode!!  "SCAN"--Run!!
                 
-                tSrunMode = eSrunMode.Check2Device
-                rxWaitTime = 0
-                
-                tmrSrun.Interval = 100
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
+
+                    tmrSrun.Interval = 1000
+                Else
+                    tSrunMode = eSrunMode.Check2Device
+                    rxWaitTime = 0
+                    
+                    tmrSrun.Interval = 100
+                End If
             
             Else
                 tSrunMode = eSrunMode.InitConn
@@ -1814,27 +1838,45 @@ Dim tilt3Dlog_fileName$
                 '''''''''
                 ret = LDtx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
 
-                tSrunMode = eSrunMode.ReceiveData
-                rxWaitTime = 0
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
 
-                tmrSrun.Interval = 100
+                    tmrSrun.Interval = 1000
+                Else
+                    tSrunMode = eSrunMode.ReceiveData
+                    rxWaitTime = 0
+    
+                    tmrSrun.Interval = 100
+                End If
 
             ElseIf ScanTYPE = 12590 Then  '''DPS-2590::12590
                 ret = LDtx12590(47)   ''''''DPS-2590:BIN-Mode!!  "GSCN"--Scan#1 !!
 
-                tSrunMode = eSrunMode.ReceiveData
-                rxWaitTime = 0
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
 
-                tmrSrun.Interval = 100
+                    tmrSrun.Interval = 1000
+                Else
+                    tSrunMode = eSrunMode.ReceiveData
+                    rxWaitTime = 0
+    
+                    tmrSrun.Interval = 100
+                End If
 
             ElseIf ScanTYPE = 2590 Then   '''''''''''''''''''' DPS-2590
                 ret = LDtx2590(43)  '''43<--49 for DPS2590--12590
                                     '''Console: "s\r\n"  : Array(Asc("s"), &HD, &HA)
 
-                tSrunMode = eSrunMode.ReceiveData
-                rxWaitTime = 0
+                If ret < 0 Then
+                    tSrunMode = eSrunMode.InitConn
 
-                tmrSrun.Interval = 100
+                    tmrSrun.Interval = 1000
+                Else
+                    tSrunMode = eSrunMode.ReceiveData
+                    rxWaitTime = 0
+    
+                    tmrSrun.Interval = 100
+                End If
 
             Else  ''''''''''''''''''''LD-LRS-3100
                 ret = LDtxDATA(39)
@@ -1844,16 +1886,14 @@ Dim tilt3Dlog_fileName$
                     '            End If
 
                 If ret < 0 Then
-                    tmrSrun.Interval = 1000
-
                     tSrunMode = eSrunMode.InitConn
 
+                    tmrSrun.Interval = 1000
                 Else
-                    tmrSrun.Interval = 10
-
                     tSrunMode = eSrunMode.ReceiveData
                     rxWaitTime = 0
 
+                    tmrSrun.Interval = 10
                 End If
             
             End If
@@ -2332,7 +2372,11 @@ Dim tBuf As Variant
     SEND_wsickLD tBuf
     '''''''''''''''''
 
-    LDtx12590 = 0
+    If (cmdCONN.BackColor = vbRed) Then
+        LDtx12590 = -1
+    Else
+        LDtx12590 = 0
+    End If
 
 End Function
 
@@ -2790,7 +2834,11 @@ Dim tBuf As Variant
     
     SEND_wsickLD tBuf
 
-    LDtx2590 = 0
+    If (cmdCONN.BackColor = vbRed) Then
+        LDtx2590 = -1
+    Else
+        LDtx2590 = 0
+    End If
     
 End Function
 
@@ -3033,7 +3081,11 @@ Dim tBuf As Variant
     SEND_wsickLD tBuf
     '''''''''''''''''
 
-    LDtxDATA = 0
+    If (cmdCONN.BackColor = vbRed) Then
+        LDtxDATA = -1
+    Else
+        LDtxDATA = 0
+    End If
 
 End Function
 
