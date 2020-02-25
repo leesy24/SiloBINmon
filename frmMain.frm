@@ -473,7 +473,7 @@ Begin VB.Form frmMain
       End
       Begin VB.Label lbNow 
          BackStyle       =   0  '≈ı∏Ì
-         Caption         =   "UpTime"
+         Caption         =   "____-__-__ __:__:__"
          BeginProperty Font 
             Name            =   "±º∏≤√º"
             Size            =   9
@@ -569,8 +569,8 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private Const relVersion = "v2.00.02"
-Private Const relDate = "2019-02-07"
+Private Const relVersion = "v2.00.03"
+Private Const relDate = "2020-02-25"
 
 Dim d1 As Single
 
