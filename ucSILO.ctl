@@ -714,8 +714,8 @@ Private Scan2590Pulse(1001) As Double '''Long
 Private UCindex As Integer
 
 
-Private ipAddr As String
-Private ipPort As String
+Public ipAddr As String
+Public ipPort As String
 
 Const PI = 3.14159265359   '''3.14159265358979  ''3.1415926535897932384626433832795
 
@@ -1585,8 +1585,8 @@ Public Sub setIDX(id As Integer, ip As String, port As String)
     ipAddr = ip
     ipPort = port
     
-    If ip <> "" Then wsockLD.RemoteHost = ip
-    If port <> "" Then wsockLD.RemotePort = port
+    ''If ip <> "" Then wsockLD.RemoteHost = ip
+    ''If port <> "" Then wsockLD.RemotePort = port
     
     ''tmrRun.Enabled = True
     '''''''''''''''''''''
@@ -1616,6 +1616,8 @@ Public Sub initStart()
     Dim i As Integer
 '
     RX_filt_Init
+'
+    wsockLD.Close
 '
     tSrunMode = eSrunMode.InitConn
 '
@@ -2106,6 +2108,9 @@ Private Sub CONN_wsockLD()
     If wsockLD.State <> sckConnected Then
 
         wsockLD.Close
+
+        If ipAddr <> "" Then wsockLD.RemoteHost = ipAddr
+        If ipPort <> "" Then wsockLD.RemotePort = ipPort
 
         wsockLD.Connect
     

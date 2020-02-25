@@ -19,7 +19,7 @@ Begin VB.Form frmCFG
       Left            =   180
       TabIndex        =   15
       Top             =   4200
-      Width           =   7755
+      Width           =   7875
       Begin VB.TextBox txtCtypes 
          Alignment       =   1  '오른쪽 맞춤
          Height          =   270
@@ -34,7 +34,7 @@ Begin VB.Form frmCFG
          BackColor       =   &H8000000A&
          Caption         =   "적 용"
          Height          =   375
-         Left            =   6060
+         Left            =   6120
          Style           =   1  '그래픽
          TabIndex        =   16
          Top             =   1800
@@ -44,10 +44,10 @@ Begin VB.Form frmCFG
          Caption         =   "SILO-"
          Height          =   195
          Index           =   0
-         Left            =   180
+         Left            =   240
          TabIndex        =   18
          Top             =   420
-         Width           =   795
+         Width           =   1035
       End
    End
    Begin VB.Frame Frame1 
@@ -171,7 +171,7 @@ Begin VB.Form frmCFG
       Left            =   180
       TabIndex        =   0
       Top             =   240
-      Width           =   7755
+      Width           =   7875
       Begin VB.CommandButton cmdLoadANG 
          BackColor       =   &H8000000A&
          Caption         =   "기본값 읽기"
@@ -186,7 +186,7 @@ Begin VB.Form frmCFG
          BackColor       =   &H8000000A&
          Caption         =   "적 용"
          Height          =   375
-         Left            =   6060
+         Left            =   6120
          Style           =   1  '그래픽
          TabIndex        =   3
          Top             =   1800
@@ -206,10 +206,10 @@ Begin VB.Form frmCFG
          Caption         =   "SILO-"
          Height          =   195
          Index           =   0
-         Left            =   180
+         Left            =   240
          TabIndex        =   1
          Top             =   420
-         Width           =   795
+         Width           =   1035
       End
    End
    Begin VB.Timer tmrCFG 
@@ -370,7 +370,7 @@ Dim iTop As Long
         Load lbBinNO(i)
         Load txtCangle(i)
         
-        iLeft = lbBinNO(0).Left + ((i) \ 3) * 1500
+        iLeft = lbBinNO(0).Left + ((i) \ 3) * 1550
         iTop = lbBinNO(0).Top + ((i) Mod 3) * 350
         
         lbBinNO(i).Left = iLeft
@@ -383,11 +383,38 @@ Dim iTop As Long
         
         txtCangle(i) = frmMain.ucSilo1(i).get_Angle
         
-        iLeft = lbBinNO(0).Left + ((i) \ 3) * 1500
+        iLeft = lbBinNO(0).Left + ((i) \ 3) * 1550
         iTop = lbBinNO(0).Top + ((i) Mod 3) * 350
         
-        txtCangle(i).Left = iLeft + 800
-        txtCangle(i).Top = iTop
+        txtCangle(i).Left = iLeft + 740
+        txtCangle(i).Top = iTop - 60
+        
+        lbBinNO(i).Visible = True
+        txtCangle(i).Visible = True
+    Next i
+
+    For i = 15 To 18
+        Load lbBinNO(i)
+        Load txtCangle(i)
+        
+        iLeft = lbBinNO(0).Left + (i - 15) * 1550
+        iTop = lbBinNO(0).Top + 3 * 350
+        
+        lbBinNO(i).Left = iLeft - 180
+        lbBinNO(i).Top = iTop
+        
+    Next i
+
+    For i = 15 To 18
+        lbBinNO(i).Caption = "S" & Format(19 + 15 - i, "00") & "-CTS" & Format(i - 15 + 1, "0")
+        
+        txtCangle(i) = frmMain.ucSilo1(i).get_Angle
+        
+        iLeft = lbBinNO(0).Left + (i - 15) * 1550
+        iTop = lbBinNO(0).Top + 3 * 350
+        
+        txtCangle(i).Left = iLeft + 740
+        txtCangle(i).Top = iTop - 60
         
         lbBinNO(i).Visible = True
         txtCangle(i).Visible = True
@@ -403,7 +430,7 @@ Dim iTop As Long
         Load lbBinNO2(i)
         Load txtCtypes(i)
         
-        iLeft = lbBinNO2(0).Left + ((i) \ 3) * 1500
+        iLeft = lbBinNO2(0).Left + ((i) \ 3) * 1550
         iTop = lbBinNO2(0).Top + ((i) Mod 3) * 350
         
         lbBinNO2(i).Left = iLeft
@@ -416,11 +443,38 @@ Dim iTop As Long
         
         txtCtypes(i) = frmMain.ucSilo1(i).getScanTYPE
         
-        iLeft = lbBinNO2(0).Left + ((i) \ 3) * 1500
+        iLeft = lbBinNO2(0).Left + ((i) \ 3) * 1550
         iTop = lbBinNO2(0).Top + ((i) Mod 3) * 350
         
-        txtCtypes(i).Left = iLeft + 800
-        txtCtypes(i).Top = iTop
+        txtCtypes(i).Left = iLeft + 740
+        txtCtypes(i).Top = iTop - 60
+        
+        lbBinNO2(i).Visible = True
+        txtCtypes(i).Visible = True
+    Next i
+    
+    For i = 15 To 18
+        Load lbBinNO2(i)
+        Load txtCtypes(i)
+        
+        iLeft = lbBinNO2(0).Left + (i - 15) * 1550
+        iTop = lbBinNO2(0).Top + 3 * 350
+        
+        lbBinNO2(i).Left = iLeft - 180
+        lbBinNO2(i).Top = iTop
+        
+    Next i
+
+    For i = 15 To 18
+        lbBinNO2(i).Caption = "S" & Format(19 + 15 - i, "00") & "-CTS" & Format(i - 15 + 1, "0")
+        
+        txtCtypes(i) = frmMain.ucSilo1(i).getScanTYPE
+        
+        iLeft = lbBinNO2(0).Left + (i - 15) * 1550
+        iTop = lbBinNO2(0).Top + 3 * 350
+        
+        txtCtypes(i).Left = iLeft + 740
+        txtCtypes(i).Top = iTop - 60
         
         lbBinNO2(i).Visible = True
         txtCtypes(i).Visible = True
@@ -430,12 +484,18 @@ End Sub
 
 Private Sub lbBinNO2_Click(Index As Integer)
 '
+    tmrCFG.Enabled = False
+    tmrCFG.Interval = 10000
+    tmrCFG.Enabled = True
+    
     If frmSettings.Visible = True Then
         frmSettings.Show
     End If
 '
     frmSettings.Init _
         Index _
+        , frmMain.ucSilo1(Index).ipAddr _
+        , frmMain.ucSilo1(Index).ipPort _
         , frmMain.ucSilo1(Index).CenterX _
         , frmMain.ucSilo1(Index).CenterY _
         , frmMain.ucSilo1(Index).Radius _
@@ -459,6 +519,37 @@ Private Sub tmrCFG_Timer()
 
     tmrCFG.Enabled = False
     
+    frmSettings.Visible = False
     frmCFG.Visible = False
     
+End Sub
+
+Private Sub txtAVRcnt_GotFocus()
+    tmrCFG.Enabled = False
+    tmrCFG.Interval = 10000
+    tmrCFG.Enabled = True
+End Sub
+
+Private Sub txtBaseHH_GotFocus()
+    tmrCFG.Enabled = False
+    tmrCFG.Interval = 10000
+    tmrCFG.Enabled = True
+End Sub
+
+Private Sub txtCangle_GotFocus(Index As Integer)
+    tmrCFG.Enabled = False
+    tmrCFG.Interval = 10000
+    tmrCFG.Enabled = True
+End Sub
+
+Private Sub txtCtypes_GotFocus(Index As Integer)
+    tmrCFG.Enabled = False
+    tmrCFG.Interval = 10000
+    tmrCFG.Enabled = True
+End Sub
+
+Private Sub txtMaxHH_GotFocus()
+    tmrCFG.Enabled = False
+    tmrCFG.Interval = 10000
+    tmrCFG.Enabled = True
 End Sub

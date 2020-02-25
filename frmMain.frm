@@ -692,8 +692,8 @@ Private Sub cmdCFG_Click()
         frmCFG.Visible = True
     End If
     
-''    frmCFG.tmrCFG.Interval = 5000
-''    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG.Interval = 10000
+    frmCFG.tmrCFG.Enabled = True
 
 End Sub
 
@@ -968,6 +968,23 @@ Dim j As Integer
     ipAddr(13) = "192.168.0.72": ipPort(13) = "7006"
     ipAddr(14) = "192.168.0.72": ipPort(14) = "7007"
     
+    Dim ipAddr_tmp As String
+    Dim ipPort_tmp As String
+    For i = 0 To 14
+        ipAddr_tmp = GetSetting(App.Title, "Settings", "BinIPAddr_" & i, "Fail")
+        ipPort_tmp = GetSetting(App.Title, "Settings", "BinIPPort_" & i, "Fail")
+        If IsValidIPAddress(ipAddr_tmp) = False Then
+            ipAddr_tmp = ipAddr(i)
+            ''SaveSetting App.Title, "Settings", "BinIPAddr_" & i, ipAddr_tmp
+        End If
+        If IsValidIPPort(ipPort_tmp) = False Then
+            ipPort_tmp = ipPort(i)
+            ''SaveSetting App.Title, "Settings", "BinIPPort_" & i, ipPort_tmp
+        End If
+        ipAddr(i) = ipAddr_tmp
+        ipPort(i) = ipPort_tmp
+    Next i
+    
     Dim typeTmp As Integer
     Dim centerXTmp$, centerYTmp$, radiusTmp$
     Dim tiltDefaultTmp$, tiltMaxTmp$, tiltMinTmp$, tiltStepTmp$
@@ -1089,6 +1106,21 @@ Dim j As Integer
     ipAddr(17) = "192.168.0.171": ipPort(17) = "7006"  '''"7005"
     ipAddr(18) = "192.168.0.171": ipPort(18) = "7007"  '''"7007"
 
+    For i = 15 To 18
+        ipAddr_tmp = GetSetting(App.Title, "Settings", "BinIPAddr_" & i, "Fail")
+        ipPort_tmp = GetSetting(App.Title, "Settings", "BinIPPort_" & i, "Fail")
+        If IsValidIPAddress(ipAddr_tmp) = False Then
+            ipAddr_tmp = ipAddr(i)
+            ''SaveSetting App.Title, "Settings", "BinIPAddr_" & i, ipAddr_tmp
+        End If
+        If IsValidIPPort(ipPort_tmp) = False Then
+            ipPort_tmp = ipPort(i)
+            ''SaveSetting App.Title, "Settings", "BinIPPort_" & i, ipPort_tmp
+        End If
+        ipAddr(i) = ipAddr_tmp
+        ipPort(i) = ipPort_tmp
+    Next i
+    
     For i = 15 To 18
         ucSilo1(i).setIDX i, ipAddr(i), ipPort(i)
         ''
