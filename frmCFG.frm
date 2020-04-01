@@ -17,7 +17,7 @@ Begin VB.Form frmCFG
       Caption         =   "센서 종류 설정"
       Height          =   2355
       Left            =   180
-      TabIndex        =   15
+      TabIndex        =   17
       Top             =   4200
       Width           =   7875
       Begin VB.TextBox txtCtypes 
@@ -25,7 +25,7 @@ Begin VB.Form frmCFG
          Height          =   270
          Index           =   0
          Left            =   1080
-         TabIndex        =   17
+         TabIndex        =   8
          Text            =   "0"
          Top             =   360
          Width           =   555
@@ -36,7 +36,7 @@ Begin VB.Form frmCFG
          Height          =   375
          Left            =   6120
          Style           =   1  '그래픽
-         TabIndex        =   16
+         TabIndex        =   9
          Top             =   1800
          Width           =   1575
       End
@@ -54,7 +54,7 @@ Begin VB.Form frmCFG
       Caption         =   "누적횟수"
       Height          =   1215
       Left            =   3360
-      TabIndex        =   12
+      TabIndex        =   16
       Top             =   2760
       Width           =   975
       Begin VB.CommandButton cmdDeepMAX 
@@ -63,7 +63,7 @@ Begin VB.Form frmCFG
          Height          =   315
          Left            =   120
          Style           =   1  '그래픽
-         TabIndex        =   14
+         TabIndex        =   7
          Top             =   720
          Width           =   675
       End
@@ -73,7 +73,7 @@ Begin VB.Form frmCFG
          Height          =   270
          Left            =   180
          MaxLength       =   2
-         TabIndex        =   13
+         TabIndex        =   6
          Text            =   "99"
          Top             =   420
          Width           =   615
@@ -93,7 +93,7 @@ Begin VB.Form frmCFG
       Caption         =   "기준높이 설정"
       Height          =   1215
       Left            =   180
-      TabIndex        =   4
+      TabIndex        =   13
       Top             =   2760
       Width           =   3015
       Begin VB.CommandButton cmdMinMax 
@@ -102,7 +102,7 @@ Begin VB.Form frmCFG
          Height          =   615
          Left            =   1920
          Style           =   1  '그래픽
-         TabIndex        =   9
+         TabIndex        =   5
          Top             =   420
          Width           =   915
       End
@@ -111,7 +111,7 @@ Begin VB.Form frmCFG
          BackColor       =   &H000040C0&
          Height          =   270
          Left            =   120
-         TabIndex        =   6
+         TabIndex        =   3
          Text            =   "5000"
          Top             =   420
          Width           =   615
@@ -121,7 +121,7 @@ Begin VB.Form frmCFG
          BackColor       =   &H000040C0&
          Height          =   270
          Left            =   120
-         TabIndex        =   5
+         TabIndex        =   4
          Text            =   "100"
          Top             =   780
          Width           =   615
@@ -141,7 +141,7 @@ Begin VB.Form frmCFG
          ForeColor       =   &H00800000&
          Height          =   195
          Left            =   780
-         TabIndex        =   8
+         TabIndex        =   15
          Top             =   780
          Width           =   855
       End
@@ -160,7 +160,7 @@ Begin VB.Form frmCFG
          ForeColor       =   &H00800000&
          Height          =   195
          Left            =   780
-         TabIndex        =   7
+         TabIndex        =   14
          Top             =   480
          Width           =   855
       End
@@ -169,7 +169,7 @@ Begin VB.Form frmCFG
       Caption         =   "센서 기울기 설정"
       Height          =   2355
       Left            =   180
-      TabIndex        =   0
+      TabIndex        =   11
       Top             =   240
       Width           =   7875
       Begin VB.CommandButton cmdLoadANG 
@@ -178,7 +178,7 @@ Begin VB.Form frmCFG
          Height          =   375
          Left            =   120
          Style           =   1  '그래픽
-         TabIndex        =   11
+         TabIndex        =   1
          Top             =   1800
          Width           =   1575
       End
@@ -188,7 +188,7 @@ Begin VB.Form frmCFG
          Height          =   375
          Left            =   6120
          Style           =   1  '그래픽
-         TabIndex        =   3
+         TabIndex        =   2
          Top             =   1800
          Width           =   1575
       End
@@ -197,7 +197,7 @@ Begin VB.Form frmCFG
          Height          =   270
          Index           =   0
          Left            =   1080
-         TabIndex        =   2
+         TabIndex        =   0
          Text            =   "0"
          Top             =   360
          Width           =   555
@@ -207,7 +207,7 @@ Begin VB.Form frmCFG
          Height          =   195
          Index           =   0
          Left            =   240
-         TabIndex        =   1
+         TabIndex        =   12
          Top             =   420
          Width           =   1035
       End
@@ -365,6 +365,9 @@ Private Sub Form_Load()
 Dim i As Integer
 Dim iLeft As Long
 Dim iTop As Long
+Dim TapIndex_base
+
+    TapIndex_base = txtCangle(0).TabIndex
 
     For i = 1 To 14
         Load lbBinNO(i)
@@ -376,6 +379,7 @@ Dim iTop As Long
         lbBinNO(i).Left = iLeft
         lbBinNO(i).Top = iTop
         
+        txtCangle(i).TabIndex = TapIndex_base + i
     Next i
 
     For i = 0 To 14
@@ -403,6 +407,7 @@ Dim iTop As Long
         lbBinNO(i).Left = iLeft - 180
         lbBinNO(i).Top = iTop
         
+        txtCangle(i).TabIndex = TapIndex_base + i
     Next i
 
     For i = 15 To 18
@@ -425,6 +430,7 @@ Dim iTop As Long
     
     txtAVRcnt = frmMain.AOdeepMAX
     
+    TapIndex_base = txtCtypes(0).TabIndex
     
     For i = 1 To 14
         Load lbBinNO2(i)
@@ -436,6 +442,7 @@ Dim iTop As Long
         lbBinNO2(i).Left = iLeft
         lbBinNO2(i).Top = iTop
         
+        txtCtypes(i).TabIndex = TapIndex_base + i
     Next i
 
     For i = 0 To 14
@@ -463,6 +470,7 @@ Dim iTop As Long
         lbBinNO2(i).Left = iLeft - 180
         lbBinNO2(i).Top = iTop
         
+        txtCtypes(i).TabIndex = TapIndex_base + i
     Next i
 
     For i = 15 To 18
