@@ -230,8 +230,13 @@ Option Explicit
 Const TIMEOUT = 60000 ' 60secs
 
 Private Sub cmdCFGexit_Click()
+    tmrCFG.Enabled = False
+    
     frmSettings.Visible = False
     frmCFG.Visible = False
+
+    Unload frmSettings
+    Unload Me
 End Sub
 
 
@@ -525,12 +530,13 @@ End Sub
 
 
 Private Sub tmrCFG_Timer()
-
     tmrCFG.Enabled = False
     
     frmSettings.Visible = False
     frmCFG.Visible = False
     
+    Unload frmSettings
+    Unload Me
 End Sub
 
 Private Sub txtAVRcnt_GotFocus()

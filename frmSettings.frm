@@ -448,6 +448,8 @@ Private Sub cmdSettingsExit_Click()
 '
     frmSettings.Visible = False
 '
+    Unload Me
+'
 End Sub
 
 Private Sub Form_Load()

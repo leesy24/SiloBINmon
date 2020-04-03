@@ -834,7 +834,19 @@ Private Sub cmdRunStop_Click()
         
 End Sub
 
+Private Sub Form_Unload(Cancel As Integer)
+    Dim ret1
+    
+    ret1 = MsgBox("종료하면 모든 기능이 정지됩니다." & vbCrLf & "정말 종료 하시겠습니까?", vbYesNo)
 
+    If ret1 <> vbYes Then
+        Cancel = 1
+        Exit Sub
+    End If
+
+    Unload frmSettings
+    Unload frmCFG
+End Sub
 
 Private Sub Form_Load()
 
