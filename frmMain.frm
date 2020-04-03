@@ -692,22 +692,17 @@ Private Sub cmdCFG_Click()
         frmCFG.Visible = True
     End If
     
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 
 End Sub
 
 
 Private Sub Form_Click()
-        frmCFG.tmrCFG.Enabled = False
-        frmCFG.tmrCFG.Interval = 5000
-        frmCFG.tmrCFG.Enabled = True
+        frmCFG.tmrCFG_update
 End Sub
 
 Private Sub Form_DblClick()
-        frmCFG.tmrCFG.Enabled = False
-        frmCFG.tmrCFG.Interval = 5000
-        frmCFG.tmrCFG.Enabled = True
+        frmCFG.tmrCFG_update
 End Sub
 
 Private Sub tmrDRAWmode_Timer()

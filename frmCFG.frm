@@ -126,7 +126,7 @@ Begin VB.Form frmCFG
          Top             =   780
          Width           =   615
       End
-      Begin VB.Label Label2 
+      Begin VB.Label lbBaseHH_ 
          BackStyle       =   0  '투명
          Caption         =   "cm   0%"
          BeginProperty Font 
@@ -145,7 +145,7 @@ Begin VB.Form frmCFG
          Top             =   780
          Width           =   855
       End
-      Begin VB.Label Label1 
+      Begin VB.Label lbMaxHH_ 
          BackStyle       =   0  '투명
          Caption         =   "cm 100%"
          BeginProperty Font 
@@ -227,6 +227,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+Const TIMEOUT = 60000 ' 60secs
 
 Private Sub cmdCFGexit_Click()
     frmSettings.Visible = False
@@ -310,9 +311,7 @@ Private Sub cmdMinMax_Click()
         frmMain.ucSilo1(i).set_baseHH CLng(txtBaseHH)
     Next i
 
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 5000
-    tmrCFG.Enabled = True
+    tmrCFG_update
 
 End Sub
 
@@ -322,9 +321,7 @@ Dim i
         frmMain.ucSilo1(i).set_Angle CDbl(txtCangle(i))
     Next i
     
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 5000
-    tmrCFG.Enabled = True
+    tmrCFG_update
     
 End Sub
 
@@ -342,9 +339,7 @@ Private Sub cmdDeepMAX_Click()
     frmMain.AOdeepMAX = Val(txtAVRcnt)
     frmMain.txtAVRcnt = Val(txtAVRcnt)
 
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 5000
-    tmrCFG.Enabled = True
+    tmrCFG_update
 End Sub
 
 
@@ -354,9 +349,7 @@ Dim i
         frmMain.ucSilo1(i).setScanTYPE CInt(txtCtypes(i))
     Next i
     
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 5000
-    tmrCFG.Enabled = True
+    tmrCFG_update
     
 End Sub
 
@@ -490,11 +483,17 @@ Dim TapIndex_base
 '
 End Sub
 
+Private Sub lbBaseHH__Click()
+    tmrCFG_update
+End Sub
+
+Private Sub lbBinNO_Click(Index As Integer)
+    tmrCFG_update
+End Sub
+
 Private Sub lbBinNO2_Click(Index As Integer)
 '
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 10000
-    tmrCFG.Enabled = True
+    tmrCFG_update
     
     If frmSettings.Visible = True Then
         frmSettings.Show
@@ -516,10 +515,12 @@ Private Sub lbBinNO2_Click(Index As Integer)
 '
 End Sub
 
+Private Sub lbMaxHH__Click()
+    tmrCFG_update
+End Sub
+
 ''Private Sub Form_LostFocus()
-''        tmrCFG.Enabled = False
-''        tmrCFG.Interval = 5000
-''        tmrCFG.Enabled = True
+''        tmrCFG_update
 ''End Sub
 
 
@@ -533,31 +534,30 @@ Private Sub tmrCFG_Timer()
 End Sub
 
 Private Sub txtAVRcnt_GotFocus()
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 10000
-    tmrCFG.Enabled = True
+    tmrCFG_update
 End Sub
 
 Private Sub txtBaseHH_GotFocus()
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 10000
-    tmrCFG.Enabled = True
+    tmrCFG_update
 End Sub
 
 Private Sub txtCangle_GotFocus(Index As Integer)
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 10000
-    tmrCFG.Enabled = True
+    tmrCFG_update
 End Sub
 
 Private Sub txtCtypes_GotFocus(Index As Integer)
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 10000
-    tmrCFG.Enabled = True
+    tmrCFG_update
 End Sub
 
 Private Sub txtMaxHH_GotFocus()
-    tmrCFG.Enabled = False
-    tmrCFG.Interval = 10000
-    tmrCFG.Enabled = True
+    tmrCFG_update
 End Sub
+
+Public Sub tmrCFG_update()
+'
+    tmrCFG.Enabled = False
+    tmrCFG.Interval = TIMEOUT
+    tmrCFG.Enabled = True
+'
+End Sub
+

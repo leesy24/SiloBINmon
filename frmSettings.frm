@@ -11,7 +11,6 @@ Begin VB.Form frmSettings
    StartUpPosition =   3  'Windows 기본값
    Visible         =   0   'False
    Begin VB.TextBox txtBinIPAddr 
-      Alignment       =   1  '오른쪽 맞춤
       Height          =   270
       Left            =   1080
       TabIndex        =   0
@@ -20,7 +19,6 @@ Begin VB.Form frmSettings
       Width           =   1395
    End
    Begin VB.TextBox txtBinIPPort 
-      Alignment       =   1  '오른쪽 맞춤
       Height          =   270
       Left            =   1080
       TabIndex        =   1
@@ -129,7 +127,7 @@ Begin VB.Form frmSettings
       Top             =   540
       Width           =   1035
    End
-   Begin VB.Label Label9 
+   Begin VB.Label lbBinIPAddr_ 
       Caption         =   "Serial2Net의 IP address"
       Height          =   195
       Left            =   2520
@@ -137,7 +135,7 @@ Begin VB.Form frmSettings
       Top             =   180
       Width           =   2295
    End
-   Begin VB.Label Label7 
+   Begin VB.Label lbBinIPPort_ 
       Caption         =   "Serial2Net의 IP port number"
       Height          =   195
       Left            =   1680
@@ -145,7 +143,7 @@ Begin VB.Form frmSettings
       Top             =   540
       Width           =   3075
    End
-   Begin VB.Label Label8 
+   Begin VB.Label lbBinTiltDefault_ 
       Caption         =   "°, 48~-48"
       Height          =   195
       Left            =   1680
@@ -162,7 +160,7 @@ Begin VB.Form frmSettings
       Top             =   1995
       Width           =   1035
    End
-   Begin VB.Label Label6 
+   Begin VB.Label lbBinTiltStep_ 
       Caption         =   "°, 0.5~5.0"
       Height          =   195
       Left            =   1680
@@ -197,7 +195,7 @@ Begin VB.Form frmSettings
       Top             =   2715
       Width           =   1035
    End
-   Begin VB.Label Label5 
+   Begin VB.Label lbBinTiltMax_ 
       Caption         =   "°, 48.0~1.0"
       Height          =   195
       Left            =   1680
@@ -205,7 +203,7 @@ Begin VB.Form frmSettings
       Top             =   2355
       Width           =   1275
    End
-   Begin VB.Label Label4 
+   Begin VB.Label lbBinTiltMin_ 
       Caption         =   "°, -48.0~-1.0"
       Height          =   195
       Left            =   1680
@@ -213,7 +211,7 @@ Begin VB.Form frmSettings
       Top             =   2715
       Width           =   1275
    End
-   Begin VB.Label Label3 
+   Begin VB.Label lbBinRadius_ 
       Caption         =   "meter, 1.0~25.0"
       Height          =   195
       Left            =   1680
@@ -221,7 +219,7 @@ Begin VB.Form frmSettings
       Top             =   1635
       Width           =   1635
    End
-   Begin VB.Label Label2 
+   Begin VB.Label lbBinCenterY_ 
       Caption         =   "meter, -25.0~25.0"
       Height          =   195
       Left            =   1680
@@ -229,7 +227,7 @@ Begin VB.Form frmSettings
       Top             =   1275
       Width           =   1755
    End
-   Begin VB.Label Label1 
+   Begin VB.Label lbBinCenterX_ 
       Caption         =   "meter, -25.0~25.0"
       Height          =   195
       Left            =   1680
@@ -321,9 +319,7 @@ Private Sub cmdSettingsApply_Click()
 '
     Dim IsValid As Boolean
 '
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 5000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 '
     IsValid = False
 '
@@ -448,70 +444,120 @@ End Sub
 
 Private Sub cmdSettingsExit_Click()
 '
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 5000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 '
     frmSettings.Visible = False
 '
 End Sub
 
 Private Sub Form_Load()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinCenterX__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinCenterX_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinCenterY__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinCenterY_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinIPAddr__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinIPAddr_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinIPPort__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinIPPort_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinRadius__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinRadius_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltDefault__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltDefault_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltMax__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltMax_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltMin__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltMin_Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltStep__Click()
+    frmCFG.tmrCFG_update
+End Sub
+
+Private Sub lbBinTiltStep_Click()
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinCenterX_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinCenterY_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinIPAddr_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinIPPort_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinRadius_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinTiltDefault_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinTiltMax_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinTiltMin_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
 
 Private Sub txtBinTiltStep_GotFocus()
-    frmCFG.tmrCFG.Enabled = False
-    frmCFG.tmrCFG.Interval = 10000
-    frmCFG.tmrCFG.Enabled = True
+    frmCFG.tmrCFG_update
 End Sub
