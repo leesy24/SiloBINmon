@@ -178,7 +178,7 @@ Begin VB.Form frmCFG
          Height          =   375
          Left            =   120
          Style           =   1  '그래픽
-         TabIndex        =   1
+         TabIndex        =   2
          Top             =   1800
          Width           =   1575
       End
@@ -188,7 +188,7 @@ Begin VB.Form frmCFG
          Height          =   375
          Left            =   6120
          Style           =   1  '그래픽
-         TabIndex        =   2
+         TabIndex        =   1
          Top             =   1800
          Width           =   1575
       End
@@ -539,20 +539,60 @@ Private Sub tmrCFG_Timer()
     Unload Me
 End Sub
 
+Private Sub txtAVRcnt_KeyPress(KeyAscii As Integer)
+'
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+'
+End Sub
+
 Private Sub txtAVRcnt_GotFocus()
     tmrCFG_update
+End Sub
+
+Private Sub txtBaseHH_KeyPress(KeyAscii As Integer)
+'
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+'
 End Sub
 
 Private Sub txtBaseHH_GotFocus()
     tmrCFG_update
 End Sub
 
+Private Sub txtCangle_KeyPress(Index As Integer, KeyAscii As Integer)
+'
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+'
+End Sub
+
 Private Sub txtCangle_GotFocus(Index As Integer)
     tmrCFG_update
 End Sub
 
+Private Sub txtCtypes_KeyPress(Index As Integer, KeyAscii As Integer)
+'
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+'
+End Sub
+
 Private Sub txtCtypes_GotFocus(Index As Integer)
     tmrCFG_update
+End Sub
+
+Private Sub txtMaxHH_KeyPress(KeyAscii As Integer)
+'
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+'
 End Sub
 
 Private Sub txtMaxHH_GotFocus()

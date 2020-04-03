@@ -528,36 +528,90 @@ Private Sub lbBinTiltStep_Click()
     frmCFG.tmrCFG_update
 End Sub
 
+Private Sub txtBinCenterX_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+End Sub
+
 Private Sub txtBinCenterX_GotFocus()
     frmCFG.tmrCFG_update
+End Sub
+
+Private Sub txtBinCenterY_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
 End Sub
 
 Private Sub txtBinCenterY_GotFocus()
     frmCFG.tmrCFG_update
 End Sub
 
+Private Sub txtBinIPAddr_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+End Sub
+
 Private Sub txtBinIPAddr_GotFocus()
     frmCFG.tmrCFG_update
+End Sub
+
+Private Sub txtBinIPPort_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
 End Sub
 
 Private Sub txtBinIPPort_GotFocus()
     frmCFG.tmrCFG_update
 End Sub
 
+Private Sub txtBinRadius_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+End Sub
+
 Private Sub txtBinRadius_GotFocus()
     frmCFG.tmrCFG_update
+End Sub
+
+Private Sub txtBinTiltDefault_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
 End Sub
 
 Private Sub txtBinTiltDefault_GotFocus()
     frmCFG.tmrCFG_update
 End Sub
 
+Private Sub txtBinTiltMax_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+End Sub
+
 Private Sub txtBinTiltMax_GotFocus()
     frmCFG.tmrCFG_update
 End Sub
 
+Private Sub txtBinTiltMin_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
+End Sub
+
 Private Sub txtBinTiltMin_GotFocus()
     frmCFG.tmrCFG_update
+End Sub
+
+Private Sub txtBinTiltStep_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then  ' The ENTER key.
+        SendKeys "{tab}"    ' Set the focus to the next control.
+    End If
 End Sub
 
 Private Sub txtBinTiltStep_GotFocus()
